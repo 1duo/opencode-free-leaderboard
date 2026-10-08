@@ -11,7 +11,7 @@ uv run --no-editable leaderboard status
 
 Python 3.11 is managed by uv. Install and start [Docker Desktop](https://docs.docker.com/desktop/setup/install/mac-install/) before grading. Accept access to [GPQA](https://huggingface.co/datasets/Idavidrein/gpqa) using your Hugging Face account; its terms prohibit publishing examples. Supply credentials in your own terminal, never in a commit or chat:
 
-Use `uv run --no-editable` for commands on macOS if filesystem hidden flags cause editable-install `.pth` files to be skipped by Python. The installed launch agent uses this mode automatically.
+Use `uv run --no-editable` for commands on macOS if filesystem hidden flags cause editable-install `.pth` files to be skipped by Python. The installed launch agent directly uses the project's virtual environment with an explicit source path, avoiding dependency installation during scheduled runs.
 
 ```sh
 uv run --no-editable leaderboard auth zen
