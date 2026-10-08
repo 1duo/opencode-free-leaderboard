@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Comparable benchmark subsets for verified free OpenCode Zen endpoints. Separate reasoning and coding scores, honest uncertainty, and evaluation history.">
+<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
+<body>
+<header><a class="brand" href="./"><span class="mark">o/f</span> OPEN / FREE</a><nav><a href="#methodology">Methodology</a><a href="leaderboard.csv">CSV ↗</a><a href="snapshot.json">JSON ↗</a></nav></header>
+<main>
+<section class="hero"><div class="eyebrow"><span class="dot"></span> OPENCODE ZEN · INDEPENDENT EVALUATIONS</div>
+<h1>Free models.<br><em>Measured carefully.</em></h1>
+<div class="intro"><p>A comparable view of reasoning and coding capability, with fixed questions, objective grading, and uncertainty you can see.</p>
+<span class="cadence">WEEKLY CHECKS<br><b>28-day screen refresh</b></span></div></section>
+<section class="metrics" aria-label="Evaluation overview"><div><span>ELIGIBLE ENDPOINTS</span><strong id="eligible">—</strong></div><div><span>COMPLETED SCREENS</span><strong id="completed">0</strong></div><div><span>QUESTIONS / SCREEN</span><strong>80</strong></div><div><span>LAST PUBLISHED</span><strong class="date" id="published">Awaiting deployment</strong></div></section>
+<section id="notice" class="notice" aria-live="polite"><b>Evaluation status</b><ul><li>OpenCode Zen API key is not configured</li><li>Authenticated GPQA access is not configured</li><li>Docker is not installed</li><li>Benchmark season awaits preparation and grader validation</li></ul></section>
+<section class="board"><div class="section-title"><div class="eyebrow">01 / LEADERBOARD</div><h2>Compare capabilities</h2><p>Rankings require a complete panel. Availability checks never replace benchmark scores.</p></div>
+<div class="controls"><div role="group" aria-label="Capability view" id="views"><button class="selected" data-view="reasoning">Reasoning</button><button data-view="coding">Coding</button><button data-view="overall">Overall</button></div>
+<label>Panel <select id="tier"><option value="screen">Screen · 80 questions</option><option value="confirmation">Confirmation · 240 questions</option></select></label></div>
+<div id="weight-control" hidden><label>Reasoning weight <input id="weight" type="range" min="0" max="100" value="40"><output id="weight-value">40% reasoning / 60% coding</output></label><p>Custom weights change your view; exported overall scores use 40% / 60%.</p></div>
+<div class="table-scroll"><table><thead><tr><th>Position</th><th>Model / endpoint</th><th id="score-heading">Reasoning / 100</th><th>95% interval</th><th>Evaluated</th><th>Status / progress</th></tr></thead><tbody id="ranking"><tr><td colspan="6" class="empty">Loading the latest snapshot…</td></tr></tbody></table></div>
+<p class="table-note">Positions follow point estimates. Pairwise comparisons may remain unresolved; intervals reflect question sampling, not repeated-generation variability.</p>
+<details id="comparisons"><summary>Pairwise comparisons</summary><div id="comparison-list"></div></details>
+</section>
+<section class="operations"><div><div class="eyebrow">02 / RUN HEALTH</div><h2>Capacity, made visible.</h2><p>Budgets scale to due screens. Provider quotas and machine downtime can still delay evaluations.</p></div><dl id="budget"></dl></section>
+<section id="methodology" class="method"><div class="eyebrow">03 / METHODOLOGY</div><h2>A small panel. A clear protocol.</h2><div class="method-grid">
+<article><span>01</span><h3>Fixed benchmark subsets</h3><p>GPQA Diamond: 20 questions. LiveBench reasoning: 20. LiveCodeBench Python generation: 40. Confirmations expand these to 60 / 60 / 120 and reuse the original answers.</p></article>
+<article><span>02</span><h3>One completion, objective grading</h3><p>No tools, repair turns, or answer selection. Temperature zero where supported, 4,096 generation tokens including reasoning where supported, with capped output verified in a pilot. Code is graded in isolated containers.</p></article>
+<article><span>03</span><h3>Separate capabilities</h3><p>Reasoning equally weights GPQA and LiveBench. Coding is LiveCodeBench pass@1. The optional overall view defaults to 40% reasoning and 60% coding.</p></article>
+<article><span>04</span><h3>Dates and uncertainty stay attached</h3><p>10,000 stratified bootstrap resamples and paired comparisons. LiveBench uses the verified 2024-11-25 spatial / zebra panel; LiveCodeBench uses release_v6. These are custom subsets, not official benchmark leaderboard scores.</p></article></div>
+<p class="source-links"><a href="https://docs.opencode.ai/docs/zen/">Zen pricing & endpoints ↗</a><a href="https://huggingface.co/datasets/Idavidrein/gpqa">GPQA ↗</a><a href="https://github.com/LiveBench/LiveBench">LiveBench ↗</a><a href="https://github.com/LiveCodeBench/LiveCodeBench">LiveCodeBench ↗</a><a href="manifest.json">Season manifests ↗</a></p>
+</section>
+<section class="history"><div class="eyebrow">04 / ARCHIVE</div><h2>Previous evaluations</h2><div id="history-list"><p>History appears after the first completed evaluation cycle.</p></div></section>
+</main><footer><span>OPEN / FREE · Benchmark capability, with context.</span><a href="https://github.com/1duo/opencode-free-leaderboard">Source & reproducibility ↗</a><span id="snapshot-date"></span></footer>
+</body></html>

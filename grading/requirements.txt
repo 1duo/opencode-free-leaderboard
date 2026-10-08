@@ -1,0 +1,7 @@
+numpy==2.2.6
+datasets==3.6.0
+pyext==0.7
+sympy==1.14.0
+scipy==1.15.3
+tqdm==4.67.1
+

@@ -1,0 +1,35 @@
+[project]
+name = "opencode-free-leaderboard"
+version = "0.1.0"
+description = "Private, resumable evaluations of verified free OpenCode Zen endpoints"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "httpx==0.28.1",
+  "pydantic==2.12.3",
+  "numpy==2.2.6",
+  "jinja2==3.1.6",
+  "beautifulsoup4==4.14.2",
+  "huggingface-hub==0.35.3",
+  "pyarrow==21.0.0",
+]
+
+[project.scripts]
+leaderboard = "freeboard.cli:main"
+
+[dependency-groups]
+dev = ["pytest==8.4.2", "ruff==0.14.0"]
+
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/freeboard"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
