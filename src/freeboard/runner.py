@@ -118,6 +118,8 @@ class Runner:
         return self.budget.summary()
 
     def generate(self, job: dict, model: dict, item: dict, cap: int) -> None:
+        if job.get('response_path'):
+            raise RuntimeError('A durable response already exists; this job must not be regenerated')
         key = credential("zen")
         if not key:
             raise RuntimeError("OpenCode Zen key missing; run auth zen")
@@ -157,6 +159,8 @@ class Runner:
                     effective["cap_verified"] = False
                     self.db.execute("UPDATE models SET profile=?,status='cap_violation' WHERE id=?",
                                     (json.dumps(effective), model["id"]))
+                    self.db.execute("UPDATE jobs SET status='failed',error='Output cap exceeded; response retained, no replay' WHERE id=?",
+                                    (job['id'],))
                 return
             self.budget.finish(attempt, "rejected", response.status_code)
             status = response.status_code
@@ -246,7 +250,7 @@ class Runner:
             job = jobs[0]
             item = json.loads(job["content"])
             model = self.db.one("SELECT * FROM models WHERE id=?", (job["model_id"],))
-            if job["kind"] != "health" and not json.loads(model["profile"]).get("cap_verified"):
+            if job["status"] != 'generated' and job["kind"] != "health" and not json.loads(model["profile"]).get("cap_verified"):
                 self.db.execute("UPDATE jobs SET status='deferred',next_after=?,error='Output cap not verified' WHERE id=?",
                                 ((datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), job["id"]))
                 continue

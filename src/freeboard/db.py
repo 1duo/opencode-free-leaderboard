@@ -61,7 +61,12 @@ class DB:
         self.path = state / "state.sqlite3"
         self.conn = sqlite3.connect(self.path, timeout=30)
         self.conn.row_factory = sqlite3.Row
-        self.conn.executescript(SCHEMA)
+        self.conn.execute('PRAGMA foreign_keys=ON')
+        version = self.conn.execute('PRAGMA user_version').fetchone()[0]
+        if version == 0:
+            self.conn.executescript(SCHEMA)
+        elif version != 1:
+            raise RuntimeError('Unsupported state schema version')
         self.path.chmod(0o600)
 
     def rows(self, sql: str, args: tuple = ()) -> list[dict]:
@@ -97,18 +102,34 @@ class DB:
 
     def recover(self) -> None:
         # A durable response can be graded again; an unknown request cannot be redispatched.
-        for attempt in self.rows("SELECT * FROM attempts WHERE status='reserved'"):
+        from .adapters import parse
+        from .budget import usage_total
+        for attempt in self.rows("""SELECT * FROM attempts WHERE status='reserved' OR
+            (status IN ('received','recovered','malformed') AND job_id IN
+            (SELECT id FROM jobs WHERE status='dispatching'))"""):
             path = self.state / "responses" / f"{attempt['id']}.json"
             if path.exists() and attempt["job_id"]:
-                json.loads(path.read_text())  # Ensure the atomic response is intact.
-                self.execute("UPDATE jobs SET status='generated', response_path=? WHERE id=?",
-                             (str(path), attempt["job_id"]))
-                self.execute("UPDATE attempts SET status='recovered', finished_at=?, response_path=? WHERE id=?",
-                             (now(), str(path), attempt["id"]))
+                try:
+                    record = json.loads(path.read_text())
+                    completion = parse(record['protocol'], json.loads(record['body']))
+                except (ValueError, KeyError, TypeError):
+                    self.execute("UPDATE jobs SET status='ambiguous',response_path=?,error='Saved response could not be parsed' WHERE id=?",
+                                 (str(path), attempt['job_id']))
+                    self.execute("UPDATE attempts SET status='malformed',finished_at=?,response_path=? WHERE id=?",
+                                 (now(), str(path), attempt['id']))
+                    continue
+                violated = completion.output_tokens is not None and completion.output_tokens > record['cap']
+                self.execute("UPDATE jobs SET status=?, response_path=?,latency=?,truncated=? WHERE id=?",
+                             ('failed' if violated else 'generated', str(path), record.get('latency'),
+                              int(completion.truncated), attempt["job_id"]))
+                reported = usage_total(completion.usage)
+                self.execute("""UPDATE attempts SET status='recovered',finished_at=COALESCE(finished_at,?),
+                    response_path=?,reported_tokens=?,accounted_tokens=?,usage=? WHERE id=?""",
+                             (now(), str(path), reported, reported if reported is not None else attempt['reserved_tokens'],
+                              json.dumps(completion.usage), attempt["id"]))
             else:
                 self.execute("UPDATE attempts SET status='ambiguous', finished_at=? WHERE id=?",
                              (now(), attempt["id"]))
                 if attempt["job_id"]:
                     self.execute("UPDATE jobs SET status='ambiguous', error='Outcome unknown; no automatic replay' WHERE id=?",
                                  (attempt["job_id"],))
-

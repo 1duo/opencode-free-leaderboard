@@ -11,7 +11,7 @@ from .db import DB
 from .discovery import discover
 from .grading import DockerGrader
 from .panels import prepare
-from .publication import export, publish
+from .publication import export, publish, refresh_publications
 from .runner import Runner
 from .scheduling import install
 from .scoring import snapshot
@@ -62,14 +62,16 @@ def main() -> None:
             if args.command == "discover":
                 result = discover(db, runner.budget)
             elif args.command == "status":
+                refresh_publications(db, settings, checkout)
                 report = snapshot(db, settings)
                 result = {"state": str(settings.state), "discovery_ok": report.discovery_ok,
                           "blockers": report.blockers, "budget": report.budget,
                           "queue_size": report.queue_size,
+                          "publication": db.one("SELECT snapshot_id,created_at,commit_sha,deployment_status FROM publications ORDER BY id DESC LIMIT 1"),
                           "models": [{"id": r.model_id, "status": r.availability, "cap_verified": r.cap_verified}
                                      for r in report.rows if r.tier == "screen"]}
             elif args.command == "prepare-panels":
-                result = prepare(db, settings)
+                result = prepare(db, settings, checkout)
                 season = db.one("SELECT * FROM seasons WHERE id=?", (result["season"],))
                 manifest = json.loads(season["manifest"])
                 grader = DockerGrader(settings)
@@ -121,6 +123,7 @@ def main() -> None:
                 db.execute("UPDATE models SET profile=? WHERE id=?", (json.dumps(profile), args.model))
                 result = {"profile": profile, "next": "Rediscover and rerun pilot; effective-setting changes create a new epoch"}
             else:  # daily
+                refresh_publications(db, settings, checkout)
                 try:
                     result = runner.run()
                 except RuntimeError as exc:
@@ -134,6 +137,9 @@ def main() -> None:
                     result["publication"] = publish(db, settings, checkout)
             db.backup()
             print(json.dumps(result, indent=2, default=str))
+    except KeyboardInterrupt:
+        print(json.dumps({'interrupted': True, 'next': 'Resume the same command; durable work is retained'}), file=sys.stderr)
+        sys.exit(130)
     except Exception as exc:
         # Dataset authentication failures can include request URLs; do not print raw SDK errors.
         safe = str(exc) if isinstance(exc, (RuntimeError, ValueError)) else f"{type(exc).__name__}: operation failed; check prerequisites and official source availability"

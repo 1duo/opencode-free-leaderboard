@@ -3,6 +3,7 @@ let report, view = "reasoning", tier = "screen", reasoningWeight = 0.4;
 const byId = (id) => document.getElementById(id);
 const fmtDate = (value) => value ? new Date(value).toLocaleDateString(undefined, {year:"numeric",month:"short",day:"numeric"}) : "—";
 const num = (value) => value == null ? "—" : value.toLocaleString();
+const statusLabel = (value) => ({cap_unverified:"Awaiting pilot",verification_unavailable:"Eligibility unverified",pricing_unknown:"Pricing unverified",quota_limited:"Quota limited",authentication_failed:"Access unavailable",cap_violation:"Output limit exceeded",excluded:"Excluded",unsupported:"Unsupported",removed:"Removed",paid:"Now paid",complete:"Complete",pending:"Pending",stale:"Stale"})[value] || value;
 function node(tag, text, className) { const element = document.createElement(tag); if(text != null) element.textContent = text; if(className) element.className=className; return element; }
 function score(row) { if(!row.scores) return null; return view === "overall" ? row.scores.reasoning*reasoningWeight+row.scores.coding*(1-reasoningWeight) : row.scores[view]; }
 function render() {
@@ -20,7 +21,7 @@ function render() {
     const ci = view==="overall"&&reasoningWeight!==0.4 ? null : row.intervals?.[view];
     tr.append(node("td",ci?`${ci[0].toFixed(1)}–${ci[1].toFixed(1)}`:row.scores&&view==="overall"?"Custom weights; see components":"—"));
     tr.append(node("td",fmtDate(row.evaluated_at)));
-    const status=node("td");status.append(node("span",row.availability==="eligible"?row.status:row.availability,"badge"));
+    const status=node("td");status.append(node("span",statusLabel(row.availability==="eligible"?row.status:row.availability),"badge"));
     status.append(node("span",`${Object.values(row.progress).reduce((a,b)=>a+b,0)} / ${Object.values(row.expected).reduce((a,b)=>a+b,0)} graded`,"sub"));
     if(row.deadline_missed) status.append(node("span","Refresh deadline missed","sub"));
     if(row.latency_seconds!=null) status.append(node("span",`${row.latency_seconds.toFixed(1)}s median · ${num(row.accounted_tokens)} accounted tokens · ${((row.truncation_rate||0)*100).toFixed(1)}% truncated`,"sub"));
@@ -56,4 +57,3 @@ for(const button of document.querySelectorAll("[data-view]"))button.addEventList
 byId("tier").addEventListener("change",()=>{tier=byId("tier").value;render();});
 byId("weight").addEventListener("input",()=>{reasoningWeight=Number(byId("weight").value)/100;render();});
 load();
-

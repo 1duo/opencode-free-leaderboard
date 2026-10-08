@@ -14,8 +14,8 @@ Python 3.11 is managed by uv. Install and start [Docker Desktop](https://docs.do
 Use `uv run --no-editable` for commands on macOS if filesystem hidden flags cause editable-install `.pth` files to be skipped by Python. The installed launch agent uses this mode automatically.
 
 ```sh
-uv run leaderboard auth zen
-uv run leaderboard auth hf
+uv run --no-editable leaderboard auth zen
+uv run --no-editable leaderboard auth hf
 ```
 
 Credentials are stored in macOS Keychain through Security.framework. Environment variables `OPENCODE_API_KEY` and `HF_TOKEN` are supported for portable manual runs. The installed launch agent uses Keychain. Configure the Zen account to disable paid access and auto-reload where available; this runner only submits exact IDs with fresh zero-price evidence.
@@ -23,13 +23,13 @@ Credentials are stored in macOS Keychain through Security.framework. Environment
 ## First evaluation
 
 ```sh
-uv run leaderboard discover
-uv run leaderboard prepare-panels
-uv run leaderboard pilot
-uv run leaderboard run
-uv run leaderboard export
-uv run leaderboard publish --create-repository
-uv run leaderboard schedule install
+uv run --no-editable leaderboard discover
+uv run --no-editable leaderboard prepare-panels
+uv run --no-editable leaderboard pilot
+uv run --no-editable leaderboard run
+uv run --no-editable leaderboard export
+uv run --no-editable leaderboard publish --create-repository
+uv run --no-editable leaderboard schedule install
 ```
 
 Discovery must succeed against both the official catalog and pricing page. Pricing parsing is fail-closed: missing or contradictory evidence blocks generation. The pilot selects the first three eligible endpoints lexicographically, with six health probes and six held-out benchmark questions each. Pilot answers never enter rankings.
@@ -37,8 +37,8 @@ Discovery must succeed against both the official catalog and pricing page. Prici
 The cap probe deliberately requests a long JSON array. A model is cap-verified only after all six responses report bounded output usage and at least one reports truncation at the 256-token probe cap. Cached input and hidden reasoning subfields are never added twice. This checks observed gateway behavior, not an assurance about every future response. A cap violation removes verification and prevents further headline requests. Unsupported parameter errors require an explicit profile change and a new pilot:
 
 ```sh
-uv run leaderboard profile MODEL_ID --cap-parameter max_tokens --omit-temperature
-uv run leaderboard pilot
+uv run --no-editable leaderboard profile MODEL_ID --cap-parameter max_tokens --omit-temperature
+uv run --no-editable leaderboard pilot
 ```
 
 Profile changes create an evaluation epoch on the next discovery. There is no automatic parameter fallback, model substitution, or paid provider fallback. Muse Spark Contributor endpoints are excluded.
@@ -82,8 +82,8 @@ Representative repository/agent tasks are outside this release. Benchmark capabi
 ## Targeted verification
 
 ```sh
-uv run pytest -q tests/test_core.py
-uv run ruff check src tests grading/worker.py
+uv run --no-editable pytest -q tests/test_core.py
+uv run --no-editable ruff check src tests grading/worker.py
 ```
 
 See [architecture and acceptance notes](docs/architecture.md).

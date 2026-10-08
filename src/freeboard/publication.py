@@ -92,7 +92,14 @@ def publish(db: DB, settings: Settings, checkout: Path, create=False) -> dict:
         command(["git", "init", "-b", "main"], checkout)
     tracked = command(["git", "ls-files"], checkout).splitlines()
     allowed = []
-    for path in checkout.rglob("*"):
+    candidates = [checkout / name for name in SOURCE_FILES if (checkout / name).exists()]
+    for name in sorted(SOURCE_ROOTS | {'site'}):
+        root = checkout / name
+        if root.is_symlink():
+            raise ValueError('Publication source directory must not be a symlink')
+        if root.exists():
+            candidates.extend(root.rglob('*'))
+    for path in candidates:
         rel = path.relative_to(checkout)
         if any(part.startswith(".") and part not in {".github", ".gitignore", ".nojekyll"} for part in rel.parts):
             continue
@@ -132,3 +139,23 @@ def publish(db: DB, settings: Settings, checkout: Path, create=False) -> dict:
     return {"repository": f"https://github.com/{settings.repository}",
             "page": f"https://{settings.repository.split('/')[0]}.github.io/{settings.repository.split('/')[1]}/",
             "commit": sha, "snapshot": exported["snapshot"], "deployment": "pending"}
+
+
+def refresh_publications(db: DB, settings: Settings, checkout: Path) -> None:
+    pending = db.rows("SELECT * FROM publications WHERE deployment_status='pushed'")
+    if not pending:
+        return
+    try:
+        result = subprocess.run(["gh", "run", "list", "--repo", settings.repository,
+                                 "--workflow", "pages.yml", "--limit", "20", "--json",
+                                 "headSha,status,conclusion"], cwd=checkout, capture_output=True, text=True,
+                                timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        return
+    if result.returncode:
+        return
+    for record in pending:
+        run = next((r for r in json.loads(result.stdout) if r["headSha"] == record["commit_sha"]), None)
+        if run and run["status"] == "completed":
+            db.execute("UPDATE publications SET deployment_status=? WHERE id=?",
+                       ("deployed" if run["conclusion"] == "success" else "failed", record["id"]))

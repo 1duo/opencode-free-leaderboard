@@ -31,6 +31,12 @@ class DockerGrader:
     def build(self, manifest: dict, checkout: Path) -> str:
         if not self.available():
             raise GradingUnavailable("Docker is not installed; code grading remains pending")
+        if manifest.get("grader_image"):
+            result = subprocess.run(["docker", "image", "inspect", manifest['grader_image'], "--format", "{{.Id}}"],
+                                    capture_output=True, text=True, timeout=15)
+            if result.returncode == 0 and result.stdout.strip() == manifest['grader_image']:
+                return manifest['grader_image']
+            raise GradingUnavailable("This season's immutable grader image is missing; restore it before regrading")
         with tempfile.TemporaryDirectory(dir=self.settings.state) as folder:
             context = Path(folder)
             shutil.copy(checkout / "grading/Dockerfile", context)

@@ -4,6 +4,7 @@ import ast
 import csv
 import io
 import json
+import os
 import random
 import tarfile
 from collections import Counter
@@ -46,6 +47,9 @@ def upstream(settings: Settings, name: str) -> Path:
 
 
 def download(settings: Settings, repo: str, filename: str, revision: str, gated=False) -> Path:
+    # Use resumable HTTP downloads with the hub's bounded timeouts. The optional Xet
+    # downloader can otherwise wait indefinitely on unavailable chunk services.
+    os.environ.setdefault('HF_HUB_DISABLE_XET', '1')
     from huggingface_hub import hf_hub_download
     token = credential("hf") if gated else False
     if gated and not token:
@@ -152,9 +156,10 @@ def livecodebench(settings: Settings, source: Path) -> list[dict]:
     return list(result.values())
 
 
-def prepare(db: DB, settings: Settings) -> dict:
+def prepare(db: DB, settings: Settings, checkout: Path) -> dict:
+    if not credential('hf'):
+        raise RuntimeError('GPQA requires an HF token with accepted dataset access; run auth hf')
     lb_source, lcb_source = upstream(settings, "livebench"), upstream(settings, "livecodebench")
-    # Cache publicly downloadable components even while GPQA authentication is pending.
     pools = {"livebench": livebench(settings), "livecodebench": livecodebench(settings, lcb_source)}
     pools["gpqa"] = gpqa(settings)
     panels = {tier: [] for tier in COUNTS}
@@ -169,6 +174,8 @@ def prepare(db: DB, settings: Settings) -> dict:
                 "livecodebench_release": "release_v6", "language": "Python", "counts": COUNTS,
                 "protocol": {"output_cap": settings.max_output_tokens, "temperature": 0,
                              "tools": False, "completions": 1},
+                "grading_files": {name: digest((checkout / 'grading' / name).read_text())
+                                  for name in ['Dockerfile', 'worker.py', 'requirements.txt']},
                 "upstream_paths": {"livebench": str(lb_source), "livecodebench": str(lcb_source)},
                 "panels": {tier: [{"id": i["id"], "hash": digest(i), "benchmark": i["benchmark"],
                                    "stratum": i["stratum"]} for i in items] for tier, items in panels.items()}}

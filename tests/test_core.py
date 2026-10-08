@@ -11,7 +11,7 @@ from freeboard.config import COUNTS, Settings, now
 from freeboard.db import DB
 from freeboard.discovery import excluded, parse_evidence
 from freeboard.grading import DockerGrader, GradingUnavailable, gpqa_score
-from freeboard.panels import sample
+from freeboard.panels import sample, prepare
 from freeboard.publication import export, validate_site
 from freeboard.runner import Runner
 from freeboard.scoring import bootstrap, is_complete
@@ -128,6 +128,18 @@ def test_saved_response_recovery_without_regeneration(context):
     assert len(runner.db.rows("SELECT * FROM attempts")) == 1
     runner.grade(recovered, {"benchmark": "gpqa", "answer": "A"}, "unused")
     assert runner.db.one("SELECT score FROM jobs")["score"] == 1
+
+
+def test_recovery_after_attempt_commit_before_job_commit(context):
+    runner, job, _, _ = job_context(context)
+    attempt = runner.budget.reserve("generation", 500, job['id'])
+    path = runner.settings.state / "responses" / f"{attempt}.json"
+    path.write_text(json.dumps({"protocol": "chat", "body": json.dumps(response_body()), "cap": 4096, "latency": 1}))
+    runner.budget.finish(attempt, 'received', 200, response_body()['usage'], str(path))
+    assert runner.db.one('SELECT status FROM jobs')['status'] == 'dispatching'
+    runner.db.recover()
+    assert runner.db.one('SELECT status FROM jobs')['status'] == 'generated'
+    assert runner.budget.summary()['reported_tokens'] == 30
 
 
 def test_explicit_retries_are_bounded(context, monkeypatch):
@@ -269,3 +281,37 @@ def test_failed_export_preserves_previous_snapshot(context, tmp_path, monkeypatc
 def test_private_state_rejects_public_checkout(tmp_path):
     with pytest.raises(ValueError):
         Settings(state=tmp_path / "private").initialize(tmp_path)
+
+
+def test_prepared_manifest_and_panels(context, monkeypatch):
+    db, settings, checkout = context
+    monkeypatch.setattr('freeboard.panels.credential', lambda _: 'test-only')
+    pools = {}
+    for benchmark, count, strata in [("gpqa", 198, ["biology", "chemistry", "physics"]),
+                                      ("livebench", 100, ["spatial", "zebra_puzzle"]),
+                                      ("livecodebench", 600, ["easy", "medium", "hard"])]:
+        pools[benchmark] = [{"id": f"{benchmark}:{i}", "benchmark": benchmark,
+                             "stratum": strata[i % len(strata)],
+                             "messages": [{"role": "user", "content": "PRIVATE_SENTINEL"}]}
+                            for i in range(count)]
+    monkeypatch.setattr("freeboard.panels.upstream", lambda settings, name: settings.state / name)
+    monkeypatch.setattr("freeboard.panels.gpqa", lambda _: pools["gpqa"])
+    monkeypatch.setattr("freeboard.panels.livebench", lambda _: pools["livebench"])
+    monkeypatch.setattr("freeboard.panels.livecodebench", lambda *_: pools["livecodebench"])
+    result = prepare(db, settings, checkout)
+    assert result["counts"] == {"screen": 80, "confirmation": 240, "pilot": 6}
+    def panel(tier):
+        return {x["item_id"] for x in db.rows("SELECT item_id FROM panels WHERE tier=?", (tier,))}
+    assert panel("screen") <= panel("confirmation")
+    assert not panel("pilot") & panel("confirmation")
+    manifest = json.loads(db.one("SELECT manifest FROM seasons")["manifest"])
+    assert set(manifest["grading_files"]) == {"Dockerfile", "worker.py", "requirements.txt"}
+
+
+def test_reported_cap_overrun_blocks_future_generation(context, monkeypatch):
+    runner, job, item_model, item = job_context(context)
+    monkeypatch.setattr("freeboard.runner.credential", lambda _: "test-only")
+    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(200, json=response_body(5000))))
+    runner.generate(job, item_model, item, 4096)
+    assert runner.db.one("SELECT status FROM models")["status"] == "cap_violation"
+    assert runner.budget.summary()["reported_tokens"] == 5020
