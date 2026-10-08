@@ -17,9 +17,12 @@ from .budget import estimate
 from .config import digest, now
 from .discovery import discover
 from .runner import PROBES
+from .public_run import plan_public_screen, validate_public_screen
 
 
-def run_native(runner, season: dict, selected: list[str] | None = None, limit: int | None = None) -> dict:
+def run_native(runner, season: dict, selected: list[str] | None = None, limit: int | None = None, screen=False) -> dict:
+    if screen:
+        validate_public_screen(runner, season)
     runner.db.recover()
     discovered = discover(runner.db, runner.budget, runner.client)
     if not discovered['ok']:
@@ -48,11 +51,19 @@ def run_native(runner, season: dict, selected: list[str] | None = None, limit: i
                    'configuration_hash': digest(config), 'cap_verified': False,
                    'headline_eligible': False, 'extra_system_context': True}
         model = {**models[ident], 'profile': json.dumps(profile), 'epoch': digest([ident, profile])[:16]}
+        if screen and not runner.db.one("SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind='native_pilot' AND completed_at IS NOT NULL",
+                                        (ident, model['epoch'], season['id'])):
+            summary.append({'model': ident, 'headline_eligible': False, 'blocked': True,
+                            'reason': 'Matching native compatibility pilot is incomplete', 'graded': 0})
+            continue
         cycles = []
-        for kind in ['native_health', 'native_pilot']:
+        panel_kind = 'native_public_screen' if screen else 'native_pilot'
+        for kind in ['native_health', panel_kind]:
             cycle = runner.cycle(model, season, kind, kind + ':' + digest([ident, model['epoch'], season['id']])[:24])
-            if kind == 'native_pilot':
-                runner.add_panel(cycle, 'pilot')
+            if kind == panel_kind:
+                runner.add_panel(cycle, 'screen' if screen else 'pilot')
+                if screen:
+                    plan_public_screen(runner, cycle)
             else:
                 for probe in PROBES:
                     item = {'benchmark': 'health', **probe, 'messages': [{'role': 'user', 'content': probe['prompt']}]}

@@ -219,8 +219,8 @@ class Runner:
         cycle = self.db.one("SELECT * FROM cycles WHERE id=?", (cycle_id,))
         if cycle["kind"] == "screen":
             tier, expected = "screen", 80
-        elif cycle["kind"] == "pilot":
-            tier = "pilot"
+        elif cycle["kind"] in {"pilot", "public_screen"}:
+            tier = 'pilot' if cycle['kind'] == 'pilot' else 'screen'
             expected = self.db.one('SELECT COUNT(*) AS n FROM panels WHERE season=? AND tier=?', (cycle['season'], tier))['n']
         else:
             tier, expected = None, 6
@@ -264,6 +264,7 @@ class Runner:
             if not jobs:
                 break
             job = jobs[0]
+            job_kind = job['kind']
             item = json.loads(job["content"])
             model = self.db.one("SELECT * FROM models WHERE id=?", (job["model_id"],))
             if job["status"] != 'generated' and job["kind"] != "health" and not json.loads(model["profile"]).get("cap_verified"):
@@ -277,14 +278,18 @@ class Runner:
                 if job["status"] == "generated":
                     self.grade(job, item, image)
                 self.finish_cycle(job["cycle_id"])
-                if kind != 'pilot' and job['kind'] == 'health':
+                if kind != 'pilot' and job_kind == 'health':
                     self.schedule(season)
                     self.capacity()
             except BudgetExhausted:
                 break
             except GradingUnavailable as exc:
-                self.db.execute("UPDATE jobs SET error=? WHERE id=?", (str(exc), job["id"]))
-                break
+                self.db.execute("UPDATE jobs SET error=?,next_after=? WHERE id=?",
+                                (str(exc), (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), job["id"]))
+                # One saved answer with a grader failure must not prevent the
+                # remaining questions from finishing. Never regenerate it.
+                processed += 1
+                continue
             processed += 1
         return {"processed": processed, "budget": self.budget.summary()}
 

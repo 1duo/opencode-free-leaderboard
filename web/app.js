@@ -52,6 +52,22 @@ async function load(){
     const budget=byId("budget");budget.replaceChildren();
     for(const [label,value] of [["Recorded requests / native invocations",`${num(report.budget.attempts_used)} / ${num(report.budget.attempts_limit)}`],["Accounted tokens",`${num(report.budget.accounted_tokens)} / ${num(report.budget.tokens_limit)}`],["Reported / OpenCode-normalized tokens",num(report.budget.reported_tokens)],["Planned attempts / tokens",`${num(report.budget.planned_attempts)} / ${num(report.budget.planned_tokens)}`],["Jobs awaiting completion",num(report.queue_size)],["Missed refresh deadlines",num(report.missed_deadlines)]])budget.append(node("dt",label),node("dd",value));
     const history=byId("history-list");if(report.history.length){history.replaceChildren();for(const row of report.history)history.append(node("article",`${row.name} · ${row.tier} · ${row.season} · ${fmtDate(row.evaluated_at)} · reasoning ${row.scores.reasoning.toFixed(1)} / coding ${row.scores.coding.toFixed(1)} · ${row.availability}`));}
+    const screens=byId("public-screen-list");
+    if(report.public_screens?.length){
+      screens.replaceChildren();
+      for(const p of report.public_screens){
+        const article=node("article");
+        article.append(node("h3",`${p.model_id} · ${p.transport} · ${statusLabel(p.status)} · UNRANKED`));
+        article.append(node("p",`${Object.values(p.progress).reduce((a,b)=>a+b,0)}/60 graded · cap ${p.cap_verified?"verified":"UNVERIFIED"} · evaluated ${fmtDate(p.evaluated_at)} · season ${p.season}`));
+        for(const [b,s] of Object.entries(p.benchmark_scores)){
+          const ci=p.intervals[b];
+          article.append(node("p",`${b}: ${s.toFixed(1)}% (n=${p.expected[b]}) · 95% interval ${ci[0].toFixed(1)}–${ci[1].toFixed(1)} · evaluated ${fmtDate(p.benchmark_evaluated_at?.[b])}`));
+        }
+        article.append(node("p",`${num(p.accounted_tokens)} accounted tokens · ${num(p.reported_tokens)} reported/normalized tokens · ${p.latency_seconds==null?"—":p.latency_seconds.toFixed(1)+"s"} median latency · ${p.truncation_rate==null?"—":(p.truncation_rate*100).toFixed(1)+"%"} truncated`));
+        if(Object.keys(p.pending_reasons).length)article.append(node("p",Object.entries(p.pending_reasons).map(([s,n])=>s==="grading_blocked"?`${n} saved answer awaiting upstream grader; score withheld`:`${n} ${s.replaceAll("_"," ")}`).join(" · ")));
+        screens.append(article);
+      }
+    }
     const pilots=byId("pilot-list");if(report.pilots?.length){pilots.replaceChildren();for(const p of report.pilots){const scores=Object.entries(p.benchmark_scores).map(([b,s])=>`${b}: ${s.toFixed(1)}% (n=${p.expected[b]})`).join(" · ");pilots.append(node("article",`${p.model_id} · ${p.transport} · ${statusLabel(p.status)} · ${p.health_graded}/6 health answers graded · cap probe ${p.cap_probe_verified?"verified":"UNVERIFIED"} · ${Object.values(p.progress).reduce((a,b)=>a+b,0)}/${Object.values(p.expected).reduce((a,b)=>a+b,0)} benchmark questions graded${scores?" · "+scores:""} · evaluated ${fmtDate(p.evaluated_at)} · UNRANKED`));}}
     render();
   }catch(error){byId("ranking").replaceChildren();const tr=node("tr"),td=node("td","The snapshot could not be loaded. Download the JSON export or refresh the page.","empty");td.colSpan=6;tr.append(td);byId("ranking").append(tr);}

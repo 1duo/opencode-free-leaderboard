@@ -72,6 +72,29 @@ class PublicPilot(Strict):
     evaluated_at: str | None
 
 
+class PublicScreen(Strict):
+    model_id: str
+    epoch: str
+    transport: str
+    season: str
+    tier: str = 'public-screen'
+    unranked: bool = True
+    extra_system_context: bool
+    cap_verified: bool
+    status: str
+    progress: dict[str, int]
+    expected: dict[str, int]
+    pending_reasons: dict[str, int]
+    benchmark_scores: dict[str, float]
+    intervals: dict[str, list[float]]
+    benchmark_evaluated_at: dict[str, str | None] = {}
+    evaluated_at: str | None
+    latency_seconds: float | None
+    accounted_tokens: int
+    reported_tokens: int
+    truncation_rate: float | None
+
+
 class PublicManifest(Strict):
     id: str
     seed: int
@@ -101,6 +124,7 @@ class Snapshot(Strict):
     history: list[PublicRow]
     comparisons: list[Comparison]
     pilots: list[PublicPilot] = []
+    public_screens: list[PublicScreen] = []
     seasons: list[PublicManifest]
     budget: dict[str, int | str | None]
     queue_size: int
@@ -108,7 +132,7 @@ class Snapshot(Strict):
     blockers: list[str]
 
 
-def bootstrap(records: list[dict], samples: int = 10000) -> dict[str, np.ndarray]:
+def component_bootstrap(records: list[dict], samples: int = 10000) -> dict[str, np.ndarray]:
     groups = {}
     for row in sorted(records, key=lambda r: (r["benchmark"], r["stratum"], r["item_id"])):
         groups.setdefault((row["benchmark"], row["stratum"]), []).append(row)
@@ -121,7 +145,11 @@ def bootstrap(records: list[dict], samples: int = 10000) -> dict[str, np.ndarray
         draws = scores[rng.integers(0, len(group), size=(samples, len(group)))].sum(axis=1)
         totals[benchmark] = totals.get(benchmark, np.zeros(samples)) + draws
         sizes[benchmark] = sizes.get(benchmark, 0) + len(group)
-    values = {k: totals[k] / sizes[k] * 100 for k in totals}
+    return {k: totals[k] / sizes[k] * 100 for k in totals}
+
+
+def bootstrap(records: list[dict], samples: int = 10000) -> dict[str, np.ndarray]:
+    values = component_bootstrap(records, samples)
     reasoning = (values["gpqa"] + values["livebench"]) / 2
     coding = values["livecodebench"]
     return {"reasoning": reasoning, "coding": coding, "overall": reasoning * .4 + coding * .6}
@@ -286,10 +314,46 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             benchmark_scores={b: float(np.mean([r['score'] for r in items if r['benchmark'] == b])) * 100
                               for b in expected if expected[b] and progress[b] == expected[b]},
             evaluated_at=cycle['completed_at'] if complete else None))
+    public_screens = []
+    for cycle in db.rows("SELECT * FROM cycles WHERE kind IN ('public_screen','native_public_screen') ORDER BY started_at,model_id"):
+        items = records(db, cycle, 'screen')
+        panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='screen'", (cycle['season'],))
+        expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['screen']}
+        progress = {b: sum(r['benchmark'] == b and r['status'] == 'graded' for r in items) for b in expected}
+        complete = (expected == {'gpqa': 0, 'livebench': 20, 'livecodebench': 40}
+                    and len(items) == 60 and progress == expected)
+        scores, intervals = {}, {}
+        completed_components = [b for b in ['livebench', 'livecodebench'] if progress[b] == expected[b] and expected[b]]
+        component_items = [r for r in items if r['benchmark'] in completed_components]
+        if component_items:
+            scores = {b: float(np.mean([r['score'] for r in component_items if r['benchmark'] == b])) * 100
+                      for b in completed_components}
+            intervals = {b: np.quantile(v, [.025, .975]).tolist()
+                         for b, v in component_bootstrap(component_items, settings.bootstrap_samples).items()}
+        usage = db.one('SELECT COALESCE(SUM(accounted_tokens),0) accounted,COALESCE(SUM(reported_tokens),0) reported FROM attempts WHERE job_id IN (SELECT id FROM jobs WHERE cycle_id=?)', (cycle['id'],))
+        component_dates = {b: db.one("""SELECT MAX(a.finished_at) stamp FROM attempts a JOIN jobs j ON j.id=a.job_id
+            JOIN items i ON i.id=j.item_id WHERE j.cycle_id=? AND i.benchmark=? AND j.status='graded'
+            AND a.status IN ('received','recovered')""", (cycle['id'], b))['stamp'] for b in completed_components}
+        generated_items = [r for r in items if r['latency'] is not None]
+        native = cycle['kind'] == 'native_public_screen'
+        public_screens.append(PublicScreen(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
+            transport='local-opencode' if native else 'zen-api', extra_system_context=native,
+            cap_verified=json.loads(cycle['profile']).get('cap_verified', False) and not any(
+                r['status'] == 'cap_unverified' or 'output cap' in (r.get('error') or '').lower() for r in items),
+            status='complete' if complete else 'pending', progress=progress, expected=expected,
+            pending_reasons={s: sum(('grading_blocked' if r['status'] == 'generated' and r.get('error') else r['status']) == s for r in items)
+                             for s in sorted({'grading_blocked' if r['status'] == 'generated' and r.get('error') else r['status']
+                                              for r in items if r['status'] != 'graded'})},
+            benchmark_scores=scores, intervals=intervals, benchmark_evaluated_at=component_dates,
+            evaluated_at=cycle['completed_at'] if complete else None,
+            latency_seconds=float(np.median([r['latency'] for r in generated_items])) if generated_items else None,
+            accounted_tokens=usage['accounted'], reported_tokens=usage['reported'],
+            truncation_rate=sum(r['truncated'] for r in generated_items) / len(generated_items) if generated_items else None))
     generated = now()
-    return Snapshot(snapshot_id=digest([generated, [r.model_dump() for r in rows]])[:20],
+    return Snapshot(snapshot_id=digest([generated, [r.model_dump() for r in rows],
+                                       [r.model_dump() for r in public_screens], [r.model_dump() for r in pilots]])[:20],
                     generated_at=generated, discovery_at=(discovery or {}).get("observed_at"),
                     discovery_ok=bool((discovery or {}).get("ok")), discovery_error=(discovery or {}).get("error"),
-                    rows=rows, history=history, comparisons=comparisons, pilots=pilots, seasons=manifests,
+                    rows=rows, history=history, comparisons=comparisons, pilots=pilots, public_screens=public_screens, seasons=manifests,
                     budget=Budget(db, settings).summary(), queue_size=queue,
                     missed_deadlines=sum(r.deadline_missed for r in rows if r.tier == 'screen'), blockers=blockers)

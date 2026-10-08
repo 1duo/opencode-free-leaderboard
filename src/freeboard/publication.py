@@ -65,16 +65,24 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
         for name in ["app.js", "style.css"]:
             shutil.copy(checkout / "web" / name, stage / name)
         (stage / ".nojekyll").write_text("")
-        fields = ["model_id", "tier", "season", "epoch", "status", "availability", "evaluated_at", "reasoning", "coding", "overall",
-                  "gpqa_n", "livebench_n", "livecodebench_n", "accounted_tokens", "reported_tokens", "truncation_rate"]
+        fields = ["model_id", "tier", "transport", "season", "epoch", "status", "availability", "evaluated_at", "reasoning", "coding", "overall", "livebench", "livecodebench",
+                  "gpqa_n", "livebench_n", "livecodebench_n", "livebench_evaluated_at", "livecodebench_evaluated_at",
+                  "accounted_tokens", "reported_tokens", "truncation_rate"]
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields)
             writer.writeheader()
             for row in report.rows + report.history:
                 data = {k: getattr(row, k) for k in fields if hasattr(row, k)}
-                data.update({k: (row.scores or {}).get(k) for k in ["reasoning", "coding", "overall"]})
+                data['transport'] = 'zen-api'
+                data.update({k: (row.scores or {}).get(k) for k in ["reasoning", "coding", "overall", "livebench", "livecodebench"]})
                 data.update({f"{k}_n": (row.sample_counts or {}).get(k, 0) for k in ["gpqa", "livebench", "livecodebench"]})
                 # Keep spreadsheet programs from executing formula-like model names.
+                writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})
+            for row in report.public_screens:
+                data = {k: getattr(row, k) for k in fields if hasattr(row, k)}
+                data.update(row.benchmark_scores)
+                data.update({f'{k}_n': row.progress[k] for k in row.expected})
+                data.update({f'{k}_evaluated_at': v for k, v in row.benchmark_evaluated_at.items()})
                 writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})
         validate_site(stage)
         target, backup = checkout / "site", Path(temp) / "previous"

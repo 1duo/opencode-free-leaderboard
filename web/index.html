@@ -10,7 +10,7 @@
 <h1>Free models.<br><em>Measured carefully.</em></h1>
 <div class="intro"><p>A comparable view of reasoning and coding capability, with fixed questions, objective grading, and uncertainty you can see.</p>
 <span class="cadence">WEEKLY CHECKS<br><b>28-day screen refresh</b></span></div></section>
-<section class="metrics" aria-label="Evaluation overview"><div><span>VERIFIED FREE ENDPOINTS</span><strong id="eligible">—</strong></div><div><span>COMPLETED SCREENS</span><strong id="completed">0</strong></div><div><span>QUESTIONS / SCREEN</span><strong>80</strong></div><div><span>LAST PUBLISHED</span><strong class="date" id="published">Awaiting deployment</strong></div></section>
+<section class="metrics" aria-label="Evaluation overview"><div><span>VERIFIED FREE ENDPOINTS</span><strong id="eligible">—</strong></div><div><span>COMPLETE 80-QUESTION SCREENS</span><strong id="completed">0</strong></div><div><span>QUESTIONS / SCREEN</span><strong>80</strong></div><div><span>LAST PUBLISHED</span><strong class="date" id="published">Awaiting deployment</strong></div></section>
 <section id="notice" class="notice" aria-live="polite"><b>Evaluation status</b><ul>{% for blocker in report.blockers %}<li>{{ blocker }}</li>{% endfor %}</ul></section>
 <section class="board"><div class="section-title"><div class="eyebrow">01 / LEADERBOARD</div><h2>Compare capabilities</h2><p>Rankings require a complete panel. Availability checks never replace benchmark scores.</p></div>
 <div class="controls"><div role="group" aria-label="Capability view" id="views"><button class="selected" data-view="reasoning">Reasoning</button><button data-view="coding">Coding</button><button data-view="overall">Overall</button></div>
@@ -21,6 +21,7 @@
 <details id="comparisons"><summary>Pairwise comparisons</summary><div id="comparison-list"></div></details>
 </section>
 <section class="operations"><div><div class="eyebrow">02 / RUN HEALTH</div><h2>Capacity, made visible.</h2><p>Budgets scale to due screens. Provider quotas and machine downtime can still delay evaluations.</p></div><dl id="budget"></dl></section>
+<section class="history"><h2>Public benchmark screens</h2><p>The 20 LiveBench and 40 LiveCodeBench questions can finish while GPQA access is pending. These separate results are unranked and cannot replace the complete 80-question screen. Native OpenCode adds context; its cap verification and normalized usage remain visible. Intervals measure question sampling only.</p><div id="public-screen-list"><p>No public screen has started.</p></div></section>
 <section class="history"><h2>Compatibility pilots</h2><p>These tiny held-out samples test execution and grading. They do not enter rankings. Native OpenCode runs add system context and are separate from the headline protocol. Native usage is normalized by OpenCode; internal transport retries are not visible in the recorded invocation count.</p><div id="pilot-list"><p>Pilot results appear after execution starts.</p></div></section>
 <section id="methodology" class="method"><div class="eyebrow">03 / METHODOLOGY</div><h2>A small panel. A clear protocol.</h2><div class="method-grid">
 <article><span>01</span><h3>Fixed benchmark subsets</h3><p>GPQA Diamond: 20 questions. LiveBench reasoning: 20. LiveCodeBench Python generation: 40. Confirmations expand these to 60 / 60 / 120 and reuse the original answers.</p></article>

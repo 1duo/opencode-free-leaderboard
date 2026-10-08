@@ -247,6 +247,117 @@ def test_complete_panels_and_paired_draws():
     np.testing.assert_array_equal(a["coding"] - b["coding"], np.zeros(10000))
 
 
+def public_screen_fixture(context):
+    db, settings, checkout = context
+    item_model, active = model(db), season(db)
+    manifest = json.loads(active['manifest'])
+    manifest['partial'] = True
+    db.execute('UPDATE seasons SET manifest=?', (json.dumps(manifest),))
+    active = db.one('SELECT * FROM seasons')
+    for benchmark, n in [('livebench', 20), ('livecodebench', 40)]:
+        for i in range(n):
+            add_item(db, f'{benchmark}:{i}', benchmark=benchmark)
+    return Runner(db, settings, checkout), item_model, active
+
+
+def test_public_screen_gate_resume_and_no_headline_rank(context, monkeypatch):
+    from freeboard.public_run import run_public
+    from freeboard.scoring import snapshot
+    runner, item_model, active = public_screen_fixture(context)
+    monkeypatch.setattr('freeboard.public_run.discover', lambda *_: {'ok': True})
+    monkeypatch.setattr('freeboard.runner.credential', lambda _: 'test-only')
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    calls = []
+    def response(req):
+        calls.append(req)
+        return httpx.Response(200, json=response_body())
+    runner.client = httpx.Client(transport=httpx.MockTransport(response))
+    monkeypatch.setattr(runner.grader, 'grade', lambda *_: 1)
+    with pytest.raises(ValueError):
+        run_public(runner, active, [item_model['id']])
+    assert not calls
+    pilot = runner.cycle(item_model, active, 'pilot', 'pilot-fixture')
+    runner.db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), pilot['id']))
+    assert run_public(runner, active, [item_model['id']], limit=1)['processed'] == 1
+    assert run_public(runner, active, [item_model['id']])['processed'] == 59
+    assert run_public(runner, active, [item_model['id']])['processed'] == 0
+    assert len(calls) == 60
+    report = snapshot(runner.db, runner.settings)
+    assert not any(r.scores for r in report.rows)
+    public = report.public_screens[0]
+    assert public.status == 'complete' and public.unranked
+    assert public.progress == {'gpqa': 0, 'livebench': 20, 'livecodebench': 40}
+    assert public.benchmark_scores == {'livebench': 100, 'livecodebench': 100}
+    assert public.intervals == {'livebench': [100, 100], 'livecodebench': [100, 100]}
+    assert all(public.benchmark_evaluated_at[b] for b in public.benchmark_scores)
+    assert report.rows[0].scores is None
+    import csv
+    import shutil
+    target = runner.settings.state.parent / 'public-export'
+    shutil.copytree(runner.checkout / 'web', target / 'web')
+    export(runner.db, runner.settings, target)
+    assert validate_site(target / 'site').public_screens == report.public_screens
+    for path in (target / 'site').iterdir():
+        assert 'PRIVATE_SENTINEL' not in path.read_text()
+    rows = list(csv.DictReader((target / 'site/leaderboard.csv').open()))
+    subset = next(r for r in rows if r['tier'] == 'public-screen')
+    assert subset['transport'] == 'zen-api' and subset['reasoning'] == '' and subset['overall'] == ''
+    assert subset['livebench_n'] == '20' and subset['livecodebench_n'] == '40'
+    assert subset['livebench_evaluated_at'] == public.benchmark_evaluated_at['livebench']
+    cycle = runner.db.one("SELECT id FROM cycles WHERE kind='public_screen'")
+    runner.db.execute("UPDATE jobs SET status='cap_unverified',error='Combined output cap unverified' WHERE id=(SELECT MIN(id) FROM jobs WHERE cycle_id=?)", (cycle['id'],))
+    invalid = snapshot(runner.db, runner.settings).public_screens[0]
+    assert invalid.status == 'pending' and not invalid.cap_verified and 'livebench' not in invalid.benchmark_scores
+    assert invalid.benchmark_scores['livecodebench'] == 100
+
+
+def test_grader_failure_preserves_answer_and_finishes_other_questions(context, monkeypatch):
+    from freeboard.public_run import run_public
+    from freeboard.scoring import snapshot
+    runner, item_model, active = public_screen_fixture(context)
+    monkeypatch.setattr('freeboard.public_run.discover', lambda *_: {'ok': True})
+    monkeypatch.setattr('freeboard.runner.credential', lambda _: 'test-only')
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    runner.client = httpx.Client(transport=httpx.MockTransport(lambda _: httpx.Response(200, json=response_body())))
+    pilot = runner.cycle(item_model, active, 'pilot', 'pilot-fixture')
+    runner.db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), pilot['id']))
+    calls = 0
+    def grade(*_):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise GradingUnavailable('Fixture grading failure')
+        return 1
+    monkeypatch.setattr(runner.grader, 'grade', grade)
+    run_public(runner, active, [item_model['id']])
+    saved = runner.db.one("SELECT * FROM jobs WHERE status='generated'")
+    assert saved['response_path'] and saved['next_after'] and saved['score'] is None
+    assert len(runner.db.rows("SELECT * FROM jobs WHERE status='graded'")) == 59
+    assert run_public(runner, active, [item_model['id']])['processed'] == 0
+    assert len(runner.db.rows('SELECT * FROM attempts')) == 60
+    public = snapshot(runner.db, runner.settings).public_screens[0]
+    assert public.status == 'pending' and public.pending_reasons == {'grading_blocked': 1}
+    assert 'livebench' not in public.benchmark_scores and public.benchmark_scores['livecodebench'] == 100
+
+
+def test_native_public_screen_requires_matching_pilot(context, monkeypatch):
+    import subprocess
+    from freeboard.native import run_native
+    runner, item_model, active = public_screen_fixture(context)
+    monkeypatch.setattr('freeboard.native.discover', lambda *_: {'ok': True})
+    calls = []
+    def call(args, **kwargs):
+        calls.append(args)
+        assert args[-1] == '--version'
+        return subprocess.CompletedProcess(args, 0, '1.18.31', '')
+    monkeypatch.setattr('freeboard.native.subprocess.run', call)
+    result = run_native(runner, active, [item_model['id']], screen=True)
+    assert result['models'][0]['blocked'] and result['processed'] == 0
+    assert len(calls) == 1
+    assert not runner.db.rows('SELECT * FROM attempts')
+    assert not runner.db.rows("SELECT * FROM cycles WHERE kind='native_public_screen'")
+
+
 def test_confirmation_reuses_same_cycle(context):
     db, settings, checkout = context
     item_model, active = model(db), season(db)

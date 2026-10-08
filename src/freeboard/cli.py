@@ -29,9 +29,10 @@ def parser() -> argparse.ArgumentParser:
         sub = commands.add_parser(name)
         sub.add_argument("--limit", type=int, help="Maximum jobs processed in this invocation")
         sub.add_argument("--season", help="Evaluate a validated candidate before promotion")
-        if name == 'pilot':
-            sub.add_argument('--model', action='append', help='Additional explicit free-endpoint diagnostics; does not change headline pilot requirements')
-            sub.add_argument('--local-opencode', action='store_true', help='Run a separate unranked pilot through the real local OpenCode client')
+        sub.add_argument('--model', action='append', help='Select exact verified free IDs for explicit public evaluations')
+        sub.add_argument('--local-opencode', action='store_true', help='Run a separate unranked evaluation through the real local OpenCode client')
+        if name == 'run':
+            sub.add_argument('--public-only', action='store_true', help='Finish 20 LiveBench and 40 LiveCodeBench questions in a separate unranked public screen')
     prepare_parser = commands.add_parser("prepare-panels")
     prepare_parser.add_argument("--promote", action="store_true")
     prepare_parser.add_argument('--public-only', action='store_true', help='Prepare a separate unranked public compatibility pilot while GPQA access is pending')
@@ -78,6 +79,7 @@ def main() -> None:
                           "blockers": report.blockers, "budget": report.budget,
                           "queue_size": report.queue_size,
                           'pilots': [p.model_dump() for p in report.pilots],
+                          'public_screens': [p.model_dump() for p in report.public_screens],
                           "publication": db.one("SELECT snapshot_id,created_at,commit_sha,deployment_status FROM publications ORDER BY id DESC LIMIT 1"),
                           "models": [{"id": r.model_id, "status": r.availability, "cap_verified": r.cap_verified}
                                      for r in report.rows if r.tier == "screen"]}
@@ -119,9 +121,17 @@ def main() -> None:
                     if not candidate:
                         raise ValueError("Unknown or unvalidated candidate season")
                     runner.active_season = lambda: candidate
-                if getattr(args, 'local_opencode', False):
+                public = getattr(args, 'public_only', False)
+                if args.command == 'run' and (args.local_opencode or args.model) and not public:
+                    raise ValueError('Explicit model/native screen selection requires --public-only')
+                if public and not args.season:
+                    raise ValueError('Select a validated public season with --season')
+                if args.local_opencode:
                     from .native import run_native
-                    result = run_native(runner, runner.active_season(), args.model, args.limit)
+                    result = run_native(runner, runner.active_season(), args.model, args.limit, screen=public)
+                elif public:
+                    from .public_run import run_public
+                    result = run_public(runner, runner.active_season(), args.model, args.limit)
                 else:
                     result = runner.run(pilot=args.command == "pilot", limit=args.limit, pilot_models=getattr(args, 'model', None))
             elif args.command == "confirm":

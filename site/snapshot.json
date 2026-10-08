@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "snapshot_id": "3ecb0f9c611ae0221b2a",
-  "generated_at": "2026-10-08T19:40:48+00:00",
+  "snapshot_id": "50ed27d6b8c905326067",
+  "generated_at": "2026-10-08T20:47:23+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-08T19:20:01+00:00",
+  "discovery_at": "2026-10-08T20:28:57+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -19,7 +19,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -54,7 +54,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -89,7 +89,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -124,7 +124,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -159,7 +159,7 @@
       "protocol": "unsupported",
       "endpoint": "https://opencode.ai/zen/v1/systemone",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -194,7 +194,7 @@
       "protocol": "unsupported",
       "endpoint": "https://opencode.ai/zen/v1/systemone",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -229,7 +229,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -264,7 +264,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -299,7 +299,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -334,7 +334,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -369,7 +369,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -404,7 +404,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -439,7 +439,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -474,7 +474,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -509,7 +509,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -544,7 +544,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -579,7 +579,7 @@
       "protocol": "responses",
       "endpoint": "https://opencode.ai/zen/v1/responses",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -614,7 +614,7 @@
       "protocol": "responses",
       "endpoint": "https://opencode.ai/zen/v1/responses",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -649,7 +649,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -684,7 +684,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -719,7 +719,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -754,7 +754,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -789,7 +789,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": true,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -824,7 +824,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": true,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -859,7 +859,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -894,7 +894,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T19:20:01+00:00",
+      "observed_at": "2026-10-08T20:28:57+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -1272,6 +1272,248 @@
         "livecodebench": 50.0
       },
       "evaluated_at": "2026-10-08T19:21:14+00:00"
+    },
+    {
+      "model_id": "ling-3.1-flash-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "longcat-2.5-preview-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "mimo-v2.6-flash-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "nemotron-3-ultra-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "nemotron-3.5-lightning-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "step-5-preview-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    }
+  ],
+  "public_screens": [
+    {
+      "model_id": "space-bunny-free",
+      "epoch": "ca9dc90d78df93b6",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "tier": "public-screen",
+      "unranked": true,
+      "extra_system_context": true,
+      "cap_verified": false,
+      "status": "complete",
+      "progress": {
+        "gpqa": 0,
+        "livebench": 20,
+        "livecodebench": 40
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 20,
+        "livecodebench": 40
+      },
+      "pending_reasons": {},
+      "benchmark_scores": {
+        "livebench": 65.0,
+        "livecodebench": 40.0
+      },
+      "intervals": {
+        "livebench": [
+          45.0,
+          80.0
+        ],
+        "livecodebench": [
+          27.500000000000004,
+          52.5
+        ]
+      },
+      "benchmark_evaluated_at": {
+        "livebench": "2026-10-08T19:59:01+00:00",
+        "livecodebench": "2026-10-08T20:08:25+00:00"
+      },
+      "evaluated_at": "2026-10-08T20:08:25+00:00",
+      "latency_seconds": 11.32806658349,
+      "accounted_tokens": 165207,
+      "reported_tokens": 165207,
+      "truncation_rate": 0.23333333333333334
+    },
+    {
+      "model_id": "space-bunny-free",
+      "epoch": "98093bc1ee2fa5db",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "tier": "public-screen",
+      "unranked": true,
+      "extra_system_context": false,
+      "cap_verified": true,
+      "status": "complete",
+      "progress": {
+        "gpqa": 0,
+        "livebench": 20,
+        "livecodebench": 40
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 20,
+        "livecodebench": 40
+      },
+      "pending_reasons": {},
+      "benchmark_scores": {
+        "livebench": 60.0,
+        "livecodebench": 60.0
+      },
+      "intervals": {
+        "livebench": [
+          40.0,
+          80.0
+        ],
+        "livecodebench": [
+          47.5,
+          72.5
+        ]
+      },
+      "benchmark_evaluated_at": {
+        "livebench": "2026-10-08T20:16:10+00:00",
+        "livecodebench": "2026-10-08T20:34:09+00:00"
+      },
+      "evaluated_at": "2026-10-08T20:46:37+00:00",
+      "latency_seconds": 11.045200666529126,
+      "accounted_tokens": 167456,
+      "reported_tokens": 167456,
+      "truncation_rate": 0.3333333333333333
     }
   ],
   "seasons": [
@@ -4315,15 +4557,15 @@
   "budget": {
     "week": "2026-10-05",
     "attempts_limit": 300,
-    "tokens_limit": 1000000,
-    "planned_attempts": 48,
-    "planned_tokens": 484560,
-    "attempts_used": 52,
-    "accounted_tokens": 133080,
-    "reported_tokens": 31704,
-    "estimated_attempts": 20
+    "tokens_limit": 1263073,
+    "planned_attempts": 32,
+    "planned_tokens": 179969,
+    "attempts_used": 188,
+    "accounted_tokens": 518669,
+    "reported_tokens": 364367,
+    "estimated_attempts": 26
   },
-  "queue_size": 120,
+  "queue_size": 180,
   "missed_deadlines": 0,
   "blockers": [
     "Authenticated GPQA access is not configured",

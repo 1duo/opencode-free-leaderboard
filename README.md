@@ -57,6 +57,15 @@ While GPQA access is pending, `prepare-panels --public-only` freezes a separate 
 
 The native parser treats OpenCode's visible output and reasoning as separate token counts, and cached input as separate from uncached input. It adds each exactly once and checks the combined output cap. Native experiments reserve extra input capacity for OpenCode context. Their usage is OpenCode-normalized rather than a raw provider invoice; unverified outcomes retain a conservative reservation. Native attempts count CLI invocations, not internal HTTP retries that OpenCode does not expose. This limitation is displayed publicly and is another reason native pilots are separate from the headline runner.
 
+Once a model's public pilot completes, finish the frozen 20 LiveBench and 40 LiveCodeBench questions independently of GPQA setup:
+
+```sh
+uv run --no-editable leaderboard run --public-only --season PUBLIC_PILOT_ID --model MODEL_ID
+uv run --no-editable leaderboard run --public-only --season PUBLIC_PILOT_ID --model MODEL_ID --local-opencode
+```
+
+These 60-question public screens have separate persistent cycles, component scores and stratified intervals; they never receive headline ranks, reasoning/overall scores, or automatic confirmation extensions. Direct API screens require a verified cap and a matching completed pilot. Native screens require a matching completed native pilot and validate the observed combined output bound on every completion; unverified cap semantics remain displayed and exclude them from headline eligibility. Saved answers resume by grading, and pilot answers are never reused. Adding GPQA creates a new full season with fresh answers rather than silently turning these partial results into headline scores.
+
 ## Routine operation
 
 The `launchd` agent runs at 09:15 local time and at login. Keep the private runtime and managed scheduled checkout at their installed paths and keep Docker running. Daily execution revalidates eligibility and resumes work; health jobs are unique to each model/epoch/week. Models have four stable refresh cohorts. A 28-day deadline depends on provider availability and the computer running.
