@@ -61,7 +61,14 @@ class Budget:
         used = self.db.one("""SELECT COUNT(*) AS attempts_used,
             COALESCE(SUM(accounted_tokens),0) AS accounted_tokens,
             COALESCE(SUM(reported_tokens),0) AS reported_tokens,
-            SUM(reported_tokens IS NULL AND reserved_tokens>0) AS estimated_attempts
+            COALESCE(SUM(reported_tokens IS NULL AND reserved_tokens>0),0) AS estimated_attempts,
+            COALESCE(SUM(kind='generation'),0) AS zen_attempts,
+            COALESCE(SUM(CASE WHEN kind='generation' THEN accounted_tokens ELSE 0 END),0) AS zen_accounted_tokens,
+            COALESCE(SUM(CASE WHEN kind='generation' THEN reported_tokens ELSE 0 END),0) AS zen_reported_tokens,
+            COALESCE(SUM(kind='generation' AND reported_tokens IS NULL AND reserved_tokens>0),0) AS zen_estimated_attempts,
+            COALESCE(SUM(kind='discovery'),0) AS discovery_attempts,
+            COALESCE(SUM(kind NOT IN ('generation','discovery')),0) AS prior_attempts,
+            COALESCE(SUM(CASE WHEN kind NOT IN ('generation','discovery') THEN accounted_tokens ELSE 0 END),0) AS prior_accounted_tokens
             FROM attempts WHERE week=?""", (key,))
         return {**limits, **used}
 

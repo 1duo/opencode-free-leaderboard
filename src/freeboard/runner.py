@@ -250,6 +250,7 @@ class Runner:
             jobs = self.db.rows("""SELECT j.*,c.model_id,c.epoch,c.kind,c.profile AS cycle_profile,i.content
                 FROM jobs j JOIN cycles c ON c.id=j.cycle_id JOIN items i ON i.id=j.item_id
                 JOIN models m ON m.id=c.model_id WHERE c.season=?
+                AND c.kind IN ('health','pilot','screen','public_screen')
                 AND (j.status='generated' OR (c.epoch=m.epoch AND m.status='eligible'
                     AND j.status IN ('pending','deferred') AND (c.kind!='health' OR c.started_at>=?)))
                 AND (j.next_after IS NULL OR j.next_after<=?)

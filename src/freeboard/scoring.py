@@ -4,6 +4,7 @@ import itertools
 import json
 import shutil
 from datetime import datetime, timezone
+from typing import Literal
 
 import numpy as np
 from pydantic import BaseModel, ConfigDict
@@ -58,10 +59,9 @@ class Comparison(Strict):
 
 class PublicPilot(Strict):
     model_id: str
-    transport: str
+    transport: Literal['zen-api'] = 'zen-api'
     season: str
     unranked: bool = True
-    extra_system_context: bool
     status: str
     health_graded: int
     cap_probe_verified: bool = False
@@ -75,13 +75,11 @@ class PublicPilot(Strict):
 class PublicScreen(Strict):
     model_id: str
     epoch: str
-    transport: str
+    transport: Literal['zen-api'] = 'zen-api'
     season: str
     tier: str = 'public-screen'
     unranked: bool = True
-    extra_system_context: bool
     cap_verified: bool
-    client_version: str | None = None
     status: str
     progress: dict[str, int]
     expected: dict[str, int]
@@ -289,18 +287,18 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         blockers.append("Benchmark season awaits preparation and grader validation")
     if discovery and not discovery["ok"]:
         blockers.append(discovery["error"])
-    queue = db.one("SELECT COUNT(*) AS n FROM jobs WHERE status!='graded'")["n"]
+    queue = db.one("""SELECT COUNT(*) AS n FROM jobs j JOIN cycles c ON c.id=j.cycle_id
+        WHERE j.status!='graded' AND c.kind IN ('health','pilot','screen','public_screen')""")["n"]
     pilots = []
-    for cycle in db.rows("SELECT * FROM cycles WHERE kind IN ('pilot','native_pilot') ORDER BY started_at,model_id"):
+    for cycle in db.rows("SELECT * FROM cycles WHERE kind='pilot' ORDER BY started_at,model_id"):
         items = records(db, cycle, 'pilot')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='pilot'", (cycle['season'],))
         expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['pilot']}
         progress = {b: sum(r['benchmark'] == b and r['status'] == 'graded' for r in items) for b in expected}
-        native = cycle['kind'] == 'native_pilot'
         # Later weekly probes cannot change a completed pilot's compatibility evidence.
         health_cycle = db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
             AND kind=? AND started_at<=? ORDER BY started_at DESC LIMIT 1""",
-            (cycle['model_id'], cycle['epoch'], cycle['season'], 'native_health' if native else 'health',
+            (cycle['model_id'], cycle['epoch'], cycle['season'], 'health',
              cycle['completed_at'] or now()))
         cap_checks = db.rows("""SELECT i.content,j.score,j.status FROM jobs j JOIN items i ON i.id=j.item_id
             WHERE j.cycle_id=?""", ((health_cycle or {}).get('id'),))
@@ -308,15 +306,15 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         verified = any(json.loads(j['content']).get('check') == 'cap' and j['score'] == 1 for j in cap_checks)
         complete = (sum(expected.values()) in {4, 6} and len(items) == sum(expected.values())
                     and health == 6 and all(progress[b] == expected[b] for b in expected))
-        pilots.append(PublicPilot(model_id=cycle['model_id'], transport='local-opencode' if native else 'zen-api',
-            season=cycle['season'], extra_system_context=native, status='complete' if complete else 'pending',
+        pilots.append(PublicPilot(model_id=cycle['model_id'],
+            season=cycle['season'], status='complete' if complete else 'pending',
             health_graded=health, cap_probe_verified=verified, progress=progress, expected=expected,
             pending_reasons={s: sum(r['status'] == s for r in items) for s in sorted({r['status'] for r in items if r['status'] != 'graded'})},
             benchmark_scores={b: float(np.mean([r['score'] for r in items if r['benchmark'] == b])) * 100
                               for b in expected if expected[b] and progress[b] == expected[b]},
             evaluated_at=cycle['completed_at'] if complete else None))
     public_screens = []
-    for cycle in db.rows("SELECT * FROM cycles WHERE kind IN ('public_screen','native_public_screen') ORDER BY started_at,model_id"):
+    for cycle in db.rows("SELECT * FROM cycles WHERE kind='public_screen' ORDER BY started_at,model_id"):
         items = records(db, cycle, 'screen')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='screen'", (cycle['season'],))
         expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['screen']}
@@ -336,11 +334,8 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             JOIN items i ON i.id=j.item_id WHERE j.cycle_id=? AND i.benchmark=? AND j.status='graded'
             AND a.status IN ('received','recovered')""", (cycle['id'], b))['stamp'] for b in completed_components}
         generated_items = [r for r in items if r['latency'] is not None]
-        native = cycle['kind'] == 'native_public_screen'
         profile = json.loads(cycle['profile'])
         public_screens.append(PublicScreen(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
-            transport='local-opencode' if native else 'zen-api', extra_system_context=native,
-            client_version=profile.get('version') if native else None,
             cap_verified=profile.get('cap_verified', False) and not any(
                 r['status'] == 'cap_unverified' or 'output cap' in (r.get('error') or '').lower() for r in items),
             status='complete' if complete else 'pending', progress=progress, expected=expected,

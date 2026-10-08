@@ -340,22 +340,49 @@ def test_grader_failure_preserves_answer_and_finishes_other_questions(context, m
     assert 'livebench' not in public.benchmark_scores and public.benchmark_scores['livecodebench'] == 100
 
 
-def test_native_public_screen_requires_matching_pilot(context, monkeypatch):
-    import subprocess
-    from freeboard.native import run_native
+def test_zen_only_runner_and_export_preserve_archived_records(context, monkeypatch):
+    import shutil
+    from freeboard.cli import parser
+    from freeboard.scoring import PublicScreen, snapshot
     runner, item_model, active = public_screen_fixture(context)
-    monkeypatch.setattr('freeboard.native.discover', lambda *_: {'ok': True})
-    calls = []
-    def call(args, **kwargs):
-        calls.append(args)
-        assert args[-1] == '--version'
-        return subprocess.CompletedProcess(args, 0, '1.18.31', '')
-    monkeypatch.setattr('freeboard.native.subprocess.run', call)
-    result = run_native(runner, active, [item_model['id']], screen=True)
-    assert result['models'][0]['blocked'] and result['processed'] == 0
-    assert len(calls) == 1
-    assert not runner.db.rows('SELECT * FROM attempts')
-    assert not runner.db.rows("SELECT * FROM cycles WHERE kind='native_public_screen'")
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    for command in ['pilot', 'run']:
+        with pytest.raises(SystemExit) as error:
+            parser().parse_args([command, '--local-opencode'])
+        assert error.value.code == 2
+    # Include pending, saved and completed legacy jobs even on the current epoch.
+    # None may be generated, graded, counted in the active queue, or published.
+    for kind in ['native_health', 'native_pilot', 'native_public_screen']:
+        cycle = runner.cycle(item_model, active, kind, kind)
+        runner.add_panel(cycle, 'screen')
+        ids = runner.db.rows('SELECT id FROM jobs WHERE cycle_id=? ORDER BY id', (cycle['id'],))
+        runner.db.execute("UPDATE jobs SET status='generated' WHERE id=?", (ids[0]['id'],))
+        runner.db.execute("UPDATE jobs SET status='graded',score=1 WHERE id=?", (ids[1]['id'],))
+    def forbidden(*_):
+        pytest.fail('Archived OpenCode jobs must never be executed')
+    monkeypatch.setattr(runner, 'generate', forbidden)
+    monkeypatch.setattr(runner, 'grade', forbidden)
+    assert runner.drain(active)['processed'] == 0
+    legacy = runner.budget.reserve('native_generation', 500)
+    runner.budget.finish(legacy, 'received', usage={'total_tokens': 100, 'source': 'opencode-normalized'})
+    direct = runner.budget.reserve('generation', 500)
+    runner.budget.finish(direct, 'received', usage={'total_tokens': 80})
+    report = snapshot(runner.db, runner.settings)
+    assert not report.pilots and not report.public_screens and report.queue_size == 0
+    assert report.budget['attempts_used'] == 2 and report.budget['accounted_tokens'] == 180
+    assert report.budget['zen_attempts'] == 1 and report.budget['zen_reported_tokens'] == 80
+    assert report.budget['prior_attempts'] == 1 and report.budget['prior_accounted_tokens'] == 100
+    with pytest.raises(ValueError):
+        PublicScreen.model_validate({'transport': 'local-opencode'})
+    target = runner.settings.state.parent / 'archive-export'
+    shutil.copytree(runner.checkout / 'web', target / 'web')
+    export(runner.db, runner.settings, target)
+    assert not validate_site(target / 'site').public_screens
+    for filename in ['snapshot.json', 'leaderboard.csv']:
+        text = (target / 'site' / filename).read_text()
+        assert 'local-opencode' not in text and 'native_' not in text and 'PRIVATE_SENTINEL' not in text
+    assert len(runner.db.rows('SELECT * FROM jobs')) == 180
+    assert len(runner.db.rows('SELECT * FROM attempts')) == 2
 
 
 def test_confirmation_reuses_same_cycle(context):
@@ -391,7 +418,7 @@ def test_responses_usage_and_truncation():
     assert result.text == "answer" and result.truncated and result.reasoning_tokens == 200
 
 
-def test_native_accounting_tools_and_multiple_completions():
+def test_archived_native_response_accounting_and_validation():
     finish = {'type': 'step_finish', 'part': {'messageID': 'm', 'reason': 'stop', 'cost': 0,
               'tokens': {'total': 7713, 'input': 7637, 'output': 3, 'reasoning': 9, 'cache': {'read': 64, 'write': 0}}}}
     text = {'type': 'text', 'part': {'messageID': 'm', 'text': 'YES'}}

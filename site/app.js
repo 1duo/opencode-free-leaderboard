@@ -4,7 +4,6 @@ const byId = id => document.getElementById(id);
 const num = value => value == null ? "—" : value.toLocaleString();
 const pct = value => value == null ? "—" : `${value.toFixed(1)}%`;
 const fmtDate = value => value ? new Date(value).toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"}) : "—";
-const transport = value => ({"local-opencode":"Local OpenCode", "zen-api":"Zen API"})[value] || value;
 const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", provider_error:"Provider error", cap_violation:"Output limit exceeded", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
 function node(tag, text, className) {
   const element = document.createElement(tag);
@@ -67,7 +66,7 @@ function renderPublicScreens() {
       for (const run of runs) {
         const value = run.benchmark_scores[benchmark], ci = run.intervals[benchmark];
         const row = node("div", null, "chart-row"), title = node("div", null, "chart-row-title"), name = node("div");
-        name.append(node("strong", modelName(run.model_id)), node("span", transport(run.transport), "sub"));
+        name.append(node("strong", modelName(run.model_id)));
         title.append(name, node("strong", pct(value), "chart-score")); row.append(title);
         if (value != null) {
           row.append(intervalPlot(value, ci));
@@ -83,15 +82,11 @@ function renderPublicScreens() {
     }
     group.append(charts); list.append(group);
   }
-  const native = screens.filter(r => r.extra_system_context);
-  byId("transport-note").hidden = !native.length;
-  byId("transport-note").textContent = `Local OpenCode adds system context${native.some(r => !r.cap_verified) ? " and has unverified cap semantics" : ""}. Its runs are separate from direct API results.`;
   const details = byId("run-detail-list"); details.replaceChildren();
   for (const run of screens) {
     const card = node("article", null, "run-card");
-    card.append(node("h3", `${modelName(run.model_id)} · ${transport(run.transport)}`));
-    if (run.client_version) card.append(node("p", `OpenCode ${run.client_version}`, "fine"));
-    card.append(facts([["Status", statusLabel(run.status)], ["Graded", `${total(run.progress)}/${total(run.expected)} answers`], ["Output cap", run.cap_verified ? "Verified" : "Unverified"], ["Median latency", run.latency_seconds == null ? "—" : `${run.latency_seconds.toFixed(1)} s`], ["Accounted tokens", num(run.accounted_tokens)], [run.transport === "local-opencode" ? "Client-normalized tokens" : "Provider-reported tokens", num(run.reported_tokens)], ["Truncated", pct(run.truncation_rate == null ? null : run.truncation_rate * 100)], ["Evaluated", dateNode(run.evaluated_at)]]));
+    card.append(node("h3", modelName(run.model_id)));
+    card.append(facts([["Status", statusLabel(run.status)], ["Graded", `${total(run.progress)}/${total(run.expected)} answers`], ["Output cap", run.cap_verified ? "Verified" : "Unverified"], ["Median latency", run.latency_seconds == null ? "—" : `${run.latency_seconds.toFixed(1)} s`], ["Accounted tokens", num(run.accounted_tokens)], ["Provider-reported tokens", num(run.reported_tokens)], ["Truncated", pct(run.truncation_rate == null ? null : run.truncation_rate * 100)], ["Evaluated", dateNode(run.evaluated_at)]]));
     if (pendingText(run.pending_reasons)) card.append(node("p", pendingText(run.pending_reasons), "fine"));
     card.append(node("p", `${run.model_id} · epoch ${run.epoch}`, "identifier"), node("p", `Season ${run.season}`, "identifier"));
     details.append(card);
@@ -150,13 +145,15 @@ function renderSupporting() {
     row.append(name, node("td", statusLabel(state))); list.append(row);
   }
   byId("execution-summary").textContent = `Execution details · week of ${fmtDate(`${report.budget.week}T12:00:00`)}`;
-  byId("budget").replaceChildren(...facts([["Recorded requests / limit", `${num(report.budget.attempts_used)} / ${num(report.budget.attempts_limit)}`], ["Accounted tokens / limit", `${num(report.budget.accounted_tokens)} / ${num(report.budget.tokens_limit)}`], ["Reported / normalized tokens", num(report.budget.reported_tokens)], ["Requests with estimated usage", num(report.budget.estimated_attempts)], ["Planned requests / tokens", `${num(report.budget.planned_attempts)} / ${num(report.budget.planned_tokens)}`], ["Queued jobs (includes blocked)", num(report.queue_size)], ["Missed refresh deadlines", num(report.missed_deadlines)]]).childNodes);
+  byId("budget").replaceChildren(...facts([["Zen generation attempts", num(report.budget.zen_attempts)], ["Discovery requests", num(report.budget.discovery_attempts)], ["Zen accounted / reported tokens", `${num(report.budget.zen_accounted_tokens)} / ${num(report.budget.zen_reported_tokens)}`], ["Zen attempts with estimated usage", num(report.budget.zen_estimated_attempts)], ["Total attempts / limit", `${num(report.budget.attempts_used)} / ${num(report.budget.attempts_limit)}`], ["Total accounted tokens / limit", `${num(report.budget.accounted_tokens)} / ${num(report.budget.tokens_limit)}`], ["Planned requests / tokens", `${num(report.budget.planned_attempts)} / ${num(report.budget.planned_tokens)}`], ["Queued Zen jobs (includes blocked)", num(report.queue_size)], ["Missed refresh deadlines", num(report.missed_deadlines)]]).childNodes);
+  byId("prior-budget").hidden = !report.budget.prior_attempts;
+  byId("prior-budget").textContent = `Budget totals retain ${num(report.budget.prior_attempts)} prior experiment attempts and ${num(report.budget.prior_accounted_tokens)} accounted tokens. These are excluded from Zen results.`;
   const pilots = (report.pilots || []).filter(p => p.status === "complete" || total(p.progress) > 0 || p.health_graded > 0);
   byId("pilots").hidden = !pilots.length;
   const pilotList = byId("pilot-list"); pilotList.replaceChildren();
   for (const pilot of pilots) {
     const card = node("article", null, "run-card");
-    card.append(node("h3", `${modelName(pilot.model_id)} · ${transport(pilot.transport)}`));
+    card.append(node("h3", modelName(pilot.model_id)));
     card.append(facts([["Health graded", `${pilot.health_graded}/6`], ["Benchmark graded", `${total(pilot.progress)}/${total(pilot.expected)}`], ["Cap probe", pilot.cap_probe_verified ? "Verified" : "Unverified"], ["Evaluated", dateNode(pilot.evaluated_at)]]));
     for (const [b, s] of Object.entries(pilot.benchmark_scores)) card.append(node("p", `${b === "livebench" ? "LiveBench" : "LiveCodeBench"}: ${pct(s)} · ${pilot.expected[b]} questions`, "fine"));
     pilotList.append(card);

@@ -74,6 +74,7 @@ def parse(protocol: str, data: dict) -> Completion:
         if data.get("status") not in {"completed", "incomplete"}:
             raise ValueError("Unexpected Responses status")
     elif protocol == 'opencode':
+        # Read-only recovery of archived responses; no OpenCode generation path exists.
         events = data['events']
         if not isinstance(events, list) or any(not isinstance(e, dict) for e in events):
             raise ValueError('Malformed native event stream')

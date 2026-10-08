@@ -30,7 +30,6 @@ def parser() -> argparse.ArgumentParser:
         sub.add_argument("--limit", type=int, help="Maximum jobs processed in this invocation")
         sub.add_argument("--season", help="Evaluate a validated candidate before promotion")
         sub.add_argument('--model', action='append', help='Select exact verified free IDs for explicit public evaluations')
-        sub.add_argument('--local-opencode', action='store_true', help='Run a separate unranked evaluation through the real local OpenCode client')
         if name == 'run':
             sub.add_argument('--public-only', action='store_true', help='Finish 20 LiveBench and 40 LiveCodeBench questions in a separate unranked public screen')
     prepare_parser = commands.add_parser("prepare-panels")
@@ -122,14 +121,11 @@ def main() -> None:
                         raise ValueError("Unknown or unvalidated candidate season")
                     runner.active_season = lambda: candidate
                 public = getattr(args, 'public_only', False)
-                if args.command == 'run' and (args.local_opencode or args.model) and not public:
-                    raise ValueError('Explicit model/native screen selection requires --public-only')
+                if args.command == 'run' and args.model and not public:
+                    raise ValueError('Explicit model screen selection requires --public-only')
                 if public and not args.season:
                     raise ValueError('Select a validated public season with --season')
-                if args.local_opencode:
-                    from .native import run_native
-                    result = run_native(runner, runner.active_season(), args.model, args.limit, screen=public)
-                elif public:
+                if public:
                     from .public_run import run_public
                     result = run_public(runner, runner.active_season(), args.model, args.limit)
                 else:

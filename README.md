@@ -53,18 +53,15 @@ Profile changes create an evaluation epoch on the next discovery. There is no au
 
 While GPQA access is pending, `prepare-panels --public-only` freezes a separate compatibility panel. Run `pilot --season PUBLIC_PILOT_ID` to evaluate six synthetic probes and two held-out questions each from LiveBench and LiveCodeBench per selected model. This pilot cannot be promoted or used for headline rankings. `prepare-panels --season SEASON_ID` validates an already frozen panel without downloading or resampling it. Download caches can be discarded after the selected questions and manifest are stored and backed up; preserve the private SQLite state.
 
-`pilot --season SEASON_ID --local-opencode --model MODEL_ID` uses the installed OpenCode client for an explicitly unranked experiment. It selects one exact verified free ID, denies tools, disables title/summary/compaction agents and sharing, sets temperature zero and the output cap, and requires one zero-cost completion. OpenCode's system/environment context and message formatting differ from the headline protocol, so these answers use separate epochs and cannot enter or be reused in rankings. Normal OpenCode integration remains enabled; this runner does not spoof client identity to bypass free-tier restrictions. Provider rejection is a blocker, even when the same model works in a normal interactive agent session.
-
-The native parser treats OpenCode's visible output and reasoning as separate token counts, and cached input as separate from uncached input. It adds each exactly once and checks the combined output cap. Native experiments reserve extra input capacity for OpenCode context. Their usage is OpenCode-normalized rather than a raw provider invoice; unverified outcomes retain a conservative reservation. Native attempts count CLI invocations, not internal HTTP retries that OpenCode does not expose. This limitation is displayed publicly and is another reason native pilots are separate from the headline runner.
+All evaluations use direct Zen Chat Completions or Responses APIs. The local OpenCode execution path has been removed. Earlier experiments remain in private storage and count against their original budgets, but are excluded from public scores, pilots, and queues. Zen usage is shown separately from those prior experiments. Provider rejection is a blocker; there is no client-identity spoofing or paid fallback.
 
 Once a model's public pilot completes, finish the frozen 20 LiveBench and 40 LiveCodeBench questions independently of GPQA setup:
 
 ```sh
 uv run --no-editable leaderboard run --public-only --season PUBLIC_PILOT_ID --model MODEL_ID
-uv run --no-editable leaderboard run --public-only --season PUBLIC_PILOT_ID --model MODEL_ID --local-opencode
 ```
 
-These 60-question public screens have separate persistent cycles, component scores and stratified intervals; they never receive headline ranks, reasoning/overall scores, or automatic confirmation extensions. Direct API screens require a verified cap and a matching completed pilot. Native screens require a matching completed native pilot and validate the observed combined output bound on every completion; unverified cap semantics remain displayed and exclude them from headline eligibility. Saved answers resume by grading, and pilot answers are never reused. Adding GPQA creates a new full season with fresh answers rather than silently turning these partial results into headline scores.
+These 60-question public screens have separate persistent cycles, component scores and stratified intervals; they never receive headline ranks, reasoning/overall scores, or automatic confirmation extensions. Screens require a verified cap and a matching completed Zen API pilot. Saved answers resume by grading, and pilot answers are never reused. Adding GPQA creates a new full season with fresh answers rather than silently turning these partial results into headline scores.
 
 ## Routine operation
 

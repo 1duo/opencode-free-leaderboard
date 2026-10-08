@@ -20,10 +20,10 @@ def validate_public_screen(runner, season: dict) -> None:
 
 
 def plan_public_screen(runner, cycle: dict) -> dict:
-    items = runner.db.rows("""SELECT i.content,c.kind FROM jobs j JOIN items i ON i.id=j.item_id JOIN cycles c ON c.id=j.cycle_id
-        WHERE c.season=? AND c.kind IN ('public_screen','native_public_screen') AND j.status IN ('pending','deferred')""",
+    items = runner.db.rows("""SELECT i.content FROM jobs j JOIN items i ON i.id=j.item_id JOIN cycles c ON c.id=j.cycle_id
+        WHERE c.season=? AND c.kind='public_screen' AND j.status IN ('pending','deferred')""",
                            (cycle['season'],))
-    estimates = [estimate(json.loads(i['content'])['messages'], 4096) + (8192 if i['kind'].startswith('native') else 0) for i in items]
+    estimates = [estimate(json.loads(i['content'])['messages'], 4096) for i in items]
     used = runner.budget.summary()
     planned = runner.budget.plan(estimates, 0)
     runner.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?) WHERE week=?',

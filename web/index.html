@@ -9,7 +9,7 @@
 <a class="skip-link" href="#main-content">Skip to content</a>
 <header><a class="brand" href="./"><span class="mark">o/f</span> OPEN / FREE</a><nav aria-label="Page navigation"><a href="#methodology">Method</a><a href="leaderboard.csv">CSV ↗</a><a href="snapshot.json">JSON ↗</a></nav></header>
 <main id="main-content" tabindex="-1">
-<section class="hero"><div class="eyebrow">OPENCODE ZEN</div><h1>Free model benchmarks.</h1><p>Fixed questions. One answer per question.</p></section>
+<section class="hero"><div class="eyebrow">OPENCODE ZEN API</div><h1>Free model benchmarks.</h1><p>Fixed questions. One answer per question.</p></section>
 <section class="metrics" aria-label="Evaluation overview"><div><span>Evaluated models</span><strong id="evaluated-models">—</strong></div><div><span>Completed screens</span><strong id="completed-runs">—</strong></div><div><span>Graded screen answers</span><strong id="graded-answers">—</strong></div><div><span>Published</span><strong class="date" id="published">—</strong></div></section>
 <div id="notice" class="notice" role="status">Loading results…</div>
 <noscript><p>Enable JavaScript to view results, or download the <a href="snapshot.json">JSON</a> and <a href="leaderboard.csv">CSV</a>.</p></noscript>
@@ -23,18 +23,18 @@
 </section>
 <section id="results" class="section" hidden>
 <div class="section-heading"><h2>Benchmark results</h2><span class="badge">Unranked subsets</span></div><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>
-<div id="public-screen-list"></div><p id="transport-note" class="fine" hidden></p>
+<div id="public-screen-list"></div>
 <details id="run-details"><summary>Run details</summary><div id="run-detail-list" class="detail-grid"></div></details>
 </section>
 <section id="supporting" class="section supporting" hidden>
 <details id="availability"><summary id="availability-summary">Model availability</summary><p id="discovery-date" class="fine"></p><div class="table-scroll"><table><caption class="sr-only">Discovered model availability</caption><thead><tr><th scope="col">Model</th><th scope="col">Status</th></tr></thead><tbody id="availability-list"></tbody></table></div></details>
-<details id="execution"><summary id="execution-summary">Execution details</summary><dl id="budget" class="facts"></dl><p class="fine">Native requests count client invocations; internal HTTP retries are not visible. Missing usage is conservatively accounted.</p><p class="fine">Weekly checks; target refresh every 28 days. Provider access and the local machine determine completion.</p></details>
+<details id="execution"><summary id="execution-summary">Execution details</summary><dl id="budget" class="facts"></dl><p id="prior-budget" class="fine" hidden></p><p class="fine">Missing usage is conservatively accounted.</p><p class="fine">Weekly checks; target refresh every 28 days. Provider access and the local machine determine completion.</p></details>
 <details id="pilots" hidden><summary>Compatibility pilots</summary><p class="fine">Held-out checks, excluded from benchmark scores. Counts show answers graded, not checks passed.</p><div id="pilot-list" class="detail-grid"></div></details>
 <details id="archive" hidden><summary>Previous evaluations</summary><div id="history-list"></div></details>
 </section>
 <section id="methodology" class="section method">
 <h2>Method</h2><p>Custom subsets, not official benchmark leaderboard scores. Intervals use 10,000 stratified bootstrap resamples and reflect question sampling, not repeated-generation variability.</p>
-<div class="method-grid"><div><h3>Panels</h3><p>LiveBench spatial / zebra: 20 questions, dated 2024-11-25. LiveCodeBench Python: 40 problems, release_v6. Full screens also require 20 GPQA Diamond questions.</p></div><div><h3>Protocol</h3><p>One completion, no tools or repair turns. Temperature zero where supported; 4,096-token output cap. Frozen graders; isolated code execution. Cap verification is recorded per run.</p></div></div>
+<div class="method-grid"><div><h3>Panels</h3><p>LiveBench spatial / zebra: 20 questions, dated 2024-11-25. LiveCodeBench Python: 40 problems, release_v6. Full screens also require 20 GPQA Diamond questions.</p></div><div><h3>Protocol</h3><p>Direct Zen API only. One completion, no tools or repair turns. Temperature zero where supported; 4,096-token output cap. Frozen graders; isolated code execution. Cap verification is recorded per run.</p></div></div>
 <details><summary>Full rankings & confirmations</summary><p>Full screens contain 80 questions. Reasoning equally averages GPQA and LiveBench; coding uses LiveCodeBench pass@1. Overall defaults to 40% reasoning / 60% coding. Manual 240-question confirmations reuse the screen's 80 answers and stay in a separate ranking. Only complete panels receive ranks.</p></details>
 <p class="source-links"><a href="manifest.json">Manifests ↗</a><a href="https://github.com/1duo/opencode-free-leaderboard#protocol-and-statistics">Protocol & source ↗</a><a href="https://docs.opencode.ai/docs/zen/">Pricing evidence ↗</a></p>
 </section>
