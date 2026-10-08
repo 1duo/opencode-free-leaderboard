@@ -29,8 +29,13 @@ def parser() -> argparse.ArgumentParser:
         sub = commands.add_parser(name)
         sub.add_argument("--limit", type=int, help="Maximum jobs processed in this invocation")
         sub.add_argument("--season", help="Evaluate a validated candidate before promotion")
+        if name == 'pilot':
+            sub.add_argument('--model', action='append', help='Additional explicit free-endpoint diagnostics; does not change headline pilot requirements')
+            sub.add_argument('--local-opencode', action='store_true', help='Run a separate unranked pilot through the real local OpenCode client')
     prepare_parser = commands.add_parser("prepare-panels")
     prepare_parser.add_argument("--promote", action="store_true")
+    prepare_parser.add_argument('--public-only', action='store_true', help='Prepare a separate unranked public compatibility pilot while GPQA access is pending')
+    prepare_parser.add_argument('--season', help='Validate a previously frozen panel without downloading or resampling datasets')
     confirmation = commands.add_parser("confirm")
     confirmation.add_argument("model")
     publisher = commands.add_parser("publish")
@@ -67,11 +72,20 @@ def main() -> None:
                 result = {"state": str(settings.state), "discovery_ok": report.discovery_ok,
                           "blockers": report.blockers, "budget": report.budget,
                           "queue_size": report.queue_size,
+                          'pilots': [p.model_dump() for p in report.pilots],
                           "publication": db.one("SELECT snapshot_id,created_at,commit_sha,deployment_status FROM publications ORDER BY id DESC LIMIT 1"),
                           "models": [{"id": r.model_id, "status": r.availability, "cap_verified": r.cap_verified}
                                      for r in report.rows if r.tier == "screen"]}
             elif args.command == "prepare-panels":
-                result = prepare(db, settings, checkout)
+                if args.public_only and args.promote:
+                    raise ValueError('A public-only compatibility pilot cannot be promoted')
+                if args.season:
+                    existing = db.one('SELECT * FROM seasons WHERE id=?', (args.season,))
+                    if not existing:
+                        raise ValueError('Unknown frozen season')
+                    result = {'season': args.season}
+                else:
+                    result = prepare(db, settings, checkout, args.public_only)
                 season = db.one("SELECT * FROM seasons WHERE id=?", (result["season"],))
                 manifest = json.loads(season["manifest"])
                 grader = DockerGrader(settings)
@@ -80,7 +94,9 @@ def main() -> None:
                 manifest["grader_image"] = image
                 db.execute("UPDATE seasons SET validated=1,manifest=? WHERE id=?", (json.dumps(manifest), season["id"]))
                 active = db.one("SELECT * FROM seasons WHERE active=1")
-                if not active or args.promote:
+                if manifest.get('partial') and args.promote:
+                    raise ValueError('A public-only compatibility pilot cannot be promoted')
+                if not manifest.get('partial') and (not active or args.promote):
                     if active and active["id"] != season["id"]:
                         for model in runner.models():
                             if not json.loads(model["profile"]).get("cap_verified"):
@@ -98,7 +114,11 @@ def main() -> None:
                     if not candidate:
                         raise ValueError("Unknown or unvalidated candidate season")
                     runner.active_season = lambda: candidate
-                result = runner.run(pilot=args.command == "pilot", limit=args.limit)
+                if getattr(args, 'local_opencode', False):
+                    from .native import run_native
+                    result = run_native(runner, runner.active_season(), args.model, args.limit)
+                else:
+                    result = runner.run(pilot=args.command == "pilot", limit=args.limit, pilot_models=getattr(args, 'model', None))
             elif args.command == "confirm":
                 result = runner.confirm(args.model)
             elif args.command == "export":

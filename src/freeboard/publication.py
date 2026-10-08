@@ -18,6 +18,20 @@ SOURCE_ROOTS = {"src", "tests", "grading", "web", "docs", ".github"}
 SOURCE_FILES = {"pyproject.toml", "uv.lock", ".gitignore", "README.md", "LICENSE", "AGENTS.md"}
 
 
+def public_source(path: str) -> bool:
+    if path in SOURCE_FILES:
+        return True
+    part = Path(path)
+    root = part.parts[0]
+    if root == 'site':
+        return len(part.parts) == 2 and part.name in SITE_FILES
+    extensions = {'src': {'.py'}, 'tests': {'.py'}, 'docs': {'.md'},
+                  '.github': {'.yml', '.yaml'}, 'web': {'.html', '.css', '.js'}}
+    if root == 'grading':
+        return path in {'grading/Dockerfile', 'grading/worker.py', 'grading/requirements.txt'}
+    return root in extensions and part.suffix in extensions[root]
+
+
 def validate_site(folder: Path) -> Snapshot:
     files = {p.name for p in folder.iterdir()}
     if files != SITE_FILES or any(p.is_symlink() or not p.is_file() for p in folder.iterdir()):
@@ -78,7 +92,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
 
 
 def command(args: list[str], checkout: Path) -> str:
-    result = subprocess.run(args, cwd=checkout, capture_output=True, text=True)
+    result = subprocess.run(args, cwd=checkout, capture_output=True, text=True, timeout=120)
     if result.returncode:
         raise RuntimeError(f"{args[0]} operation failed: {result.stderr.strip()[:300]}")
     return result.stdout.strip()
@@ -105,11 +119,12 @@ def publish(db: DB, settings: Settings, checkout: Path, create=False) -> dict:
             continue
         if any(part in {"__pycache__", ".venv", ".pytest_cache"} for part in rel.parts):
             continue
-        if path.is_file() and (str(rel) in SOURCE_FILES or rel.parts[0] in SOURCE_ROOTS or rel.parts[0] == "site"):
-            if path.is_symlink() or path.suffix in {".sqlite3", ".db", ".pyc", ".log"}:
+        if path.is_file():
+            if path.is_symlink() or not public_source(str(rel)):
                 raise ValueError("Unsafe file in publication tree")
             allowed.append(str(rel))
-    unexpected = [p for p in tracked if p.split("/")[0] not in SOURCE_ROOTS | {"site"} and p not in SOURCE_FILES]
+    staged_paths = command(['git', 'diff', '--cached', '--name-only'], checkout).splitlines()
+    unexpected = [p for p in tracked + staged_paths if not public_source(p)]
     if unexpected:
         raise ValueError("Unexpected tracked files; review before publication")
     command(["git", "add", "--", *sorted(allowed)], checkout)

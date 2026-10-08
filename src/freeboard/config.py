@@ -68,8 +68,26 @@ def credential(name: str) -> str | None:
             return result.stdout.strip()
     except (OSError, subprocess.TimeoutExpired):
         pass
-    # Environment is useful on other platforms; installed launchd uses Keychain.
-    return os.environ.get("OPENCODE_API_KEY" if name == "zen" else "HF_TOKEN")
+    value = os.environ.get("OPENCODE_API_KEY" if name == "zen" else "HF_TOKEN")
+    if value:
+        return value
+    if name == "zen":
+        # Reuse OpenCode's API credential when present. OAuth tokens are not Zen keys.
+        path = Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share"))) / "opencode/auth.json"
+        try:
+            auth = json.loads(path.read_text()).get("opencode", {})
+            if auth.get("type") == "api" and isinstance(auth.get("key"), str) and auth["key"]:
+                return auth["key"]
+        except (OSError, ValueError, AttributeError):
+            pass
+        # OpenCode's own provider uses this public credential for free models.
+        # Eligibility still requires fresh catalog AND explicit zero-price evidence.
+        return "public"
+    hf_home = Path(os.environ.get("HF_HOME", str(Path.home() / ".cache/huggingface")))
+    try:
+        return (hf_home / "token").read_text().strip() or None
+    except OSError:
+        return None
 
 
 def save_credential(name: str, secret: str) -> None:

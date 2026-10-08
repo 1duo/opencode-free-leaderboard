@@ -12,9 +12,9 @@ from freeboard.db import DB
 from freeboard.discovery import excluded, parse_evidence
 from freeboard.grading import DockerGrader, GradingUnavailable, gpqa_score
 from freeboard.panels import sample, prepare
-from freeboard.publication import export, validate_site
+from freeboard.publication import export, validate_site, public_source
 from freeboard.runner import Runner
-from freeboard.scoring import bootstrap, is_complete
+from freeboard.scoring import bootstrap, is_complete, make_row
 
 
 @pytest.fixture
@@ -89,6 +89,63 @@ def test_usage_subsets_not_double_counted():
     assert usage_total({"total_tokens": 100, "input_tokens_details": {"cached_tokens": 90}, "output_tokens_details": {"reasoning_tokens": 40}}) == 100
     assert usage_total({"input_tokens": 60, "output_tokens": 40, "output_tokens_details": {"reasoning_tokens": 35}}) == 100
     assert usage_total(None) is None
+    assert usage_total({'total_tokens': 1, 'input_tokens': 60, 'output_tokens': 40}) is None
+    assert usage_total({'total_tokens': -1}) is None
+    assert usage_total({'total_tokens': True}) is None
+
+
+def test_cap_revoked_during_crash_recovery(context):
+    runner, job, _, _ = job_context(context)
+    attempt = runner.budget.reserve('generation', 500, job['id'])
+    path = runner.settings.state / 'responses' / f'{attempt}.json'
+    path.write_text(json.dumps({'protocol': 'chat', 'body': json.dumps(response_body(4097)), 'cap': 4096}))
+    runner.db.recover()
+    assert runner.db.one('SELECT status FROM jobs')['status'] == 'failed'
+    value = runner.db.one('SELECT * FROM models')
+    assert value['status'] == 'cap_violation'
+    assert not json.loads(value['profile'])['cap_verified']
+
+
+def test_missing_cap_usage_retained_without_rank_or_replay(context, monkeypatch):
+    runner, job, item_model, item = job_context(context)
+    monkeypatch.setattr('freeboard.runner.credential', lambda _: 'public')
+    body = response_body()
+    body.pop('usage')
+    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(200, json=body)))
+    runner.generate(job, item_model, item, 4096)
+    saved = runner.db.one('SELECT * FROM jobs')
+    assert saved['status'] == 'cap_unverified' and saved['score'] is None
+    assert Path(saved['response_path']).exists()
+    assert len(runner.db.rows('SELECT * FROM attempts')) == 1
+    assert runner.budget.summary()['accounted_tokens'] > 4096
+
+
+def test_saved_answer_graded_after_removal(context, monkeypatch):
+    runner, job, item_model, item = job_context(context)
+    monkeypatch.setattr('freeboard.runner.credential', lambda _: 'public')
+    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(200, json=response_body())))
+    runner.generate(job, item_model, item, 4096)
+    runner.db.execute("UPDATE models SET status='removed',epoch='new' ")
+    assert runner.drain(runner.active_season(), limit=1)['processed'] == 1
+    assert runner.db.one('SELECT score FROM jobs')['score'] == 1
+    assert len(runner.db.rows('SELECT * FROM attempts')) == 1
+
+
+def test_historical_profile_is_immutable(context):
+    runner, _, _, _ = job_context(context)
+    cycle = runner.db.one('SELECT * FROM cycles')
+    runner.db.execute("UPDATE models SET protocol='responses',endpoint='https://opencode.ai/zen/v1/responses',profile=?",
+                      (json.dumps({'protocol': 'responses', 'cap_verified': False}),))
+    current = runner.db.one('SELECT * FROM models')
+    row, _ = make_row(runner.db, runner.settings, current, cycle, 'screen')
+    assert row.protocol == 'chat' and row.endpoint.endswith('/chat/completions') and row.cap_verified
+
+
+def test_public_source_rejects_private_artifact_paths():
+    assert public_source('src/freeboard/runner.py')
+    assert public_source('grading/worker.py')
+    for path in ['src/freeboard/answers.json', 'tests/gpqa.csv', 'docs/credentials.txt', 'grading/state.db', 'site/responses.json']:
+        assert not public_source(path)
 
 
 def test_reservation_reconciliation_and_week_rollover(context, monkeypatch):
@@ -223,6 +280,59 @@ def test_responses_usage_and_truncation():
     assert result.text == "answer" and result.truncated and result.reasoning_tokens == 200
 
 
+def test_native_accounting_tools_and_multiple_completions():
+    finish = {'type': 'step_finish', 'part': {'messageID': 'm', 'reason': 'stop', 'cost': 0,
+              'tokens': {'total': 7713, 'input': 7637, 'output': 3, 'reasoning': 9, 'cache': {'read': 64, 'write': 0}}}}
+    text = {'type': 'text', 'part': {'messageID': 'm', 'text': 'YES'}}
+    events = [text, finish]
+    result = parse('opencode', {'events': events})
+    assert result.text == 'YES' and result.output_tokens == 12
+    assert usage_total(result.usage) == 7713
+    for invalid in [events + [finish], events + [{'type': 'tool_use'}], events + [{'type': 'error'}]]:
+        with pytest.raises(ValueError):
+            parse('opencode', {'events': invalid})
+    for invalid in [{'type': 'step_finish', 'part': []},
+                    {**finish, 'part': {**finish['part'], 'tokens': []}},
+                    {**finish, 'part': {**finish['part'], 'tokens': {'cache': []}}}]:
+        with pytest.raises(ValueError):
+            parse('opencode', {'events': [text, invalid]})
+
+
+def test_unavailable_provider_stops_model_without_capability_score(context, monkeypatch):
+    runner, job, item_model, item = job_context(context)
+    monkeypatch.setattr('freeboard.runner.credential', lambda _: 'public')
+    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(400, json={'error': {'message': 'Model is unavailable.'}})))
+    runner.generate(job, item_model, item, 4096)
+    assert runner.db.one('SELECT status FROM models')['status'] == 'model_unavailable'
+    assert runner.db.one('SELECT status,score FROM jobs') == {'status': 'deferred', 'score': None}
+    assert len(runner.db.rows('SELECT * FROM attempts')) == 1
+
+
+def test_completed_pilot_keeps_original_health_evidence(context, monkeypatch):
+    from freeboard.scoring import snapshot
+    db, settings, checkout = context
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    runner = Runner(db, settings, checkout)
+    item_model, active = model(db), season(db)
+    health = runner.health(item_model, active)
+    db.execute('UPDATE cycles SET started_at=? WHERE id=?', ('2026-10-01T00:00:00+00:00', health['id']))
+    db.execute("UPDATE jobs SET status='graded',score=1 WHERE cycle_id=?", (health['id'],))
+    pilot = runner.cycle(item_model, active, 'pilot', 'pilot-health-fixture')
+    for i, benchmark in enumerate(['livebench', 'livebench', 'livecodebench', 'livecodebench']):
+        add_item(db, f'pilot-{i}', 'pilot', benchmark)
+    runner.add_panel(pilot, 'pilot')
+    db.execute("UPDATE jobs SET status='graded',score=1 WHERE cycle_id=?", (pilot['id'],))
+    db.execute('UPDATE cycles SET started_at=?,completed_at=? WHERE id=?',
+               ('2026-10-01T01:00:00+00:00', '2026-10-02T00:00:00+00:00', pilot['id']))
+    original = snapshot(db, settings).pilots[0]
+    assert original.status == 'complete' and original.health_graded == 6 and original.cap_probe_verified
+    future = runner.cycle(item_model, active, 'health', 'later-week')
+    db.execute('UPDATE cycles SET started_at=? WHERE id=?', ('2026-10-03T00:00:00+00:00', future['id']))
+    db.execute("INSERT INTO jobs(cycle_id,item_id,status,score) SELECT ?,item_id,'graded',0 FROM jobs WHERE cycle_id=?",
+               (future['id'], health['id']))
+    assert snapshot(db, settings).pilots[0] == original
+
+
 def test_public_export_omits_private_material(context, tmp_path, monkeypatch):
     db, settings, checkout = context
     model(db)
@@ -298,14 +408,41 @@ def test_prepared_manifest_and_panels(context, monkeypatch):
     monkeypatch.setattr("freeboard.panels.gpqa", lambda _: pools["gpqa"])
     monkeypatch.setattr("freeboard.panels.livebench", lambda _: pools["livebench"])
     monkeypatch.setattr("freeboard.panels.livecodebench", lambda *_: pools["livecodebench"])
+    public = prepare(db, settings, checkout, public_only=True)
+    assert public['counts'] == {'screen': 60, 'confirmation': 180, 'pilot': 4}
+    public_ids = {r['item_id'] for r in db.rows('SELECT item_id FROM panels WHERE season=?', (public['season'],))}
+    monkeypatch.setattr('freeboard.panels.livecodebench', lambda *_: (_ for _ in ()).throw(AssertionError('Unexpected public dataset download')))
     result = prepare(db, settings, checkout)
+    assert result['reused_frozen_public_questions']
     assert result["counts"] == {"screen": 80, "confirmation": 240, "pilot": 6}
+    full_public_ids = {r['item_id'] for r in db.rows('SELECT p.item_id FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND i.benchmark!=?', (result['season'], 'gpqa'))}
+    assert full_public_ids == public_ids
     def panel(tier):
         return {x["item_id"] for x in db.rows("SELECT item_id FROM panels WHERE tier=?", (tier,))}
     assert panel("screen") <= panel("confirmation")
     assert not panel("pilot") & panel("confirmation")
-    manifest = json.loads(db.one("SELECT manifest FROM seasons")["manifest"])
+    manifest = json.loads(db.one("SELECT manifest FROM seasons WHERE id=?", (result['season'],))["manifest"])
     assert set(manifest["grading_files"]) == {"Dockerfile", "worker.py", "requirements.txt"}
+    # A grader fix must preserve the frozen questions and hold-out separation.
+    import shutil
+    replacement = settings.state / 'replacement-source'
+    shutil.copytree(checkout / 'grading', replacement / 'grading')
+    with (replacement / 'grading/Dockerfile').open('a') as handle:
+        handle.write('\n# Grader revision fixture\n')
+    monkeypatch.setattr('freeboard.panels.livecodebench', lambda *_: (_ for _ in ()).throw(AssertionError('Unexpected resampling')))
+    updated = prepare(db, settings, replacement)
+    assert updated['season'] != result['season']
+    assert updated['reused_frozen_questions']
+    old = {x['item_id'] for x in db.rows('SELECT item_id FROM panels WHERE season=?', (result['season'],))}
+    new = {x['item_id'] for x in db.rows('SELECT item_id FROM panels WHERE season=?', (updated['season'],))}
+    assert old == new
+    assert not db.rows('SELECT * FROM cycles WHERE season=?', (updated['season'],))
+    # Public canonical IDs remain stable even when the frozen rows came from a prior season.
+    from freeboard.scoring import records
+    runner = Runner(db, settings, checkout)
+    cycle = runner.cycle(model(db), db.one('SELECT * FROM seasons WHERE id=?', (updated['season'],)), 'screen', 'canonical')
+    runner.add_panel(cycle, 'screen')
+    assert {r['item_id'] for r in records(db, cycle, 'screen')} == {i['id'] for i in manifest['panels']['screen']}
 
 
 def test_reported_cap_overrun_blocks_future_generation(context, monkeypatch):

@@ -8,7 +8,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from .config import Settings
+from .config import Settings, digest
 
 
 class GradingUnavailable(RuntimeError):
@@ -29,6 +29,9 @@ class DockerGrader:
         return bool(shutil.which("docker"))
 
     def build(self, manifest: dict, checkout: Path) -> str:
+        if any(digest((checkout / 'grading' / name).read_text()) != value
+               for name, value in manifest.get('grading_files', {}).items()):
+            raise GradingUnavailable('Grading source changed; prepare a replacement season')
         if not self.available():
             raise GradingUnavailable("Docker is not installed; code grading remains pending")
         if manifest.get("grader_image"):
@@ -46,8 +49,9 @@ class DockerGrader:
                 shutil.copytree(Path(path), context / name)
             result = subprocess.run(["docker", "build", "--tag", self.tag, str(context)],
                                     capture_output=True, text=True, timeout=600)
+            (self.settings.state / 'logs/grader-build.log').write_text(result.stdout + result.stderr)
             if result.returncode:
-                raise GradingUnavailable("Docker grading image build failed; see local Docker logs")
+                raise GradingUnavailable("Docker grading image build failed; see private logs/grader-build.log")
         return self.image_id()
 
     def image_id(self) -> str:
@@ -89,12 +93,22 @@ class DockerGrader:
             raise GradingUnavailable("Invalid grading report") from None
 
     def validate(self, image: str) -> None:
+        raw = {'question_title': 'Synthetic doubling fixture', 'question_content': 'Double an integer.',
+               'platform': 'atcoder', 'question_id': 'synthetic', 'contest_id': 'fixture',
+               'contest_date': '2024-01-01T00:00:00', 'starter_code': '', 'difficulty': 'easy',
+               'public_test_cases': json.dumps([{'input': '2\n', 'output': '4\n', 'testtype': 'stdin'}]),
+               'private_test_cases': json.dumps([{'input': '-3\n', 'output': '-6\n', 'testtype': 'stdin'}]),
+               'metadata': '{}'}
         for item, good, bad in [
             ({"benchmark": "livebench", "stratum": "spatial", "answer": "2"}, "**2**", "**3**"),
             ({"benchmark": "livebench", "stratum": "zebra_puzzle", "release": "2024-11-25", "answer": "1, red"},
              "<solution>1, red</solution>", "<solution>2, blue</solution>"),
             ({"benchmark": "synthetic_code", "tests": [["2\n", "4\n"]]},
              "```python\nprint(int(input())*2)\n```", "```python\nprint(0)\n```"),
+            ({'benchmark': 'livecodebench', 'raw': raw},
+             '```python\nprint(int(input())*2)\n```', '```python\nprint(0)\n```'),
         ]:
             if self.grade(item, good, image) != 1 or self.grade(item, bad, image) != 0:
                 raise GradingUnavailable("Pinned grader fixtures failed")
+        if self.grade({'benchmark': 'livecodebench', 'raw': raw}, '```python\nwhile True: pass\n```', image) != 0:
+            raise GradingUnavailable('Official code timeout fixture failed')

@@ -100,6 +100,17 @@ class DB:
         for old in sorted((self.state / "backups").glob("*.sqlite3"))[:-7]:
             old.unlink()
 
+    def invalidate_cap(self, job_id: int, message: str, status: str = 'failed') -> None:
+        cycle = self.one('SELECT c.* FROM cycles c JOIN jobs j ON j.cycle_id=c.id WHERE j.id=?', (job_id,))
+        model = self.one('SELECT * FROM models WHERE id=?', (cycle['model_id'],))
+        with self.conn:
+            self.conn.execute('UPDATE jobs SET status=?,error=? WHERE id=?', (status, message, job_id))
+            if model and model['epoch'] == cycle['epoch']:
+                profile = json.loads(model['profile'])
+                profile['cap_verified'] = False
+                self.conn.execute('UPDATE models SET profile=?,status=? WHERE id=?',
+                                  (json.dumps(profile), 'cap_violation' if status == 'failed' else 'cap_unverified', model['id']))
+
     def recover(self) -> None:
         # A durable response can be graded again; an unknown request cannot be redispatched.
         from .adapters import parse
@@ -118,10 +129,13 @@ class DB:
                     self.execute("UPDATE attempts SET status='malformed',finished_at=?,response_path=? WHERE id=?",
                                  (now(), str(path), attempt['id']))
                     continue
-                violated = completion.output_tokens is not None and completion.output_tokens > record['cap']
+                verified = completion.bounded(record['cap'])
                 self.execute("UPDATE jobs SET status=?, response_path=?,latency=?,truncated=? WHERE id=?",
-                             ('failed' if violated else 'generated', str(path), record.get('latency'),
+                             ('generated', str(path), record.get('latency'),
                               int(completion.truncated), attempt["job_id"]))
+                if not verified:
+                    self.invalidate_cap(attempt['job_id'], 'Saved response cannot verify the combined output cap; no replay',
+                                        'cap_unverified' if completion.output_tokens is None else 'failed')
                 reported = usage_total(completion.usage)
                 self.execute("""UPDATE attempts SET status='recovered',finished_at=COALESCE(finished_at,?),
                     response_path=?,reported_tokens=?,accounted_tokens=?,usage=? WHERE id=?""",

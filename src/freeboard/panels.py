@@ -156,12 +156,55 @@ def livecodebench(settings: Settings, source: Path) -> list[dict]:
     return list(result.values())
 
 
-def prepare(db: DB, settings: Settings, checkout: Path) -> dict:
-    if not credential('hf'):
+def prepare(db: DB, settings: Settings, checkout: Path, public_only=False) -> dict:
+    if not public_only and not credential('hf'):
         raise RuntimeError('GPQA requires an HF token with accepted dataset access; run auth hf')
+    grading_files = {name: digest((checkout / 'grading' / name).read_text())
+                     for name in ['Dockerfile', 'worker.py', 'requirements.txt']}
+    # Reuse frozen questions when only the grader changes. Never resample because
+    # of a setup failure, and never carry answers into a replacement season.
+    for prior in db.rows('SELECT * FROM seasons ORDER BY created_at DESC'):
+        saved = json.loads(prior['manifest'])
+        if (saved['sources'] != PINS or saved['seed'] != SEED or saved['counts'] != COUNTS
+                or saved.get('partial', False) != public_only):
+            continue
+        if saved['grading_files'] == grading_files:
+            return {'season': prior['id'], 'reused_frozen_questions': True}
+        saved['grading_files'] = grading_files
+        saved.pop('grader_image', None)
+        ident = ('public-pilot-' if public_only else 's1-') + digest({k: v for k, v in saved.items() if k != 'upstream_paths'})[:16]
+        db.execute('INSERT OR IGNORE INTO seasons(id,created_at,manifest) VALUES(?,?,?)', (ident, now(), json.dumps(saved)))
+        db.execute('INSERT OR IGNORE INTO panels SELECT ?,tier,item_id FROM panels WHERE season=?', (ident, prior['id']))
+        return {'season': ident, 'reused_frozen_questions': True, 'replacement_grader': True}
+    if not public_only:
+        for prior in db.rows('SELECT * FROM seasons ORDER BY created_at DESC'):
+            saved = json.loads(prior['manifest'])
+            if not (saved.get('partial') and saved['sources'] == PINS and saved['seed'] == SEED and saved['counts'] == COUNTS):
+                continue
+            pool = gpqa(settings)
+            confirmation = sample(pool, COUNTS['confirmation']['gpqa'], 'gpqa')
+            screen = sample(confirmation, COUNTS['screen']['gpqa'], 'gpqa:screen')
+            pilot = sample([i for i in pool if i['id'] not in {x['id'] for x in confirmation}], 2, 'gpqa:pilot')
+            selected = {'confirmation': confirmation, 'screen': screen, 'pilot': pilot}
+            saved.pop('grader_image', None)
+            saved.update(partial=False, grading_files=grading_files)
+            for tier, values in selected.items():
+                saved['panels'][tier].extend({'id': i['id'], 'hash': digest(i), 'benchmark': 'gpqa', 'stratum': i['stratum']} for i in values)
+            ident = 's1-' + digest({k: v for k, v in saved.items() if k != 'upstream_paths'})[:16]
+            db.execute('INSERT OR IGNORE INTO seasons(id,created_at,manifest) VALUES(?,?,?)', (ident, now(), json.dumps(saved)))
+            db.execute('INSERT OR IGNORE INTO panels SELECT ?,tier,item_id FROM panels WHERE season=?', (ident, prior['id']))
+            for tier, values in selected.items():
+                for item in values:
+                    item_id = ident + ':' + item['id']
+                    db.execute('INSERT OR IGNORE INTO items VALUES(?,?,?,?,?,?)',
+                        (item_id, ident, 'gpqa', item['stratum'], digest(item), json.dumps(item)))
+                    db.execute('INSERT OR IGNORE INTO panels VALUES(?,?,?)', (ident, tier, item_id))
+            return {'season': ident, 'reused_frozen_public_questions': True,
+                    'counts': {tier: len(items) for tier, items in saved['panels'].items()}}
     lb_source, lcb_source = upstream(settings, "livebench"), upstream(settings, "livecodebench")
     pools = {"livebench": livebench(settings), "livecodebench": livecodebench(settings, lcb_source)}
-    pools["gpqa"] = gpqa(settings)
+    if not public_only:
+        pools["gpqa"] = gpqa(settings)
     panels = {tier: [] for tier in COUNTS}
     for benchmark, pool in pools.items():
         confirmation = sample(pool, COUNTS["confirmation"][benchmark], benchmark, equal=benchmark == "livebench")
@@ -172,14 +215,14 @@ def prepare(db: DB, settings: Settings, checkout: Path) -> dict:
             panels[tier].extend(selected)
     manifest = {"seed": SEED, "sources": PINS, "livebench_release": "2024-11-25",
                 "livecodebench_release": "release_v6", "language": "Python", "counts": COUNTS,
+                "partial": public_only,
                 "protocol": {"output_cap": settings.max_output_tokens, "temperature": 0,
                              "tools": False, "completions": 1},
-                "grading_files": {name: digest((checkout / 'grading' / name).read_text())
-                                  for name in ['Dockerfile', 'worker.py', 'requirements.txt']},
+                "grading_files": grading_files,
                 "upstream_paths": {"livebench": str(lb_source), "livecodebench": str(lcb_source)},
                 "panels": {tier: [{"id": i["id"], "hash": digest(i), "benchmark": i["benchmark"],
                                    "stratum": i["stratum"]} for i in items] for tier, items in panels.items()}}
-    season = "s1-" + digest({k: v for k, v in manifest.items() if k != "upstream_paths"})[:16]
+    season = ("public-pilot-" if public_only else "s1-") + digest({k: v for k, v in manifest.items() if k != "upstream_paths"})[:16]
     db.execute("INSERT OR IGNORE INTO seasons(id,created_at,manifest) VALUES(?,?,?)", (season, now(), json.dumps(manifest)))
     for tier, selected in panels.items():
         for item in selected:

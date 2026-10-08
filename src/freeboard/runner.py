@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
@@ -53,10 +54,11 @@ class Runner:
 
     def cycle(self, model: dict, season: dict, kind: str, ident: str) -> dict:
         started = now()
+        profile = {**json.loads(model['profile']), 'endpoint': model['endpoint']}
         self.db.execute("""INSERT OR IGNORE INTO cycles
             (id,model_id,epoch,season,kind,started_at,due_at,profile) VALUES(?,?,?,?,?,?,?,?)""",
                         (ident, model["id"], model["epoch"], season["id"], kind, started,
-                         (datetime.fromisoformat(started) + timedelta(days=28)).isoformat(), model["profile"]))
+                         (datetime.fromisoformat(started) + timedelta(days=28)).isoformat(), json.dumps(profile)))
         return self.db.one("SELECT * FROM cycles WHERE id=?", (ident,))
 
     def add_panel(self, cycle: dict, tier: str) -> None:
@@ -144,7 +146,14 @@ class Runner:
                 temp = path.with_suffix(".partial")
                 temp.write_text(json.dumps({"body": response.text, "protocol": effective["protocol"], "cap": cap,
                                             "latency": time.monotonic() - started}))
+                with temp.open('rb') as handle:
+                    os.fsync(handle.fileno())
                 temp.replace(path)
+                directory = os.open(path.parent, os.O_RDONLY)
+                try:
+                    os.fsync(directory)
+                finally:
+                    os.close(directory)
                 try:
                     completion = parse(effective["protocol"], response.json())
                 except (ValueError, KeyError, TypeError):
@@ -155,14 +164,13 @@ class Runner:
                 self.budget.finish(attempt, "received", response.status_code, completion.usage, str(path))
                 self.db.execute("UPDATE jobs SET status='generated',response_path=?,latency=?,truncated=?,error=NULL WHERE id=?",
                                 (str(path), time.monotonic() - started, int(completion.truncated), job["id"]))
-                if completion.output_tokens is not None and completion.output_tokens > cap:
-                    effective["cap_verified"] = False
-                    self.db.execute("UPDATE models SET profile=?,status='cap_violation' WHERE id=?",
-                                    (json.dumps(effective), model["id"]))
-                    self.db.execute("UPDATE jobs SET status='failed',error='Output cap exceeded; response retained, no replay' WHERE id=?",
-                                    (job['id'],))
+                if not completion.bounded(cap):
+                    self.db.invalidate_cap(job['id'], 'Combined output cap unverified or exceeded; response retained, no replay',
+                                           'cap_unverified' if completion.output_tokens is None else 'failed')
                 return
-            self.budget.finish(attempt, "rejected", response.status_code)
+            path = self.settings.state / 'responses' / f'{attempt}.rejection.json'
+            path.write_text(json.dumps({'http_status': response.status_code, 'body': response.text}))
+            self.budget.finish(attempt, "rejected", response.status_code, response_path=str(path))
             status = response.status_code
             if status in {401, 403}:
                 self.db.execute("UPDATE models SET status='authentication_failed' WHERE id=?", (model["id"],))
@@ -177,7 +185,10 @@ class Runner:
                     continue
                 next_status, message = "deferred" if attempt_index < 2 else "failed", "Retryable provider error"
             else:
-                next_status, message = "failed", f"Unsupported request (HTTP {status}); profile needs review"
+                unavailable = 'model is unavailable' in response.text.lower() or 'model not found' in response.text.lower()
+                self.db.execute('UPDATE models SET status=? WHERE id=?',
+                                ('model_unavailable' if unavailable else 'configuration_error', model['id']))
+                next_status, message = 'deferred', f'Provider unavailable (HTTP {status})' if unavailable else f'Unsupported request (HTTP {status}); profile needs review'
             delay = retry_delay(response.headers.get("Retry-After")) if status == 429 else 86400
             next_at = (datetime.now(timezone.utc) + timedelta(seconds=max(60, delay))).isoformat()
             self.db.execute("UPDATE jobs SET status=?,next_after=?,error=? WHERE id=?", (next_status, next_at, message, job["id"]))
@@ -209,7 +220,8 @@ class Runner:
         if cycle["kind"] == "screen":
             tier, expected = "screen", 80
         elif cycle["kind"] == "pilot":
-            tier, expected = "pilot", 6
+            tier = "pilot"
+            expected = self.db.one('SELECT COUNT(*) AS n FROM panels WHERE season=? AND tier=?', (cycle['season'], tier))['n']
         else:
             tier, expected = None, 6
         clause = "" if tier is None else " AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)"
@@ -221,30 +233,34 @@ class Runner:
             jobs = self.db.rows("SELECT * FROM jobs WHERE cycle_id=?", (cycle_id,))
             records = [json.loads(Path(j["response_path"]).read_text()) for j in jobs]
             completions = [parse(r["protocol"], json.loads(r["body"])) for r in records]
-            bounded = all(c.output_tokens is not None and c.output_tokens <= 256 and
-                          (c.reasoning_tokens is None or c.reasoning_tokens <= c.output_tokens) for c in completions)
-            bounded = bounded and any(c.truncated for c in completions)
+            bounded = all(c.bounded(r['cap']) for c, r in zip(completions, records))
+            bounded = bounded and any(c.truncated and json.loads(self.db.one('SELECT content FROM items WHERE id=?', (j['item_id'],))['content']).get('check') == 'cap'
+                                      for c, j in zip(completions, jobs))
             model = self.db.one("SELECT * FROM models WHERE id=?", (cycle["model_id"],))
             if model and model["epoch"] == cycle["epoch"] and bounded:
                 profile = json.loads(model["profile"])
                 profile["cap_verified"] = True
                 self.db.execute("UPDATE models SET profile=? WHERE id=?", (json.dumps(profile), model["id"]))
 
-    def drain(self, season: dict, kind: str | None = None, limit: int | None = None) -> dict:
+    def drain(self, season: dict, kind: str | None = None, limit: int | None = None, model_ids: set[str] | None = None) -> dict:
         manifest = json.loads(season["manifest"])
         image = manifest["grader_image"]
         processed = 0
         while limit is None or processed < limit:
             jobs = self.db.rows("""SELECT j.*,c.model_id,c.epoch,c.kind,c.profile AS cycle_profile,i.content
                 FROM jobs j JOIN cycles c ON c.id=j.cycle_id JOIN items i ON i.id=j.item_id
-                JOIN models m ON m.id=c.model_id WHERE c.season=? AND c.epoch=m.epoch
-                AND m.status='eligible' AND j.status IN ('pending','generated','deferred')
+                JOIN models m ON m.id=c.model_id WHERE c.season=?
+                AND (j.status='generated' OR (c.epoch=m.epoch AND m.status='eligible'
+                    AND j.status IN ('pending','deferred') AND (c.kind!='health' OR c.started_at>=?)))
                 AND (j.next_after IS NULL OR j.next_after<=?)
-                ORDER BY CASE c.kind WHEN 'health' THEN 0 WHEN 'screen' THEN 1 ELSE 2 END,
-                CASE WHEN EXISTS(SELECT 1 FROM panels p WHERE p.tier='screen' AND p.item_id=j.item_id) THEN 0 ELSE 1 END,
-                c.due_at,j.id""", (season["id"], now()))
+                ORDER BY CASE WHEN c.kind='health' AND json_extract(m.profile,'$.cap_verified')!=1 THEN 0
+                    WHEN c.kind='screen' AND EXISTS(SELECT 1 FROM panels p WHERE p.season=c.season AND p.tier='screen' AND p.item_id=j.item_id) THEN 1
+                    WHEN c.kind='health' THEN 2 ELSE 3 END,
+                c.due_at,j.id""", (season["id"], week(), now()))
             if kind:
                 jobs = [j for j in jobs if j["kind"] == kind or (kind == "pilot" and j["kind"] == "health")]
+            if model_ids is not None:
+                jobs = [j for j in jobs if j['model_id'] in model_ids]
             if not jobs:
                 break
             job = jobs[0]
@@ -261,6 +277,9 @@ class Runner:
                 if job["status"] == "generated":
                     self.grade(job, item, image)
                 self.finish_cycle(job["cycle_id"])
+                if kind != 'pilot' and job['kind'] == 'health':
+                    self.schedule(season)
+                    self.capacity()
             except BudgetExhausted:
                 break
             except GradingUnavailable as exc:
@@ -269,7 +288,7 @@ class Runner:
             processed += 1
         return {"processed": processed, "budget": self.budget.summary()}
 
-    def run(self, pilot=False, limit=None) -> dict:
+    def run(self, pilot=False, limit=None, pilot_models=None) -> dict:
         self.db.recover()
         result = discover(self.db, self.budget, self.client)
         if not result["ok"]:
@@ -277,16 +296,22 @@ class Runner:
         if not credential("zen"):
             return {"blocked": "OpenCode Zen credential missing", "discovery": result}
         season = self.active_season()
+        if not pilot and json.loads(season['manifest']).get('partial'):
+            return {'blocked': 'Public compatibility pilots cannot enter headline evaluations; authenticated GPQA is required'}
         if pilot:
-            for model in self.models()[:3]:
+            available = {m['id']: m for m in self.models()}
+            selected = sorted(pilot_models) if pilot_models else sorted(available)[:3]
+            if any(m not in available for m in selected):
+                raise ValueError('Pilot model lacks current free eligibility')
+            for model in [available[m] for m in selected]:
                 self.health(model, season)
                 ident = "pilot:" + digest([model["id"], model["epoch"], season["id"]])[:24]
                 self.add_panel(self.cycle(model, season, "pilot", ident), "pilot")
             self.budget.plan([20000] * 18, 18)
-            return self.drain(season, "pilot", limit)
+            return self.drain(season, "pilot", limit, set(selected))
         # Headline execution requires successful pilot for the three selected endpoints.
         targets = self.models()[:3]
-        if any(not self.db.one("SELECT id FROM cycles WHERE kind='pilot' AND model_id=? AND epoch=? AND season=? AND completed_at IS NOT NULL",
+        if any(not json.loads(m['profile']).get('cap_verified') or not self.db.one("SELECT id FROM cycles WHERE kind='pilot' AND model_id=? AND epoch=? AND season=? AND completed_at IS NOT NULL",
                                (m["id"], m["epoch"], season["id"])) for m in targets):
             return {"blocked": "Complete the three-model compatibility pilot before headline screens"}
         self.schedule(season)

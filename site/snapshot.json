@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "snapshot_id": "ffa3eecf57cd602f6a0c",
-  "generated_at": "2026-10-08T18:10:09+00:00",
+  "snapshot_id": "2e35360f4022748dc425",
+  "generated_at": "2026-10-08T19:36:05+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-08T17:48:24+00:00",
+  "discovery_at": "2026-10-08T19:20:01+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -14,11 +14,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -26,6 +27,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -47,11 +49,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -59,6 +62,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -80,11 +84,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -92,6 +97,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -113,11 +119,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -125,6 +132,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -147,10 +155,11 @@
       "season": null,
       "status": "pending",
       "availability": "unsupported",
+      "free_eligible": false,
       "protocol": "unsupported",
       "endpoint": "https://opencode.ai/zen/v1/systemone",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -158,6 +167,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -180,10 +190,11 @@
       "season": null,
       "status": "pending",
       "availability": "unsupported",
+      "free_eligible": false,
       "protocol": "unsupported",
       "endpoint": "https://opencode.ai/zen/v1/systemone",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -191,6 +202,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -212,11 +224,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "model_unavailable",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -224,6 +237,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -245,11 +259,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "model_unavailable",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -257,6 +272,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -278,11 +294,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -290,6 +307,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -311,11 +329,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -323,6 +342,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -344,11 +364,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -356,6 +377,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -377,11 +399,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -389,6 +412,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -411,10 +435,11 @@
       "season": null,
       "status": "pending",
       "availability": "removed",
+      "free_eligible": false,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -422,6 +447,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -444,10 +470,11 @@
       "season": null,
       "status": "pending",
       "availability": "removed",
+      "free_eligible": false,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -455,6 +482,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -476,11 +504,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -488,6 +517,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -509,11 +539,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -521,6 +552,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -543,10 +575,11 @@
       "season": null,
       "status": "pending",
       "availability": "excluded",
+      "free_eligible": false,
       "protocol": "responses",
       "endpoint": "https://opencode.ai/zen/v1/responses",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -554,6 +587,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -576,10 +610,11 @@
       "season": null,
       "status": "pending",
       "availability": "excluded",
+      "free_eligible": false,
       "protocol": "responses",
       "endpoint": "https://opencode.ai/zen/v1/responses",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -587,6 +622,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -608,11 +644,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -620,6 +657,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -641,11 +679,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -653,6 +692,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -674,11 +714,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -686,6 +727,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -707,11 +749,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -719,6 +762,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -739,12 +783,13 @@
       "epoch": "98093bc1ee2fa5db",
       "tier": "screen",
       "season": null,
-      "status": "cap_unverified",
+      "status": "pending",
       "availability": "eligible",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "cap_verified": true,
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -752,6 +797,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -772,12 +818,13 @@
       "epoch": "98093bc1ee2fa5db",
       "tier": "confirmation",
       "season": null,
-      "status": "cap_unverified",
+      "status": "pending",
       "availability": "eligible",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "cap_verified": true,
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -785,6 +832,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -806,11 +854,12 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -818,6 +867,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -839,11 +889,12 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "eligible",
+      "availability": "authentication_failed",
+      "free_eligible": true,
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T17:48:24+00:00",
+      "observed_at": "2026-10-08T19:20:01+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -851,6 +902,7 @@
         "livebench": 0,
         "livecodebench": 0
       },
+      "pending_reasons": {},
       "expected": {
         "gpqa": 60,
         "livebench": 60,
@@ -868,24 +920,3413 @@
   ],
   "history": [],
   "comparisons": [],
-  "seasons": [],
+  "pilots": [
+    {
+      "model_id": "big-pickle",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "exo-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "ling-3.0-flash-fin-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "deferred": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "ling-3.1-flash-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "longcat-2.5-preview-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "mimo-v2.6-flash-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "nemotron-3-ultra-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "nemotron-3.5-lightning-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "space-bunny-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "complete",
+      "health_graded": 6,
+      "cap_probe_verified": true,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {},
+      "benchmark_scores": {
+        "livebench": 100.0,
+        "livecodebench": 50.0
+      },
+      "evaluated_at": "2026-10-08T19:03:06+00:00"
+    },
+    {
+      "model_id": "step-5-preview-free",
+      "transport": "zen-api",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": false,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "big-pickle",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "exo-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "ling-3.0-flash-fin-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "pending",
+      "health_graded": 0,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 0,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {
+        "pending": 4
+      },
+      "benchmark_scores": {},
+      "evaluated_at": null
+    },
+    {
+      "model_id": "space-bunny-free",
+      "transport": "local-opencode",
+      "season": "public-pilot-424b7a865093c836",
+      "unranked": true,
+      "extra_system_context": true,
+      "status": "complete",
+      "health_graded": 6,
+      "cap_probe_verified": false,
+      "progress": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 2,
+        "livecodebench": 2
+      },
+      "pending_reasons": {},
+      "benchmark_scores": {
+        "livebench": 50.0,
+        "livecodebench": 50.0
+      },
+      "evaluated_at": "2026-10-08T19:21:14+00:00"
+    }
+  ],
+  "seasons": [
+    {
+      "id": "public-pilot-c818b85f16b42bf9",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "Python",
+      "counts": {
+        "screen": {
+          "gpqa": 20,
+          "livebench": 20,
+          "livecodebench": 40
+        },
+        "confirmation": {
+          "gpqa": 60,
+          "livebench": 60,
+          "livecodebench": 120
+        },
+        "pilot": {
+          "gpqa": 2,
+          "livebench": 2,
+          "livecodebench": 2
+        }
+      },
+      "panels": {
+        "screen": [
+          {
+            "id": "livebench:09719ca5e81c332df5d59ed37737c7351b5d68568933f4e7bbe08f0b22f2d030",
+            "hash": "bc5168505c49e8fb4a1a54005f2bc4a8a270300654fbb52910b6d18c51bc872b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:27780ecab68b99ba747722d3e536086049ba4a8fc768b1357c0e20871a92e41c",
+            "hash": "9b1bf689358f5e672b84ce07bebe20748d08403b74843be477674d96d9dff653",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:2a886a49a7c9afb9b30d299d6de0b67558ae1076da4178faaf08e8b24d4a2994",
+            "hash": "37a636e208a5c7726ac5f7b11818f01bebd90acf17cc6e81163ea2316bac5493",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:40a8ca9e0abcfe1a1ddcdcc44ca837131ed669f51eafcb1d27b361da7d8d1165",
+            "hash": "1dd76fce8a15f76bac527b38d3c584d06a48f619d69005d08ca311f1b28f8c8c",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:4f78225af2661b5b2f22f126fba54723cdbd02e16a8f89fe024f9f21fd54248b",
+            "hash": "58703f35a1956a3cecbf8e6459e2430bc26f18b80014c0b792fb2ac90d372b2d",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:7c59f01508ae8297658af14d0af57e4d1eaf95bed6fb729d27de2c45faf61eef",
+            "hash": "317229eecaea977ad9ab65ac0b5291fedbb67b06987b3f38be079415a6b84cdc",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:87af7bdf47fa02d0fc18d13cf81cda012d1edb0c3458a2dd4ab4f9ca3113988c",
+            "hash": "605f3f63a68a87ecfc7ca424ed7a56b15274c717e9cadcb84b43c3c4800e5fa5",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:92e4b2cc3b6a16e3e4ad52e89731bd602cb5bf42c884c540981284b28a415929",
+            "hash": "712105f1bf7ffb0880b52f87af274288842616b8921c2c6609bcce8b03f8f5c7",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:977a0ea5fc1727ca664cd2af90b5c4a2f36648891e8f5b6ad047512df081a4d8",
+            "hash": "4fb49d77f0ef38ba6f96ff73d5a16810e1d1ba0fd324eb7a6b54054dbaef89a9",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:9c7c693083342fc0622081516bebd935c7b1d08f3bea9969944d1ef2bf5864fc",
+            "hash": "3f2b0924df203cb7fd8b87c6a1d58920fa06dc30f66fe1e5d244ff42eabc7ef2",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:a0383235b91e3e448468d0764fedb901f39a8c7855b214ba364e6956722c89cf",
+            "hash": "2c6f9785ff19f719336d7ae42c76684bf34c49fecb55a591df0563ce1797530b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:b1b1678a4f290c8ab2b85f957a0cdbba93ef0c97d1e7ab4663e46e92ebac70e8",
+            "hash": "bdb2046a8b864dc403ad8455ff784d76553fa44b2e05c27c43f0c20e70fac89f",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:b7b7e331df4614775210ef5e524ed7f20c5fec6655fb0dd179c94e4d71170862",
+            "hash": "2c215bbfef6812e56c320b2caaf17f5049662c29facba607ae0871dd66072519",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:c89fdda34dcddd50a92fd79332f22c31b7f0fd94d3ce05062fd7a874bd36e224",
+            "hash": "db20ab1ddcdde3fc21655e912e9bfbadf7b244f1edfcb533d6a943cf62037278",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:d60075facb5ecdbc3618620e77f29db9dc5f24b11eb789c771b3180b48866fbf",
+            "hash": "57f4ce743f1c6daad88427f60420c461bd5cd6d62cef0b68ca445931619c542e",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:db55a7cc2ceaa32778ecbb91aecaca4b905b0de218f9a2080a2b3548bbf507b0",
+            "hash": "eb96c260580beba4bd7b2a5209fa1452191050e553d5ec46ab44a06e99e7bcad",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:e0df6bab9a48ea72072778dc1f8a804810438529347c88b5028b15045b20a203",
+            "hash": "e0384394a845a0839935cb2a7b08f2e437b87c1b4085915026a9d85645c93755",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:ed015ab9a9b9c84e1b5d45695a46f91880ced969877640ef9eafd4c231a8960a",
+            "hash": "a0ee463149b8126694da4d19d01317a13aed921c8660a8859020baa9c068e893",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:f32bae4c10c136c2e8c1180b6bd43c70aeb916935ff767779d95b3093354dd5b",
+            "hash": "c811f7f139c891790e38cbf1fa3b4f783d20d5c79e63faa8b888ee243e4ce3f5",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:f8e84ee53942b7e6881fd483a404f6d2c875e816fd79f07cf4181d5d0e3a5b31",
+            "hash": "23579fa4a1a1b927c7b783b73d73abdd4a287bf69b15c433559d41010ac1fcbe",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livecodebench:atcoder:abc305_c",
+            "hash": "55da33f800e3aa15cd7c48f191f0264abe483728c60ef14ed1dd59753f9bd28e",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc310_d",
+            "hash": "fad7b1bd90f252cc2d349a68fadd8071d546769b7798a7c7b31d1668d5ae4641",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc311_a",
+            "hash": "b8035cd2d06500b24c0962710a45224e9b78b44a06f045568bf888ddb3ba2e38",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc318_e",
+            "hash": "4a52f45d96e267355a79650136aba5cbd1a6fd92b4a7423586471ec725be7309",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc321_d",
+            "hash": "0365c8318a30113d8520a59e4d6220122fa6a5b0c62e9fb10de217f43392a62b",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc324_f",
+            "hash": "9b3912f0bf3f0b71deb05229c00d73481591f34078d3d661352bc5235a0fe058",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc331_d",
+            "hash": "9c143fe7dc0ed4bda79ce97bf7a51c2f8e19440ad9ad67d05c463f8e5808a878",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc333_d",
+            "hash": "5f95b94191a38ad6edc7a1ec7ea867c386734e737b09179de237612e2b3386ba",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc334_a",
+            "hash": "d72ade6c101facbf1296bb8e9cfb98bc237dbcaf61f692c976ee45a495279d76",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc341_c",
+            "hash": "2863d8aa506d54b3118739ee27272aa83381b7465d98c6291782c527c09b47e3",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc344_b",
+            "hash": "85f49ca83d0d2e6fccb2c33d4aaf688df97ba7c89c6fc98791f7c23397714a7f",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc352_a",
+            "hash": "b861f1e23783e279cb8243e3d97c1b193b70de641685d540a4a3801410c34ee6",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_a",
+            "hash": "c06e3a46d1302dca3a61e9cdc2997b6e2c890c6934d3211a65ed3a50c3202294",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_b",
+            "hash": "6ef6c11677330641d88ce3215624ab80c83e288585bf76e0a0c6d6e88d7b0f18",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc368_f",
+            "hash": "b1362305d6f132ac66b480218bbcf7f2e5e8366cba941ecccd365b8316e81e20",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc370_e",
+            "hash": "6bd7ec8b3ec0d5aed010d5bc4f6c47ab662c4478fc2e1eba250100a80fc5ebc5",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc376_e",
+            "hash": "8e5077eb52fb06d8b833e84ef69bbcdd76eff1a84f4aeac598296d9a191cbc16",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc379_c",
+            "hash": "b1cb3109e6cc8952c201ba3e74a7a50d5ae5117eb4603e6287e39ebfc60163bd",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_a",
+            "hash": "c9b511dc173394a0d764066e97d063d5f6d4323c599a294e3c0b2525a4a308cd",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_e",
+            "hash": "2eeabd411fcd53c243001e5bafe59e921567d0905124154a5a0f9712f07f9c55",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_g",
+            "hash": "f0f91345b6f7618989d7845f6a16ec3c7cdf037e6a81f8e08401413f3939ea04",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc398_b",
+            "hash": "80fc1d805b86c38634dbcbef228401f3242797c3302de708225c38d753f9f6db",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc400_a",
+            "hash": "2caaf171bf87ed273f761465988dcc915b3abb4ffa1314cb07bf3c1e8bc9ecff",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:arc192_b",
+            "hash": "6bc2e7226d9ff0a42a094e77d5e1caa62f214cc9befd4d43772aa536beb7d4ef",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:2728",
+            "hash": "d28a6f6d7b3b3335af92cf6dc34b0721bdd98dec0162b90a6fbbb4c6c7810b24",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2839",
+            "hash": "8455d4ad17997145291ae512349b862d948bcf269c2542a65e262db2559ee308",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:2854",
+            "hash": "f881162840ca29db1cec18e197c4601cc650286d352c56862103e3d5a54bc1bb",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3031",
+            "hash": "f9b6aec3e10b648f2202ba702b1b122749da729df836040a2c3738479a1ac683",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3261",
+            "hash": "2fadd701ce3df2f460fe3d8970e0d32b05d4266c46d24254cc09322fdee7ba6b",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3292",
+            "hash": "63f6a29215ae6809910bf22185efa19edcaf3912d6f0869626f166370144e7a2",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3312",
+            "hash": "1ab5ac30fbf165b2349816121e6df8f9123c81fe51c3b34dab0cbddb809e25ad",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3396",
+            "hash": "1db9769f2b9c6b8b2507a6f294c02e9d95950897eefb8edf18da7eecd6a580a3",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3412",
+            "hash": "0d32109e311ea3a8c0c4b19ddae3ee538f57e1a1e939339edadd7836fc6b4ef7",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3421",
+            "hash": "241004cf07c551204a44bffd4589d7a2e99b928e3a6c9389e1cf0934b070a680",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3492",
+            "hash": "6793d9ab4c02e7e0f816ba51b44aac15253d54270efd1d85ac10f9e4ca4e099e",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3594",
+            "hash": "91de24f204e22d8d3ce6015694d9292a2b249d7a300a885fd32f10038e207f17",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3659",
+            "hash": "5bef0ddfe897d2e61324454b51fe3e1292b6a916170e26dab486b2855b7865c1",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3696",
+            "hash": "d263f0256facf9710a585659550ae63e78f94c8c400bd2d7cef85993b2dbbe9d",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3788",
+            "hash": "4da0b974ae81dd14ba91a5479d2c21e1266a9c142d4206aab2a8ca1b01cc1272",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3801",
+            "hash": "621269bcf81d65591505e2c3a2d858c7841c086bd5f11b1f743625778444d3e8",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          }
+        ],
+        "confirmation": [
+          {
+            "id": "livebench:09719ca5e81c332df5d59ed37737c7351b5d68568933f4e7bbe08f0b22f2d030",
+            "hash": "bc5168505c49e8fb4a1a54005f2bc4a8a270300654fbb52910b6d18c51bc872b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:15a572d195b127489b50b0a4fc86c36a38fcfe6542ca3e2aa309e46f4d56edb5",
+            "hash": "7caa5ddfa0af8c3f183944363a8d6cc0d968b0a89e66fa144cdeb93c63a58295",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:1836f6b0486252c504e3eb25ca060651488abc7952bb9cab58f8ce7c4fe2c5a2",
+            "hash": "df3f915f9623ceb2e89d2a8fc7e37b2f23022e4c0056a22d0e669b996ffb70db",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:1c6eda54001bf87aa1b9d833e89448168f0c3020a026b618ba346b18afa6ef26",
+            "hash": "9998bce7cae0f0a3cc16d22eea6cb380d3f2f538d1e8c95a6a394f3115408d5a",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:1fdd436a43f1a7d242602871b37275ee09a69a64094f619b91bee96095846452",
+            "hash": "2e41835a48bf796fdfdcc86384bb2c267c43c99f36f3d493be10809979207df3",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:20d48b97e524cd64f82b0e4fb3c597a37bae1d9357e9b2c93aad96b4c70e098e",
+            "hash": "6c19a90afe1ff28b544d72c3808e4321f0e6e8031407aff7c661910007225ef0",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:2102018493646d369865e04813606d3170a25f31f0fad3aece558969b56f97d0",
+            "hash": "41bb500703501441c55c17257018f2ec29628c4fea78c1195b7f386bc992230c",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:27780ecab68b99ba747722d3e536086049ba4a8fc768b1357c0e20871a92e41c",
+            "hash": "9b1bf689358f5e672b84ce07bebe20748d08403b74843be477674d96d9dff653",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:27eb08badf45383af3d99130de55ffe01e5723504d6d5fca8f9a7f672aad7e82",
+            "hash": "ea505056d9cc96ba5a5722a4e77254a0e51ff6e438f5461cb7ae8cb305fa8a18",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:2a886a49a7c9afb9b30d299d6de0b67558ae1076da4178faaf08e8b24d4a2994",
+            "hash": "37a636e208a5c7726ac5f7b11818f01bebd90acf17cc6e81163ea2316bac5493",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:34efb95856af4045015f9d8f46390d1ca13ae96c4aa4098a62da4b4d4cda2049",
+            "hash": "31b880befb458f9b12a473383713a693d3f83873c3befe58568adb7283c6fc96",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:363d6a519f6ce7572b752357e5008d054f34fb01ff1e8864326889bd2b24f626",
+            "hash": "b363598dc2b2ca9e89489729288fcb761ecb1319397d06a699d7bbd4f357e100",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:36a9c56b72919f6ee03ed6e929a2e9abfb58b0084a8cab91119393f396faa26e",
+            "hash": "43f819508519ec69bcaca64941403854d7fe2e038cff9d5bc25a7263fdf0f065",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:407a91d3d4fa5ae79f9b36285582a7ad8738dcf8d9e2104faecb69fca08e07a6",
+            "hash": "c2681a0dd8c26207176519434352def643f4646362f14c58f0d8cdd2844bc3c4",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:40a8ca9e0abcfe1a1ddcdcc44ca837131ed669f51eafcb1d27b361da7d8d1165",
+            "hash": "1dd76fce8a15f76bac527b38d3c584d06a48f619d69005d08ca311f1b28f8c8c",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:46c71f6c8010ba06139e2df649ad68b93d6386d40065301f33e9c3c6d04a81d0",
+            "hash": "edf9da8eda22c59c30c324e017eb055f6818da8136cdaedb42afa3f0e89c0584",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:484f9d95e130b527cf40c85b560fc70edf30efc56fd57750ad78ee81f64deb47",
+            "hash": "7a8732112522249e413650e48dda4befafa3284f47e4a1fe653c4172acba7e28",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:4c6e9d7cd2f5506ef5d07f1545dad8d1ca31bfd74ad3ca3e1a6d34accac62db2",
+            "hash": "6da9c53db4ca942f595dfe2d69749293aa2bd2b15aa96bed2918110af420f26b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:4d307a56c0beed06090c18b6a431f82f1292d895bdc3186452a36eb33bc6f095",
+            "hash": "312372b7429ca7a9cf5210f816990743a5cc6ebbbe042ce67d2d9c319303fbd7",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:4f78225af2661b5b2f22f126fba54723cdbd02e16a8f89fe024f9f21fd54248b",
+            "hash": "58703f35a1956a3cecbf8e6459e2430bc26f18b80014c0b792fb2ac90d372b2d",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:5b5d24ca717950268327ba8a8a14ebd116476e226be68ff3663d577df7fa3ed1",
+            "hash": "a5bf262e18c387581d8c31ccf3cfef24cff08fb6dbc09b8db2823e7ad2d1adf7",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:5c484e793c5fbab10f9d42025bd34db662a33f04ccf3f2157fad7fba1d3fe843",
+            "hash": "259afef20f292af132610f7466cb70bf99218b7549cdda0d402fe37af7bac0f8",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:6882b248e31a65f287a7a2ab617b31ebfed771511e730697ceb43f0b5a3dd067",
+            "hash": "9c33d42fdc2b4ef6e77d575a37b183c8c4472386833c129a32c7910f5771baec",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:69f8b6614de6be6712544c2ee92e323be657baea3072e5d8fe2b61b3fde4b6d2",
+            "hash": "6c0872798bac0d805bbf8ff774e26b2b455b93eb2e1f4575ab808c8f541d3ab3",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:6a4ca003d6cce2477e549d195b01bf093e37784a9566afc8239f5169e32e3818",
+            "hash": "0bad699d376a3aa86ef9c2cf896c5f2c2331a9502caa2bdd0c8b0e57a445388b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:709c3cb6f68c39f7fac17d28cbfef62a41eb2ab52cb44d2b35c402395d0126c4",
+            "hash": "6a71a9c7b3fa5ef0353d7e181695ba448746db3a69c4f04d6928ef751a731fd7",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:7456b78b84937f3f7d137c1af263bfbb1987075e6d093f1bcaf89751e9d30b9c",
+            "hash": "deb64256d37b24ad8f80a6241991503cb7eec9146e82701fb61a880843c1e4c6",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:763d6bf2ce815f919798705460bf9199302ffc581f1aec7031275ec60bdb36a3",
+            "hash": "273a7478f58583a40ed1388fcb078d69b0807af2e69ceb5be7eb81b5509dcebd",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:7c59f01508ae8297658af14d0af57e4d1eaf95bed6fb729d27de2c45faf61eef",
+            "hash": "317229eecaea977ad9ab65ac0b5291fedbb67b06987b3f38be079415a6b84cdc",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:84650f1042abf3d267bb79b6d1e1d899d27327a11ab81f1079121734a68306b1",
+            "hash": "e9e359b464f85c2fd1d031b033e6bd62d90a7922c52cca9a3d062bf14a563e90",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:8701a5c0c217906a7982be7725249353ee02d5fad80c6f8fc9ad22241072b89d",
+            "hash": "71bb1167d312f62dc14e970dd67a211ad0451b556bd2212507aeca290867b249",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:87af7bdf47fa02d0fc18d13cf81cda012d1edb0c3458a2dd4ab4f9ca3113988c",
+            "hash": "605f3f63a68a87ecfc7ca424ed7a56b15274c717e9cadcb84b43c3c4800e5fa5",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:92e4b2cc3b6a16e3e4ad52e89731bd602cb5bf42c884c540981284b28a415929",
+            "hash": "712105f1bf7ffb0880b52f87af274288842616b8921c2c6609bcce8b03f8f5c7",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:95af6ecc707197ef62b26adf0f0b5eb0ac8a4335b304bc0b77b87feffc1b5fc3",
+            "hash": "f491b00c23cd23483dbaa9ca576d4a10519fda4867b6b85cfcaab770b01414e0",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:95ef46b58759a1595006301bebb7be5edff15ad5fcaec453d3483c6d8d554b10",
+            "hash": "cee3e45e71c8af50036aabac8a1b5281fc2ed020af558282e68dc78807bf83db",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:977a0ea5fc1727ca664cd2af90b5c4a2f36648891e8f5b6ad047512df081a4d8",
+            "hash": "4fb49d77f0ef38ba6f96ff73d5a16810e1d1ba0fd324eb7a6b54054dbaef89a9",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:9aafbce875263fd96f7bec10666dde3534e82b01bc2545cf9d4ade501ea943f0",
+            "hash": "0b66490e29e43c47bbec878d865287c76bee300efac7364fe3da5cc85a756428",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:9c7c693083342fc0622081516bebd935c7b1d08f3bea9969944d1ef2bf5864fc",
+            "hash": "3f2b0924df203cb7fd8b87c6a1d58920fa06dc30f66fe1e5d244ff42eabc7ef2",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:9e3c878ffe6ee807e3b01746de0f4a8da254e96c865f7b518ddc1b16f564ce9c",
+            "hash": "10329e483e5b05faa880bf8ae94cc2f5a930c253930f015fb9b58fd287deeda2",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:a0383235b91e3e448468d0764fedb901f39a8c7855b214ba364e6956722c89cf",
+            "hash": "2c6f9785ff19f719336d7ae42c76684bf34c49fecb55a591df0563ce1797530b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:a07f06973712c26654d728911aaef7046af825e1d449c731aa7af32a94d9cbd1",
+            "hash": "5e5ae74d2b9891db15d971bf07988cdd8a4a971025d5d1c12959545d1b309e7c",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:a0f4b0be2055ef97c455771f2de3eb3f41c9018603d96c93225be734b70dcdce",
+            "hash": "d11ccf1d783cba88b8e32fd68f1fa9c23c9832078b81027e79a98fb4d610087a",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:afb99e750d3a60adef0795fffb10a9c7639d06be30c5119c1003238abc6f9b46",
+            "hash": "0b0ad6e69269aef07666d945f5c8e17355248104dcb384ae6054b670f4c05c4e",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:b1b1678a4f290c8ab2b85f957a0cdbba93ef0c97d1e7ab4663e46e92ebac70e8",
+            "hash": "bdb2046a8b864dc403ad8455ff784d76553fa44b2e05c27c43f0c20e70fac89f",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:b7b7e331df4614775210ef5e524ed7f20c5fec6655fb0dd179c94e4d71170862",
+            "hash": "2c215bbfef6812e56c320b2caaf17f5049662c29facba607ae0871dd66072519",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:bd14ba82d1fe813dcdf6c16f0f868e5f3fe92e4cee9cf5eb3fd5cb6f03d68517",
+            "hash": "f6e5216c653205beb6ca10281d240ca606688f6119d4059a131b7f06f823ddb3",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:bd6776bfffbd81eaa021c33ffbd833e0c75ee50c5827094ccb469d421cd5b8ab",
+            "hash": "2d0736cdff8a4c2ca0315710a9fc76664b237495aefd18dbdc64733b1651f595",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:c2b235761e06ab22ef1bfba7fa61461b6f6536e5b2a7709674193c7cc96b192c",
+            "hash": "934cb852909e1842a530e27672a6fa583070be0cbc4fd01bac7a83bf21eec030",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:c89fdda34dcddd50a92fd79332f22c31b7f0fd94d3ce05062fd7a874bd36e224",
+            "hash": "db20ab1ddcdde3fc21655e912e9bfbadf7b244f1edfcb533d6a943cf62037278",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:d60075facb5ecdbc3618620e77f29db9dc5f24b11eb789c771b3180b48866fbf",
+            "hash": "57f4ce743f1c6daad88427f60420c461bd5cd6d62cef0b68ca445931619c542e",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:d977e70d05f737b3df36dbe997420820c43a0c43cfb0ff32290d45667b53987d",
+            "hash": "11a26912d55b22ab6206d1fa58eea4150829ff5586008e330a7115a396c7e182",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:d99123f5dae428ffc74487c853ff6a440a5d3f3ffdc47006175db53ff4a5054c",
+            "hash": "598d9908cb037bb4736a3531a3cd829226146bc1393c1bf3d9eff1cb6693e8e7",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:db55a7cc2ceaa32778ecbb91aecaca4b905b0de218f9a2080a2b3548bbf507b0",
+            "hash": "eb96c260580beba4bd7b2a5209fa1452191050e553d5ec46ab44a06e99e7bcad",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:e0df6bab9a48ea72072778dc1f8a804810438529347c88b5028b15045b20a203",
+            "hash": "e0384394a845a0839935cb2a7b08f2e437b87c1b4085915026a9d85645c93755",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:ed015ab9a9b9c84e1b5d45695a46f91880ced969877640ef9eafd4c231a8960a",
+            "hash": "a0ee463149b8126694da4d19d01317a13aed921c8660a8859020baa9c068e893",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:f2a76bdd345c47700ec8b8df974d871d3f2102114c24933b6da249af92ee7f33",
+            "hash": "6d51c74ee59535af7b02a32b5460a9aa34d54e85e93559aca729392f58ed369b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:f32bae4c10c136c2e8c1180b6bd43c70aeb916935ff767779d95b3093354dd5b",
+            "hash": "c811f7f139c891790e38cbf1fa3b4f783d20d5c79e63faa8b888ee243e4ce3f5",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:f8e84ee53942b7e6881fd483a404f6d2c875e816fd79f07cf4181d5d0e3a5b31",
+            "hash": "23579fa4a1a1b927c7b783b73d73abdd4a287bf69b15c433559d41010ac1fcbe",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:fb970027cec594189294af351537cff1a9a860a8acad597f7f8854fc0ec8875e",
+            "hash": "256dcbcebf020ed6ba8e19f4979135322ebde1a75eb131e4d0a034211dd8b589",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:fd87ac63ae2222cc816095cc4f9cbecbdeb65eae64c9e92cccbae3514c7c7354",
+            "hash": "a828c60c4fede4f7c8f5061a684ab56420389fc83ab3a0b276ac9a063f6eb55c",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livecodebench:atcoder:abc302_b",
+            "hash": "4479acec3e8561623f17d234c6eb2878e86db083e478b7b2b647d76fe37a530f",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc302_f",
+            "hash": "2cdd95f660d72ff5797c536903855e0d3c71ae48158b8387ecd70a8d6f159fb1",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc304_d",
+            "hash": "b856e3b1d0cc7af302e8b2ae6d3d8e6414cc91b271ab5a1039ff9e71e8ee6832",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc305_c",
+            "hash": "55da33f800e3aa15cd7c48f191f0264abe483728c60ef14ed1dd59753f9bd28e",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc306_d",
+            "hash": "2b6fc0ebbd60afcacbbfd36c0f56439f0de5d7841bff40b14cdfc84955c71943",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc307_e",
+            "hash": "4b708cdce642bfaeedf85a9522093aaefb8a892520b88be9c4f76046746ec9f5",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc309_a",
+            "hash": "43fcb2d8183ff67f82e0ad456139147b464cd4356f4655f715282a1920f64bf2",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc310_d",
+            "hash": "fad7b1bd90f252cc2d349a68fadd8071d546769b7798a7c7b31d1668d5ae4641",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc311_a",
+            "hash": "b8035cd2d06500b24c0962710a45224e9b78b44a06f045568bf888ddb3ba2e38",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc312_e",
+            "hash": "0172b8f497ca98be1f1fffef91e453e68c6f2902322dd0f21c62f0a1de920a91",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc318_e",
+            "hash": "4a52f45d96e267355a79650136aba5cbd1a6fd92b4a7423586471ec725be7309",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc319_b",
+            "hash": "17263bfcd9be8e1f4d6126b2ea111a28a8e7f8c7eac3e0f5034d0ceff5dbcbdc",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc321_d",
+            "hash": "0365c8318a30113d8520a59e4d6220122fa6a5b0c62e9fb10de217f43392a62b",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc324_f",
+            "hash": "9b3912f0bf3f0b71deb05229c00d73481591f34078d3d661352bc5235a0fe058",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc325_e",
+            "hash": "64384a8019c71c104adfd442646717d9d4333a30ae506362fa7f956aa83e8bc1",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc330_a",
+            "hash": "0fd424d9f4db4222b24af352b78ee7559f2033c5e821415aa30f0a4df4a3b39c",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc330_d",
+            "hash": "3d1ae3a81641bbeaed5823ba8b712648431a916f51081dbdb8909abaeebd1590",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc331_d",
+            "hash": "9c143fe7dc0ed4bda79ce97bf7a51c2f8e19440ad9ad67d05c463f8e5808a878",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc333_a",
+            "hash": "068f44357b498b561a2a92174e32ed86e01994cbb64f470c6cbc758336ca0604",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc333_d",
+            "hash": "5f95b94191a38ad6edc7a1ec7ea867c386734e737b09179de237612e2b3386ba",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc334_a",
+            "hash": "d72ade6c101facbf1296bb8e9cfb98bc237dbcaf61f692c976ee45a495279d76",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc334_d",
+            "hash": "369c30fa102e1c412d7cf08a6c8117e2d87301484b1844d63ff50924dc83664f",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc338_b",
+            "hash": "8a2922ef13056b3d8e6ecbe86738330fbd28bcaa64ea407d16c2fa20572d2b91",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc340_b",
+            "hash": "ad57b8500fa8edde57000bf2ee143492132cadff2c972d8ed9147ca3255efc9a",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc341_c",
+            "hash": "2863d8aa506d54b3118739ee27272aa83381b7465d98c6291782c527c09b47e3",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc344_b",
+            "hash": "85f49ca83d0d2e6fccb2c33d4aaf688df97ba7c89c6fc98791f7c23397714a7f",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc348_a",
+            "hash": "2945e5d84c2e6b7eadbfd816a119fe27237eba8cb7252f620f73fc7355f08882",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc351_a",
+            "hash": "d90b1cadcf8808801bb4da0a5ddea1a33c4e03b2d14c75b944568575d5905155",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc351_c",
+            "hash": "4441d70faba61c1649a58a713765f0f8269117d66ed1a74f588ce0876a6dc7eb",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc352_a",
+            "hash": "b861f1e23783e279cb8243e3d97c1b193b70de641685d540a4a3801410c34ee6",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc353_c",
+            "hash": "1f31f07acb5f942a846005aae0012f9a3dba3b2aac30aaccfcc8e1c53f56aaef",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc353_d",
+            "hash": "aeda17b2f497a4340132f67037fe177167a7371b2696fe3abf41228e57ecf0ed",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_a",
+            "hash": "c06e3a46d1302dca3a61e9cdc2997b6e2c890c6934d3211a65ed3a50c3202294",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_b",
+            "hash": "6ef6c11677330641d88ce3215624ab80c83e288585bf76e0a0c6d6e88d7b0f18",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_d",
+            "hash": "627cd901c75bd6a692ab4033850aefad1c68de7b055a3ffaf58541fa93143d6b",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc359_d",
+            "hash": "d37665ea8335b14a100aaeaeb325dcc1009102687bd714bf67cff1f345fcfcd6",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc362_b",
+            "hash": "3215f481d53173322325e8f341ae46a796b710a1ed7d3e9fcfec488426ec07d3",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc363_f",
+            "hash": "83180024079ec68d8ca2f6e0c938aba9107455e87b28f9a832c2586787eaa428",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc367_d",
+            "hash": "3dab21f9c5909dda8ec1c438903f15dbcb1050e7b9fa6c272214f869772bc4fe",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc368_c",
+            "hash": "0c4d9b7a2ea931a3c4e2377ee6d7a144a584cc153fcf383ee223e4a4438220ed",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc368_e",
+            "hash": "833cb0597d0573553a8738630984f74aaa9262294ce63b88ac2c723d583a88b8",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc368_f",
+            "hash": "b1362305d6f132ac66b480218bbcf7f2e5e8366cba941ecccd365b8316e81e20",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc370_d",
+            "hash": "356dfdae5ae3e63c49a2216e5af61fe505638170a357935abac71f00e04b7cab",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc370_e",
+            "hash": "6bd7ec8b3ec0d5aed010d5bc4f6c47ab662c4478fc2e1eba250100a80fc5ebc5",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc374_a",
+            "hash": "a81e12cbdab64dfc2ad10f569ffd02448b3f7492cc5a421aa78ee1a4ca79a13a",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc375_b",
+            "hash": "9f46b0c9047b1de657660a33b1cc788b02a3994484b8acf40f2a1fd0bd8fdd9d",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc376_a",
+            "hash": "61ce7c853dc3bf77024d8ddc21825ad919e1072ad35fe196509817ad992c98c8",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc376_e",
+            "hash": "8e5077eb52fb06d8b833e84ef69bbcdd76eff1a84f4aeac598296d9a191cbc16",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc377_d",
+            "hash": "0de57573e9be2f97ccf4a950e1e4d68f4c1f94fd51b5b5c2e5ca3e49f4f3e01b",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc378_f",
+            "hash": "78bb42b1df2ea824078eebe980c649b11e0f94cc965141ec3f953a131d8724b7",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc379_c",
+            "hash": "b1cb3109e6cc8952c201ba3e74a7a50d5ae5117eb4603e6287e39ebfc60163bd",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc380_d",
+            "hash": "5d47dee9044b51490a60ec1d33e8bf022ce542b9a83721f24ce49c5386a941e8",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc380_g",
+            "hash": "56a3b5bfd5962a80fe0be5f203c44839145598c38b1a90a62dd799a61301b513",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc381_b",
+            "hash": "37cfd886996b7bbaf87a5199a0fb906148fb32bad0bab7268fa56de2e821f00a",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc382_g",
+            "hash": "091eefb3e4ffe1a21d24f3df7fa4f03111efb17b84d46439bf7e3e346aeeadc2",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc384_a",
+            "hash": "fdd256d50dc5a13b20af2f4751dc2812c919c65488b60c1c48615c803b2e8a7a",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc384_d",
+            "hash": "25ef7f7aeac15212e8e50e3ac38a8dabf9d3b7097e2cd483c77091ce52d6e879",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_a",
+            "hash": "c9b511dc173394a0d764066e97d063d5f6d4323c599a294e3c0b2525a4a308cd",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_e",
+            "hash": "2eeabd411fcd53c243001e5bafe59e921567d0905124154a5a0f9712f07f9c55",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_f",
+            "hash": "26a6e81e34993364acac8d234b7af18353579396b7bd5b09558cd2c77e0b895e",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_b",
+            "hash": "5bc946013136c88f1be4b3634e15302ae169efc49bf54f241b341a6d7f4afaf9",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_d",
+            "hash": "2eb9ac09dee961c3e1be21d124633fb7e535ef23c58d349777ac6977a57d017d",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_e",
+            "hash": "4dba3a8466ab4f2ae37653a8a0c4a9e5d9692e37efe04a87510a1c21a015c551",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_g",
+            "hash": "f0f91345b6f7618989d7845f6a16ec3c7cdf037e6a81f8e08401413f3939ea04",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc398_b",
+            "hash": "80fc1d805b86c38634dbcbef228401f3242797c3302de708225c38d753f9f6db",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc400_a",
+            "hash": "2caaf171bf87ed273f761465988dcc915b3abb4ffa1314cb07bf3c1e8bc9ecff",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:arc183_c",
+            "hash": "20a601ef3ae56f874d422b7b3acb48c49a99d0b999372f271753d16dc0d650e1",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc187_b",
+            "hash": "eb284c0fef87ee60b7125bd96d0806094d205a0813e1497d8929582059c51a95",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc188_b",
+            "hash": "e1535e6b58f028bc356bd2787f7ee3013f4fb986642344752f5c4c076c4a9f10",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc192_b",
+            "hash": "6bc2e7226d9ff0a42a094e77d5e1caa62f214cc9befd4d43772aa536beb7d4ef",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc194_c",
+            "hash": "870f9de252e12c365511b6f44025f344bd6332e1ea683063be5658a3f8704c18",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc194_e",
+            "hash": "6fd5313b448ee47c5a95c7a24231d7f62608718aada8a2257b8dc94babdf56d3",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:codeforces:1883_B",
+            "hash": "addd901423c31374829e80bc458e1dc4bbbac3fda81c7af3468e9b2d316ae667",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2728",
+            "hash": "d28a6f6d7b3b3335af92cf6dc34b0721bdd98dec0162b90a6fbbb4c6c7810b24",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2800",
+            "hash": "f329e38ee4448ef4237a378d3fb370daccbc068f729444cc03c74e50751736be",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:2839",
+            "hash": "8455d4ad17997145291ae512349b862d948bcf269c2542a65e262db2559ee308",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:2850",
+            "hash": "724442ba40a5ba7dc9dbd8b78b59315ead9e2eaba4c9440b6a678294d76bb479",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2854",
+            "hash": "f881162840ca29db1cec18e197c4601cc650286d352c56862103e3d5a54bc1bb",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2881",
+            "hash": "4adf9f593db9db5c61f6d5e0440a9aaf4aa3b05ae311abd129db374597e3a36f",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:2999",
+            "hash": "7e5ce4d3d277a71bc84f1f47c8ee331fc9c347b1c45195074741f3cda44217fa",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3031",
+            "hash": "f9b6aec3e10b648f2202ba702b1b122749da729df836040a2c3738479a1ac683",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3114",
+            "hash": "40948bebb6b424d4e058b37302efa66dec207dd90247c071bf53644a2dc199fd",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3171",
+            "hash": "210b660169e66c928cd7c61d578e51f3a844c1c4fd2491247991deb3306f0582",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3206",
+            "hash": "11b24bd640cf3bbd2665f9e94d490bde98b936ff35805dfec748bd14d8344cc9",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3239",
+            "hash": "3b1e11f6051d1e3dd32910fb89ac065e8694214acc43d481c4a20617d85906a2",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3261",
+            "hash": "2fadd701ce3df2f460fe3d8970e0d32b05d4266c46d24254cc09322fdee7ba6b",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3265",
+            "hash": "357bdd1f5632471d93f5aa5acf46f35f8ecdd3edda93d2a5e40daca2bdf7027c",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3292",
+            "hash": "63f6a29215ae6809910bf22185efa19edcaf3912d6f0869626f166370144e7a2",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3311",
+            "hash": "69442593ac768967ab67f6db82d92f055af039fa9ad1d003745f6574b7b3a7c7",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3312",
+            "hash": "1ab5ac30fbf165b2349816121e6df8f9123c81fe51c3b34dab0cbddb809e25ad",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3313",
+            "hash": "d95742027fd50aa948cb17178baf9f8f22300fa30923e5ce9ba4c35072f71533",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3344",
+            "hash": "2bf739f41caae9d2f0cc233dd00263f2feb177b2393f21e46da7c6f3a9899573",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3375",
+            "hash": "42a870482bc231b4c46953add7f06c763dcf6e1a3bffcb5612305962eedd6bda",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3388",
+            "hash": "70d436acb2130e301ff61ec6961d4b5639794933f8202803d55f8c4f631a4880",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3396",
+            "hash": "1db9769f2b9c6b8b2507a6f294c02e9d95950897eefb8edf18da7eecd6a580a3",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3411",
+            "hash": "c4feb3aa969c4f1e8cf816e40a0a7d385d70186d533033d7716f89cf6ceba46f",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3412",
+            "hash": "0d32109e311ea3a8c0c4b19ddae3ee538f57e1a1e939339edadd7836fc6b4ef7",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3414",
+            "hash": "52e5f427823b62b6e0b53095dd8e6453b4c772f222ba47d44b5b544a5c0bcede",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3421",
+            "hash": "241004cf07c551204a44bffd4589d7a2e99b928e3a6c9389e1cf0934b070a680",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3426",
+            "hash": "40e1adc22610c7ecaec4dbc34680325c37ed7562ad4530a6a535ee0948b026ea",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3461",
+            "hash": "bba5e2680762656120e8b78621ee58b611cd939ef44f4c2c6a1da079ac9b143b",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3490",
+            "hash": "c446d6aa30429bb1044e22c8a8f1c1d3f9f0d8243730edbccf573e421fa18d1a",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3492",
+            "hash": "6793d9ab4c02e7e0f816ba51b44aac15253d54270efd1d85ac10f9e4ca4e099e",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3498",
+            "hash": "0201d71d782f4381b77bf9fb8562e2f7a690da72c4bb6d3f864962cb6ddeaed9",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3515",
+            "hash": "bd3174aa1e1f0364c70f82b41641d7fc4c804d4087ef8921e9631d37728b3661",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3522",
+            "hash": "6ab837b78f9e63d9a67cdfbd71e872368c53f8efa349d66903168e7c230c4fef",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3534",
+            "hash": "75da93b9c101b120badd966b9fdf9ce0b9d274442c7e48ddfb561e92c37436bc",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3540",
+            "hash": "69146ddb0a3dc624c9ef73ddf51852e54334fe491976794ddc97a767f7b21468",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3594",
+            "hash": "91de24f204e22d8d3ce6015694d9292a2b249d7a300a885fd32f10038e207f17",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3603",
+            "hash": "31a2429b00a5fd2253f1c81c830fcd4930e135e2ff19792fe788d897761f4372",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3626",
+            "hash": "a84459e4ba4d27faac8dce7914015f5c5d6051cb4a5709ee28ce5fc4c1fa85c4",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3659",
+            "hash": "5bef0ddfe897d2e61324454b51fe3e1292b6a916170e26dab486b2855b7865c1",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3680",
+            "hash": "ca407551f6f7787ab47d09db918c14d84cffadebd3ae5c51ea79148dbbe61d50",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3692",
+            "hash": "01ac3690820341e90aa6556eec09e76f39b891d73dc67d052faca56ebcc4b848",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3696",
+            "hash": "d263f0256facf9710a585659550ae63e78f94c8c400bd2d7cef85993b2dbbe9d",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3768",
+            "hash": "35604a50da4d3f9844c72b188cd7f682c437641fc1bc6d399da49e4852a2f7d4",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3776",
+            "hash": "e235eba756368c2db37cdbea9743454b767131b563ec3ec37009aad67a3fb4ec",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3777",
+            "hash": "16327691e3563df899ac5455ef0ea0dffc7335e9e1a3d1eb8be4d551ccb93269",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3788",
+            "hash": "4da0b974ae81dd14ba91a5479d2c21e1266a9c142d4206aab2a8ca1b01cc1272",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3801",
+            "hash": "621269bcf81d65591505e2c3a2d858c7841c086bd5f11b1f743625778444d3e8",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          }
+        ],
+        "pilot": [
+          {
+            "id": "livebench:b1a413b03774b8811bb97c0b238c16c3c122217a11aa51425918bd5315b0935b",
+            "hash": "efcace31b0f322ac38914424b338cea23e8c8813c5bf03a036514ec76fef3d25",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:b7d1f1dff19c7a17f5bed438461607ab663b76b783a55ccdd2b5efb2236c4831",
+            "hash": "569a4556e6c160f170e5774f56cf608bb5e24aed252b882f189a8e44fbe85f2a",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livecodebench:atcoder:abc370_g",
+            "hash": "de1f12181485d88e5915e602c35ae957b93dc04109d6f015e89241e59eeda686",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:2817",
+            "hash": "4351e9356b8260efa637f6cf651de096568631a1c2c7827ba9a65bbd0f42409a",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0,
+        "tools": false,
+        "completions": 1
+      },
+      "grading_files": {
+        "Dockerfile": "fb131352570e02651f2a1b9acdc1ce090e89b898b584b4e4786491a65a977ee9",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
+      }
+    },
+    {
+      "id": "public-pilot-424b7a865093c836",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "Python",
+      "counts": {
+        "screen": {
+          "gpqa": 20,
+          "livebench": 20,
+          "livecodebench": 40
+        },
+        "confirmation": {
+          "gpqa": 60,
+          "livebench": 60,
+          "livecodebench": 120
+        },
+        "pilot": {
+          "gpqa": 2,
+          "livebench": 2,
+          "livecodebench": 2
+        }
+      },
+      "panels": {
+        "screen": [
+          {
+            "id": "livebench:09719ca5e81c332df5d59ed37737c7351b5d68568933f4e7bbe08f0b22f2d030",
+            "hash": "bc5168505c49e8fb4a1a54005f2bc4a8a270300654fbb52910b6d18c51bc872b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:27780ecab68b99ba747722d3e536086049ba4a8fc768b1357c0e20871a92e41c",
+            "hash": "9b1bf689358f5e672b84ce07bebe20748d08403b74843be477674d96d9dff653",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:2a886a49a7c9afb9b30d299d6de0b67558ae1076da4178faaf08e8b24d4a2994",
+            "hash": "37a636e208a5c7726ac5f7b11818f01bebd90acf17cc6e81163ea2316bac5493",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:40a8ca9e0abcfe1a1ddcdcc44ca837131ed669f51eafcb1d27b361da7d8d1165",
+            "hash": "1dd76fce8a15f76bac527b38d3c584d06a48f619d69005d08ca311f1b28f8c8c",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:4f78225af2661b5b2f22f126fba54723cdbd02e16a8f89fe024f9f21fd54248b",
+            "hash": "58703f35a1956a3cecbf8e6459e2430bc26f18b80014c0b792fb2ac90d372b2d",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:7c59f01508ae8297658af14d0af57e4d1eaf95bed6fb729d27de2c45faf61eef",
+            "hash": "317229eecaea977ad9ab65ac0b5291fedbb67b06987b3f38be079415a6b84cdc",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:87af7bdf47fa02d0fc18d13cf81cda012d1edb0c3458a2dd4ab4f9ca3113988c",
+            "hash": "605f3f63a68a87ecfc7ca424ed7a56b15274c717e9cadcb84b43c3c4800e5fa5",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:92e4b2cc3b6a16e3e4ad52e89731bd602cb5bf42c884c540981284b28a415929",
+            "hash": "712105f1bf7ffb0880b52f87af274288842616b8921c2c6609bcce8b03f8f5c7",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:977a0ea5fc1727ca664cd2af90b5c4a2f36648891e8f5b6ad047512df081a4d8",
+            "hash": "4fb49d77f0ef38ba6f96ff73d5a16810e1d1ba0fd324eb7a6b54054dbaef89a9",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:9c7c693083342fc0622081516bebd935c7b1d08f3bea9969944d1ef2bf5864fc",
+            "hash": "3f2b0924df203cb7fd8b87c6a1d58920fa06dc30f66fe1e5d244ff42eabc7ef2",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:a0383235b91e3e448468d0764fedb901f39a8c7855b214ba364e6956722c89cf",
+            "hash": "2c6f9785ff19f719336d7ae42c76684bf34c49fecb55a591df0563ce1797530b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:b1b1678a4f290c8ab2b85f957a0cdbba93ef0c97d1e7ab4663e46e92ebac70e8",
+            "hash": "bdb2046a8b864dc403ad8455ff784d76553fa44b2e05c27c43f0c20e70fac89f",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:b7b7e331df4614775210ef5e524ed7f20c5fec6655fb0dd179c94e4d71170862",
+            "hash": "2c215bbfef6812e56c320b2caaf17f5049662c29facba607ae0871dd66072519",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:c89fdda34dcddd50a92fd79332f22c31b7f0fd94d3ce05062fd7a874bd36e224",
+            "hash": "db20ab1ddcdde3fc21655e912e9bfbadf7b244f1edfcb533d6a943cf62037278",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:d60075facb5ecdbc3618620e77f29db9dc5f24b11eb789c771b3180b48866fbf",
+            "hash": "57f4ce743f1c6daad88427f60420c461bd5cd6d62cef0b68ca445931619c542e",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:db55a7cc2ceaa32778ecbb91aecaca4b905b0de218f9a2080a2b3548bbf507b0",
+            "hash": "eb96c260580beba4bd7b2a5209fa1452191050e553d5ec46ab44a06e99e7bcad",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:e0df6bab9a48ea72072778dc1f8a804810438529347c88b5028b15045b20a203",
+            "hash": "e0384394a845a0839935cb2a7b08f2e437b87c1b4085915026a9d85645c93755",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:ed015ab9a9b9c84e1b5d45695a46f91880ced969877640ef9eafd4c231a8960a",
+            "hash": "a0ee463149b8126694da4d19d01317a13aed921c8660a8859020baa9c068e893",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:f32bae4c10c136c2e8c1180b6bd43c70aeb916935ff767779d95b3093354dd5b",
+            "hash": "c811f7f139c891790e38cbf1fa3b4f783d20d5c79e63faa8b888ee243e4ce3f5",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:f8e84ee53942b7e6881fd483a404f6d2c875e816fd79f07cf4181d5d0e3a5b31",
+            "hash": "23579fa4a1a1b927c7b783b73d73abdd4a287bf69b15c433559d41010ac1fcbe",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livecodebench:atcoder:abc305_c",
+            "hash": "55da33f800e3aa15cd7c48f191f0264abe483728c60ef14ed1dd59753f9bd28e",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc310_d",
+            "hash": "fad7b1bd90f252cc2d349a68fadd8071d546769b7798a7c7b31d1668d5ae4641",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc311_a",
+            "hash": "b8035cd2d06500b24c0962710a45224e9b78b44a06f045568bf888ddb3ba2e38",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc318_e",
+            "hash": "4a52f45d96e267355a79650136aba5cbd1a6fd92b4a7423586471ec725be7309",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc321_d",
+            "hash": "0365c8318a30113d8520a59e4d6220122fa6a5b0c62e9fb10de217f43392a62b",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc324_f",
+            "hash": "9b3912f0bf3f0b71deb05229c00d73481591f34078d3d661352bc5235a0fe058",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc331_d",
+            "hash": "9c143fe7dc0ed4bda79ce97bf7a51c2f8e19440ad9ad67d05c463f8e5808a878",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc333_d",
+            "hash": "5f95b94191a38ad6edc7a1ec7ea867c386734e737b09179de237612e2b3386ba",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc334_a",
+            "hash": "d72ade6c101facbf1296bb8e9cfb98bc237dbcaf61f692c976ee45a495279d76",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc341_c",
+            "hash": "2863d8aa506d54b3118739ee27272aa83381b7465d98c6291782c527c09b47e3",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc344_b",
+            "hash": "85f49ca83d0d2e6fccb2c33d4aaf688df97ba7c89c6fc98791f7c23397714a7f",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc352_a",
+            "hash": "b861f1e23783e279cb8243e3d97c1b193b70de641685d540a4a3801410c34ee6",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_a",
+            "hash": "c06e3a46d1302dca3a61e9cdc2997b6e2c890c6934d3211a65ed3a50c3202294",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_b",
+            "hash": "6ef6c11677330641d88ce3215624ab80c83e288585bf76e0a0c6d6e88d7b0f18",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc368_f",
+            "hash": "b1362305d6f132ac66b480218bbcf7f2e5e8366cba941ecccd365b8316e81e20",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc370_e",
+            "hash": "6bd7ec8b3ec0d5aed010d5bc4f6c47ab662c4478fc2e1eba250100a80fc5ebc5",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc376_e",
+            "hash": "8e5077eb52fb06d8b833e84ef69bbcdd76eff1a84f4aeac598296d9a191cbc16",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc379_c",
+            "hash": "b1cb3109e6cc8952c201ba3e74a7a50d5ae5117eb4603e6287e39ebfc60163bd",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_a",
+            "hash": "c9b511dc173394a0d764066e97d063d5f6d4323c599a294e3c0b2525a4a308cd",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_e",
+            "hash": "2eeabd411fcd53c243001e5bafe59e921567d0905124154a5a0f9712f07f9c55",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_g",
+            "hash": "f0f91345b6f7618989d7845f6a16ec3c7cdf037e6a81f8e08401413f3939ea04",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc398_b",
+            "hash": "80fc1d805b86c38634dbcbef228401f3242797c3302de708225c38d753f9f6db",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc400_a",
+            "hash": "2caaf171bf87ed273f761465988dcc915b3abb4ffa1314cb07bf3c1e8bc9ecff",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:arc192_b",
+            "hash": "6bc2e7226d9ff0a42a094e77d5e1caa62f214cc9befd4d43772aa536beb7d4ef",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:2728",
+            "hash": "d28a6f6d7b3b3335af92cf6dc34b0721bdd98dec0162b90a6fbbb4c6c7810b24",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2839",
+            "hash": "8455d4ad17997145291ae512349b862d948bcf269c2542a65e262db2559ee308",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:2854",
+            "hash": "f881162840ca29db1cec18e197c4601cc650286d352c56862103e3d5a54bc1bb",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3031",
+            "hash": "f9b6aec3e10b648f2202ba702b1b122749da729df836040a2c3738479a1ac683",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3261",
+            "hash": "2fadd701ce3df2f460fe3d8970e0d32b05d4266c46d24254cc09322fdee7ba6b",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3292",
+            "hash": "63f6a29215ae6809910bf22185efa19edcaf3912d6f0869626f166370144e7a2",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3312",
+            "hash": "1ab5ac30fbf165b2349816121e6df8f9123c81fe51c3b34dab0cbddb809e25ad",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3396",
+            "hash": "1db9769f2b9c6b8b2507a6f294c02e9d95950897eefb8edf18da7eecd6a580a3",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3412",
+            "hash": "0d32109e311ea3a8c0c4b19ddae3ee538f57e1a1e939339edadd7836fc6b4ef7",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3421",
+            "hash": "241004cf07c551204a44bffd4589d7a2e99b928e3a6c9389e1cf0934b070a680",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3492",
+            "hash": "6793d9ab4c02e7e0f816ba51b44aac15253d54270efd1d85ac10f9e4ca4e099e",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3594",
+            "hash": "91de24f204e22d8d3ce6015694d9292a2b249d7a300a885fd32f10038e207f17",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3659",
+            "hash": "5bef0ddfe897d2e61324454b51fe3e1292b6a916170e26dab486b2855b7865c1",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3696",
+            "hash": "d263f0256facf9710a585659550ae63e78f94c8c400bd2d7cef85993b2dbbe9d",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3788",
+            "hash": "4da0b974ae81dd14ba91a5479d2c21e1266a9c142d4206aab2a8ca1b01cc1272",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3801",
+            "hash": "621269bcf81d65591505e2c3a2d858c7841c086bd5f11b1f743625778444d3e8",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          }
+        ],
+        "confirmation": [
+          {
+            "id": "livebench:09719ca5e81c332df5d59ed37737c7351b5d68568933f4e7bbe08f0b22f2d030",
+            "hash": "bc5168505c49e8fb4a1a54005f2bc4a8a270300654fbb52910b6d18c51bc872b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:15a572d195b127489b50b0a4fc86c36a38fcfe6542ca3e2aa309e46f4d56edb5",
+            "hash": "7caa5ddfa0af8c3f183944363a8d6cc0d968b0a89e66fa144cdeb93c63a58295",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:1836f6b0486252c504e3eb25ca060651488abc7952bb9cab58f8ce7c4fe2c5a2",
+            "hash": "df3f915f9623ceb2e89d2a8fc7e37b2f23022e4c0056a22d0e669b996ffb70db",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:1c6eda54001bf87aa1b9d833e89448168f0c3020a026b618ba346b18afa6ef26",
+            "hash": "9998bce7cae0f0a3cc16d22eea6cb380d3f2f538d1e8c95a6a394f3115408d5a",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:1fdd436a43f1a7d242602871b37275ee09a69a64094f619b91bee96095846452",
+            "hash": "2e41835a48bf796fdfdcc86384bb2c267c43c99f36f3d493be10809979207df3",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:20d48b97e524cd64f82b0e4fb3c597a37bae1d9357e9b2c93aad96b4c70e098e",
+            "hash": "6c19a90afe1ff28b544d72c3808e4321f0e6e8031407aff7c661910007225ef0",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:2102018493646d369865e04813606d3170a25f31f0fad3aece558969b56f97d0",
+            "hash": "41bb500703501441c55c17257018f2ec29628c4fea78c1195b7f386bc992230c",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:27780ecab68b99ba747722d3e536086049ba4a8fc768b1357c0e20871a92e41c",
+            "hash": "9b1bf689358f5e672b84ce07bebe20748d08403b74843be477674d96d9dff653",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:27eb08badf45383af3d99130de55ffe01e5723504d6d5fca8f9a7f672aad7e82",
+            "hash": "ea505056d9cc96ba5a5722a4e77254a0e51ff6e438f5461cb7ae8cb305fa8a18",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:2a886a49a7c9afb9b30d299d6de0b67558ae1076da4178faaf08e8b24d4a2994",
+            "hash": "37a636e208a5c7726ac5f7b11818f01bebd90acf17cc6e81163ea2316bac5493",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:34efb95856af4045015f9d8f46390d1ca13ae96c4aa4098a62da4b4d4cda2049",
+            "hash": "31b880befb458f9b12a473383713a693d3f83873c3befe58568adb7283c6fc96",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:363d6a519f6ce7572b752357e5008d054f34fb01ff1e8864326889bd2b24f626",
+            "hash": "b363598dc2b2ca9e89489729288fcb761ecb1319397d06a699d7bbd4f357e100",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:36a9c56b72919f6ee03ed6e929a2e9abfb58b0084a8cab91119393f396faa26e",
+            "hash": "43f819508519ec69bcaca64941403854d7fe2e038cff9d5bc25a7263fdf0f065",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:407a91d3d4fa5ae79f9b36285582a7ad8738dcf8d9e2104faecb69fca08e07a6",
+            "hash": "c2681a0dd8c26207176519434352def643f4646362f14c58f0d8cdd2844bc3c4",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:40a8ca9e0abcfe1a1ddcdcc44ca837131ed669f51eafcb1d27b361da7d8d1165",
+            "hash": "1dd76fce8a15f76bac527b38d3c584d06a48f619d69005d08ca311f1b28f8c8c",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:46c71f6c8010ba06139e2df649ad68b93d6386d40065301f33e9c3c6d04a81d0",
+            "hash": "edf9da8eda22c59c30c324e017eb055f6818da8136cdaedb42afa3f0e89c0584",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:484f9d95e130b527cf40c85b560fc70edf30efc56fd57750ad78ee81f64deb47",
+            "hash": "7a8732112522249e413650e48dda4befafa3284f47e4a1fe653c4172acba7e28",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:4c6e9d7cd2f5506ef5d07f1545dad8d1ca31bfd74ad3ca3e1a6d34accac62db2",
+            "hash": "6da9c53db4ca942f595dfe2d69749293aa2bd2b15aa96bed2918110af420f26b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:4d307a56c0beed06090c18b6a431f82f1292d895bdc3186452a36eb33bc6f095",
+            "hash": "312372b7429ca7a9cf5210f816990743a5cc6ebbbe042ce67d2d9c319303fbd7",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:4f78225af2661b5b2f22f126fba54723cdbd02e16a8f89fe024f9f21fd54248b",
+            "hash": "58703f35a1956a3cecbf8e6459e2430bc26f18b80014c0b792fb2ac90d372b2d",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:5b5d24ca717950268327ba8a8a14ebd116476e226be68ff3663d577df7fa3ed1",
+            "hash": "a5bf262e18c387581d8c31ccf3cfef24cff08fb6dbc09b8db2823e7ad2d1adf7",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:5c484e793c5fbab10f9d42025bd34db662a33f04ccf3f2157fad7fba1d3fe843",
+            "hash": "259afef20f292af132610f7466cb70bf99218b7549cdda0d402fe37af7bac0f8",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:6882b248e31a65f287a7a2ab617b31ebfed771511e730697ceb43f0b5a3dd067",
+            "hash": "9c33d42fdc2b4ef6e77d575a37b183c8c4472386833c129a32c7910f5771baec",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:69f8b6614de6be6712544c2ee92e323be657baea3072e5d8fe2b61b3fde4b6d2",
+            "hash": "6c0872798bac0d805bbf8ff774e26b2b455b93eb2e1f4575ab808c8f541d3ab3",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:6a4ca003d6cce2477e549d195b01bf093e37784a9566afc8239f5169e32e3818",
+            "hash": "0bad699d376a3aa86ef9c2cf896c5f2c2331a9502caa2bdd0c8b0e57a445388b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:709c3cb6f68c39f7fac17d28cbfef62a41eb2ab52cb44d2b35c402395d0126c4",
+            "hash": "6a71a9c7b3fa5ef0353d7e181695ba448746db3a69c4f04d6928ef751a731fd7",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:7456b78b84937f3f7d137c1af263bfbb1987075e6d093f1bcaf89751e9d30b9c",
+            "hash": "deb64256d37b24ad8f80a6241991503cb7eec9146e82701fb61a880843c1e4c6",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:763d6bf2ce815f919798705460bf9199302ffc581f1aec7031275ec60bdb36a3",
+            "hash": "273a7478f58583a40ed1388fcb078d69b0807af2e69ceb5be7eb81b5509dcebd",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:7c59f01508ae8297658af14d0af57e4d1eaf95bed6fb729d27de2c45faf61eef",
+            "hash": "317229eecaea977ad9ab65ac0b5291fedbb67b06987b3f38be079415a6b84cdc",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:84650f1042abf3d267bb79b6d1e1d899d27327a11ab81f1079121734a68306b1",
+            "hash": "e9e359b464f85c2fd1d031b033e6bd62d90a7922c52cca9a3d062bf14a563e90",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:8701a5c0c217906a7982be7725249353ee02d5fad80c6f8fc9ad22241072b89d",
+            "hash": "71bb1167d312f62dc14e970dd67a211ad0451b556bd2212507aeca290867b249",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:87af7bdf47fa02d0fc18d13cf81cda012d1edb0c3458a2dd4ab4f9ca3113988c",
+            "hash": "605f3f63a68a87ecfc7ca424ed7a56b15274c717e9cadcb84b43c3c4800e5fa5",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:92e4b2cc3b6a16e3e4ad52e89731bd602cb5bf42c884c540981284b28a415929",
+            "hash": "712105f1bf7ffb0880b52f87af274288842616b8921c2c6609bcce8b03f8f5c7",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:95af6ecc707197ef62b26adf0f0b5eb0ac8a4335b304bc0b77b87feffc1b5fc3",
+            "hash": "f491b00c23cd23483dbaa9ca576d4a10519fda4867b6b85cfcaab770b01414e0",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:95ef46b58759a1595006301bebb7be5edff15ad5fcaec453d3483c6d8d554b10",
+            "hash": "cee3e45e71c8af50036aabac8a1b5281fc2ed020af558282e68dc78807bf83db",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:977a0ea5fc1727ca664cd2af90b5c4a2f36648891e8f5b6ad047512df081a4d8",
+            "hash": "4fb49d77f0ef38ba6f96ff73d5a16810e1d1ba0fd324eb7a6b54054dbaef89a9",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:9aafbce875263fd96f7bec10666dde3534e82b01bc2545cf9d4ade501ea943f0",
+            "hash": "0b66490e29e43c47bbec878d865287c76bee300efac7364fe3da5cc85a756428",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:9c7c693083342fc0622081516bebd935c7b1d08f3bea9969944d1ef2bf5864fc",
+            "hash": "3f2b0924df203cb7fd8b87c6a1d58920fa06dc30f66fe1e5d244ff42eabc7ef2",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:9e3c878ffe6ee807e3b01746de0f4a8da254e96c865f7b518ddc1b16f564ce9c",
+            "hash": "10329e483e5b05faa880bf8ae94cc2f5a930c253930f015fb9b58fd287deeda2",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:a0383235b91e3e448468d0764fedb901f39a8c7855b214ba364e6956722c89cf",
+            "hash": "2c6f9785ff19f719336d7ae42c76684bf34c49fecb55a591df0563ce1797530b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:a07f06973712c26654d728911aaef7046af825e1d449c731aa7af32a94d9cbd1",
+            "hash": "5e5ae74d2b9891db15d971bf07988cdd8a4a971025d5d1c12959545d1b309e7c",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:a0f4b0be2055ef97c455771f2de3eb3f41c9018603d96c93225be734b70dcdce",
+            "hash": "d11ccf1d783cba88b8e32fd68f1fa9c23c9832078b81027e79a98fb4d610087a",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:afb99e750d3a60adef0795fffb10a9c7639d06be30c5119c1003238abc6f9b46",
+            "hash": "0b0ad6e69269aef07666d945f5c8e17355248104dcb384ae6054b670f4c05c4e",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:b1b1678a4f290c8ab2b85f957a0cdbba93ef0c97d1e7ab4663e46e92ebac70e8",
+            "hash": "bdb2046a8b864dc403ad8455ff784d76553fa44b2e05c27c43f0c20e70fac89f",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:b7b7e331df4614775210ef5e524ed7f20c5fec6655fb0dd179c94e4d71170862",
+            "hash": "2c215bbfef6812e56c320b2caaf17f5049662c29facba607ae0871dd66072519",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:bd14ba82d1fe813dcdf6c16f0f868e5f3fe92e4cee9cf5eb3fd5cb6f03d68517",
+            "hash": "f6e5216c653205beb6ca10281d240ca606688f6119d4059a131b7f06f823ddb3",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:bd6776bfffbd81eaa021c33ffbd833e0c75ee50c5827094ccb469d421cd5b8ab",
+            "hash": "2d0736cdff8a4c2ca0315710a9fc76664b237495aefd18dbdc64733b1651f595",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:c2b235761e06ab22ef1bfba7fa61461b6f6536e5b2a7709674193c7cc96b192c",
+            "hash": "934cb852909e1842a530e27672a6fa583070be0cbc4fd01bac7a83bf21eec030",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:c89fdda34dcddd50a92fd79332f22c31b7f0fd94d3ce05062fd7a874bd36e224",
+            "hash": "db20ab1ddcdde3fc21655e912e9bfbadf7b244f1edfcb533d6a943cf62037278",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:d60075facb5ecdbc3618620e77f29db9dc5f24b11eb789c771b3180b48866fbf",
+            "hash": "57f4ce743f1c6daad88427f60420c461bd5cd6d62cef0b68ca445931619c542e",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:d977e70d05f737b3df36dbe997420820c43a0c43cfb0ff32290d45667b53987d",
+            "hash": "11a26912d55b22ab6206d1fa58eea4150829ff5586008e330a7115a396c7e182",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:d99123f5dae428ffc74487c853ff6a440a5d3f3ffdc47006175db53ff4a5054c",
+            "hash": "598d9908cb037bb4736a3531a3cd829226146bc1393c1bf3d9eff1cb6693e8e7",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:db55a7cc2ceaa32778ecbb91aecaca4b905b0de218f9a2080a2b3548bbf507b0",
+            "hash": "eb96c260580beba4bd7b2a5209fa1452191050e553d5ec46ab44a06e99e7bcad",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:e0df6bab9a48ea72072778dc1f8a804810438529347c88b5028b15045b20a203",
+            "hash": "e0384394a845a0839935cb2a7b08f2e437b87c1b4085915026a9d85645c93755",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:ed015ab9a9b9c84e1b5d45695a46f91880ced969877640ef9eafd4c231a8960a",
+            "hash": "a0ee463149b8126694da4d19d01317a13aed921c8660a8859020baa9c068e893",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:f2a76bdd345c47700ec8b8df974d871d3f2102114c24933b6da249af92ee7f33",
+            "hash": "6d51c74ee59535af7b02a32b5460a9aa34d54e85e93559aca729392f58ed369b",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:f32bae4c10c136c2e8c1180b6bd43c70aeb916935ff767779d95b3093354dd5b",
+            "hash": "c811f7f139c891790e38cbf1fa3b4f783d20d5c79e63faa8b888ee243e4ce3f5",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:f8e84ee53942b7e6881fd483a404f6d2c875e816fd79f07cf4181d5d0e3a5b31",
+            "hash": "23579fa4a1a1b927c7b783b73d73abdd4a287bf69b15c433559d41010ac1fcbe",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:fb970027cec594189294af351537cff1a9a860a8acad597f7f8854fc0ec8875e",
+            "hash": "256dcbcebf020ed6ba8e19f4979135322ebde1a75eb131e4d0a034211dd8b589",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livebench:fd87ac63ae2222cc816095cc4f9cbecbdeb65eae64c9e92cccbae3514c7c7354",
+            "hash": "a828c60c4fede4f7c8f5061a684ab56420389fc83ab3a0b276ac9a063f6eb55c",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livecodebench:atcoder:abc302_b",
+            "hash": "4479acec3e8561623f17d234c6eb2878e86db083e478b7b2b647d76fe37a530f",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc302_f",
+            "hash": "2cdd95f660d72ff5797c536903855e0d3c71ae48158b8387ecd70a8d6f159fb1",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc304_d",
+            "hash": "b856e3b1d0cc7af302e8b2ae6d3d8e6414cc91b271ab5a1039ff9e71e8ee6832",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc305_c",
+            "hash": "55da33f800e3aa15cd7c48f191f0264abe483728c60ef14ed1dd59753f9bd28e",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc306_d",
+            "hash": "2b6fc0ebbd60afcacbbfd36c0f56439f0de5d7841bff40b14cdfc84955c71943",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc307_e",
+            "hash": "4b708cdce642bfaeedf85a9522093aaefb8a892520b88be9c4f76046746ec9f5",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc309_a",
+            "hash": "43fcb2d8183ff67f82e0ad456139147b464cd4356f4655f715282a1920f64bf2",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc310_d",
+            "hash": "fad7b1bd90f252cc2d349a68fadd8071d546769b7798a7c7b31d1668d5ae4641",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc311_a",
+            "hash": "b8035cd2d06500b24c0962710a45224e9b78b44a06f045568bf888ddb3ba2e38",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc312_e",
+            "hash": "0172b8f497ca98be1f1fffef91e453e68c6f2902322dd0f21c62f0a1de920a91",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc318_e",
+            "hash": "4a52f45d96e267355a79650136aba5cbd1a6fd92b4a7423586471ec725be7309",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc319_b",
+            "hash": "17263bfcd9be8e1f4d6126b2ea111a28a8e7f8c7eac3e0f5034d0ceff5dbcbdc",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc321_d",
+            "hash": "0365c8318a30113d8520a59e4d6220122fa6a5b0c62e9fb10de217f43392a62b",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc324_f",
+            "hash": "9b3912f0bf3f0b71deb05229c00d73481591f34078d3d661352bc5235a0fe058",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc325_e",
+            "hash": "64384a8019c71c104adfd442646717d9d4333a30ae506362fa7f956aa83e8bc1",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc330_a",
+            "hash": "0fd424d9f4db4222b24af352b78ee7559f2033c5e821415aa30f0a4df4a3b39c",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc330_d",
+            "hash": "3d1ae3a81641bbeaed5823ba8b712648431a916f51081dbdb8909abaeebd1590",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc331_d",
+            "hash": "9c143fe7dc0ed4bda79ce97bf7a51c2f8e19440ad9ad67d05c463f8e5808a878",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc333_a",
+            "hash": "068f44357b498b561a2a92174e32ed86e01994cbb64f470c6cbc758336ca0604",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc333_d",
+            "hash": "5f95b94191a38ad6edc7a1ec7ea867c386734e737b09179de237612e2b3386ba",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc334_a",
+            "hash": "d72ade6c101facbf1296bb8e9cfb98bc237dbcaf61f692c976ee45a495279d76",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc334_d",
+            "hash": "369c30fa102e1c412d7cf08a6c8117e2d87301484b1844d63ff50924dc83664f",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc338_b",
+            "hash": "8a2922ef13056b3d8e6ecbe86738330fbd28bcaa64ea407d16c2fa20572d2b91",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc340_b",
+            "hash": "ad57b8500fa8edde57000bf2ee143492132cadff2c972d8ed9147ca3255efc9a",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc341_c",
+            "hash": "2863d8aa506d54b3118739ee27272aa83381b7465d98c6291782c527c09b47e3",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc344_b",
+            "hash": "85f49ca83d0d2e6fccb2c33d4aaf688df97ba7c89c6fc98791f7c23397714a7f",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc348_a",
+            "hash": "2945e5d84c2e6b7eadbfd816a119fe27237eba8cb7252f620f73fc7355f08882",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc351_a",
+            "hash": "d90b1cadcf8808801bb4da0a5ddea1a33c4e03b2d14c75b944568575d5905155",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc351_c",
+            "hash": "4441d70faba61c1649a58a713765f0f8269117d66ed1a74f588ce0876a6dc7eb",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc352_a",
+            "hash": "b861f1e23783e279cb8243e3d97c1b193b70de641685d540a4a3801410c34ee6",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc353_c",
+            "hash": "1f31f07acb5f942a846005aae0012f9a3dba3b2aac30aaccfcc8e1c53f56aaef",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc353_d",
+            "hash": "aeda17b2f497a4340132f67037fe177167a7371b2696fe3abf41228e57ecf0ed",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_a",
+            "hash": "c06e3a46d1302dca3a61e9cdc2997b6e2c890c6934d3211a65ed3a50c3202294",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_b",
+            "hash": "6ef6c11677330641d88ce3215624ab80c83e288585bf76e0a0c6d6e88d7b0f18",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc354_d",
+            "hash": "627cd901c75bd6a692ab4033850aefad1c68de7b055a3ffaf58541fa93143d6b",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc359_d",
+            "hash": "d37665ea8335b14a100aaeaeb325dcc1009102687bd714bf67cff1f345fcfcd6",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc362_b",
+            "hash": "3215f481d53173322325e8f341ae46a796b710a1ed7d3e9fcfec488426ec07d3",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc363_f",
+            "hash": "83180024079ec68d8ca2f6e0c938aba9107455e87b28f9a832c2586787eaa428",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc367_d",
+            "hash": "3dab21f9c5909dda8ec1c438903f15dbcb1050e7b9fa6c272214f869772bc4fe",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc368_c",
+            "hash": "0c4d9b7a2ea931a3c4e2377ee6d7a144a584cc153fcf383ee223e4a4438220ed",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc368_e",
+            "hash": "833cb0597d0573553a8738630984f74aaa9262294ce63b88ac2c723d583a88b8",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc368_f",
+            "hash": "b1362305d6f132ac66b480218bbcf7f2e5e8366cba941ecccd365b8316e81e20",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc370_d",
+            "hash": "356dfdae5ae3e63c49a2216e5af61fe505638170a357935abac71f00e04b7cab",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc370_e",
+            "hash": "6bd7ec8b3ec0d5aed010d5bc4f6c47ab662c4478fc2e1eba250100a80fc5ebc5",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc374_a",
+            "hash": "a81e12cbdab64dfc2ad10f569ffd02448b3f7492cc5a421aa78ee1a4ca79a13a",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc375_b",
+            "hash": "9f46b0c9047b1de657660a33b1cc788b02a3994484b8acf40f2a1fd0bd8fdd9d",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc376_a",
+            "hash": "61ce7c853dc3bf77024d8ddc21825ad919e1072ad35fe196509817ad992c98c8",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc376_e",
+            "hash": "8e5077eb52fb06d8b833e84ef69bbcdd76eff1a84f4aeac598296d9a191cbc16",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc377_d",
+            "hash": "0de57573e9be2f97ccf4a950e1e4d68f4c1f94fd51b5b5c2e5ca3e49f4f3e01b",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc378_f",
+            "hash": "78bb42b1df2ea824078eebe980c649b11e0f94cc965141ec3f953a131d8724b7",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc379_c",
+            "hash": "b1cb3109e6cc8952c201ba3e74a7a50d5ae5117eb4603e6287e39ebfc60163bd",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc380_d",
+            "hash": "5d47dee9044b51490a60ec1d33e8bf022ce542b9a83721f24ce49c5386a941e8",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc380_g",
+            "hash": "56a3b5bfd5962a80fe0be5f203c44839145598c38b1a90a62dd799a61301b513",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc381_b",
+            "hash": "37cfd886996b7bbaf87a5199a0fb906148fb32bad0bab7268fa56de2e821f00a",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc382_g",
+            "hash": "091eefb3e4ffe1a21d24f3df7fa4f03111efb17b84d46439bf7e3e346aeeadc2",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc384_a",
+            "hash": "fdd256d50dc5a13b20af2f4751dc2812c919c65488b60c1c48615c803b2e8a7a",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc384_d",
+            "hash": "25ef7f7aeac15212e8e50e3ac38a8dabf9d3b7097e2cd483c77091ce52d6e879",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_a",
+            "hash": "c9b511dc173394a0d764066e97d063d5f6d4323c599a294e3c0b2525a4a308cd",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_e",
+            "hash": "2eeabd411fcd53c243001e5bafe59e921567d0905124154a5a0f9712f07f9c55",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc386_f",
+            "hash": "26a6e81e34993364acac8d234b7af18353579396b7bd5b09558cd2c77e0b895e",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_b",
+            "hash": "5bc946013136c88f1be4b3634e15302ae169efc49bf54f241b341a6d7f4afaf9",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_d",
+            "hash": "2eb9ac09dee961c3e1be21d124633fb7e535ef23c58d349777ac6977a57d017d",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_e",
+            "hash": "4dba3a8466ab4f2ae37653a8a0c4a9e5d9692e37efe04a87510a1c21a015c551",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc390_g",
+            "hash": "f0f91345b6f7618989d7845f6a16ec3c7cdf037e6a81f8e08401413f3939ea04",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:abc398_b",
+            "hash": "80fc1d805b86c38634dbcbef228401f3242797c3302de708225c38d753f9f6db",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:atcoder:abc400_a",
+            "hash": "2caaf171bf87ed273f761465988dcc915b3abb4ffa1314cb07bf3c1e8bc9ecff",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:atcoder:arc183_c",
+            "hash": "20a601ef3ae56f874d422b7b3acb48c49a99d0b999372f271753d16dc0d650e1",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc187_b",
+            "hash": "eb284c0fef87ee60b7125bd96d0806094d205a0813e1497d8929582059c51a95",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc188_b",
+            "hash": "e1535e6b58f028bc356bd2787f7ee3013f4fb986642344752f5c4c076c4a9f10",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc192_b",
+            "hash": "6bc2e7226d9ff0a42a094e77d5e1caa62f214cc9befd4d43772aa536beb7d4ef",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc194_c",
+            "hash": "870f9de252e12c365511b6f44025f344bd6332e1ea683063be5658a3f8704c18",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:atcoder:arc194_e",
+            "hash": "6fd5313b448ee47c5a95c7a24231d7f62608718aada8a2257b8dc94babdf56d3",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:codeforces:1883_B",
+            "hash": "addd901423c31374829e80bc458e1dc4bbbac3fda81c7af3468e9b2d316ae667",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2728",
+            "hash": "d28a6f6d7b3b3335af92cf6dc34b0721bdd98dec0162b90a6fbbb4c6c7810b24",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2800",
+            "hash": "f329e38ee4448ef4237a378d3fb370daccbc068f729444cc03c74e50751736be",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:2839",
+            "hash": "8455d4ad17997145291ae512349b862d948bcf269c2542a65e262db2559ee308",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:2850",
+            "hash": "724442ba40a5ba7dc9dbd8b78b59315ead9e2eaba4c9440b6a678294d76bb479",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2854",
+            "hash": "f881162840ca29db1cec18e197c4601cc650286d352c56862103e3d5a54bc1bb",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:2881",
+            "hash": "4adf9f593db9db5c61f6d5e0440a9aaf4aa3b05ae311abd129db374597e3a36f",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:2999",
+            "hash": "7e5ce4d3d277a71bc84f1f47c8ee331fc9c347b1c45195074741f3cda44217fa",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3031",
+            "hash": "f9b6aec3e10b648f2202ba702b1b122749da729df836040a2c3738479a1ac683",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3114",
+            "hash": "40948bebb6b424d4e058b37302efa66dec207dd90247c071bf53644a2dc199fd",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3171",
+            "hash": "210b660169e66c928cd7c61d578e51f3a844c1c4fd2491247991deb3306f0582",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3206",
+            "hash": "11b24bd640cf3bbd2665f9e94d490bde98b936ff35805dfec748bd14d8344cc9",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3239",
+            "hash": "3b1e11f6051d1e3dd32910fb89ac065e8694214acc43d481c4a20617d85906a2",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3261",
+            "hash": "2fadd701ce3df2f460fe3d8970e0d32b05d4266c46d24254cc09322fdee7ba6b",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3265",
+            "hash": "357bdd1f5632471d93f5aa5acf46f35f8ecdd3edda93d2a5e40daca2bdf7027c",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3292",
+            "hash": "63f6a29215ae6809910bf22185efa19edcaf3912d6f0869626f166370144e7a2",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3311",
+            "hash": "69442593ac768967ab67f6db82d92f055af039fa9ad1d003745f6574b7b3a7c7",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3312",
+            "hash": "1ab5ac30fbf165b2349816121e6df8f9123c81fe51c3b34dab0cbddb809e25ad",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3313",
+            "hash": "d95742027fd50aa948cb17178baf9f8f22300fa30923e5ce9ba4c35072f71533",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3344",
+            "hash": "2bf739f41caae9d2f0cc233dd00263f2feb177b2393f21e46da7c6f3a9899573",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3375",
+            "hash": "42a870482bc231b4c46953add7f06c763dcf6e1a3bffcb5612305962eedd6bda",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3388",
+            "hash": "70d436acb2130e301ff61ec6961d4b5639794933f8202803d55f8c4f631a4880",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3396",
+            "hash": "1db9769f2b9c6b8b2507a6f294c02e9d95950897eefb8edf18da7eecd6a580a3",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3411",
+            "hash": "c4feb3aa969c4f1e8cf816e40a0a7d385d70186d533033d7716f89cf6ceba46f",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3412",
+            "hash": "0d32109e311ea3a8c0c4b19ddae3ee538f57e1a1e939339edadd7836fc6b4ef7",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3414",
+            "hash": "52e5f427823b62b6e0b53095dd8e6453b4c772f222ba47d44b5b544a5c0bcede",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3421",
+            "hash": "241004cf07c551204a44bffd4589d7a2e99b928e3a6c9389e1cf0934b070a680",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3426",
+            "hash": "40e1adc22610c7ecaec4dbc34680325c37ed7562ad4530a6a535ee0948b026ea",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3461",
+            "hash": "bba5e2680762656120e8b78621ee58b611cd939ef44f4c2c6a1da079ac9b143b",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3490",
+            "hash": "c446d6aa30429bb1044e22c8a8f1c1d3f9f0d8243730edbccf573e421fa18d1a",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3492",
+            "hash": "6793d9ab4c02e7e0f816ba51b44aac15253d54270efd1d85ac10f9e4ca4e099e",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3498",
+            "hash": "0201d71d782f4381b77bf9fb8562e2f7a690da72c4bb6d3f864962cb6ddeaed9",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3515",
+            "hash": "bd3174aa1e1f0364c70f82b41641d7fc4c804d4087ef8921e9631d37728b3661",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3522",
+            "hash": "6ab837b78f9e63d9a67cdfbd71e872368c53f8efa349d66903168e7c230c4fef",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3534",
+            "hash": "75da93b9c101b120badd966b9fdf9ce0b9d274442c7e48ddfb561e92c37436bc",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3540",
+            "hash": "69146ddb0a3dc624c9ef73ddf51852e54334fe491976794ddc97a767f7b21468",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3594",
+            "hash": "91de24f204e22d8d3ce6015694d9292a2b249d7a300a885fd32f10038e207f17",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3603",
+            "hash": "31a2429b00a5fd2253f1c81c830fcd4930e135e2ff19792fe788d897761f4372",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3626",
+            "hash": "a84459e4ba4d27faac8dce7914015f5c5d6051cb4a5709ee28ce5fc4c1fa85c4",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3659",
+            "hash": "5bef0ddfe897d2e61324454b51fe3e1292b6a916170e26dab486b2855b7865c1",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3680",
+            "hash": "ca407551f6f7787ab47d09db918c14d84cffadebd3ae5c51ea79148dbbe61d50",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3692",
+            "hash": "01ac3690820341e90aa6556eec09e76f39b891d73dc67d052faca56ebcc4b848",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3696",
+            "hash": "d263f0256facf9710a585659550ae63e78f94c8c400bd2d7cef85993b2dbbe9d",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3768",
+            "hash": "35604a50da4d3f9844c72b188cd7f682c437641fc1bc6d399da49e4852a2f7d4",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3776",
+            "hash": "e235eba756368c2db37cdbea9743454b767131b563ec3ec37009aad67a3fb4ec",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          },
+          {
+            "id": "livecodebench:leetcode:3777",
+            "hash": "16327691e3563df899ac5455ef0ea0dffc7335e9e1a3d1eb8be4d551ccb93269",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:3788",
+            "hash": "4da0b974ae81dd14ba91a5479d2c21e1266a9c142d4206aab2a8ca1b01cc1272",
+            "benchmark": "livecodebench",
+            "stratum": "easy"
+          },
+          {
+            "id": "livecodebench:leetcode:3801",
+            "hash": "621269bcf81d65591505e2c3a2d858c7841c086bd5f11b1f743625778444d3e8",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          }
+        ],
+        "pilot": [
+          {
+            "id": "livebench:b1a413b03774b8811bb97c0b238c16c3c122217a11aa51425918bd5315b0935b",
+            "hash": "efcace31b0f322ac38914424b338cea23e8c8813c5bf03a036514ec76fef3d25",
+            "benchmark": "livebench",
+            "stratum": "zebra_puzzle"
+          },
+          {
+            "id": "livebench:b7d1f1dff19c7a17f5bed438461607ab663b76b783a55ccdd2b5efb2236c4831",
+            "hash": "569a4556e6c160f170e5774f56cf608bb5e24aed252b882f189a8e44fbe85f2a",
+            "benchmark": "livebench",
+            "stratum": "spatial"
+          },
+          {
+            "id": "livecodebench:atcoder:abc370_g",
+            "hash": "de1f12181485d88e5915e602c35ae957b93dc04109d6f015e89241e59eeda686",
+            "benchmark": "livecodebench",
+            "stratum": "hard"
+          },
+          {
+            "id": "livecodebench:leetcode:2817",
+            "hash": "4351e9356b8260efa637f6cf651de096568631a1c2c7827ba9a65bbd0f42409a",
+            "benchmark": "livecodebench",
+            "stratum": "medium"
+          }
+        ]
+      },
+      "validated": true,
+      "active": false,
+      "partial": true,
+      "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0,
+        "tools": false,
+        "completions": 1
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
+      }
+    }
+  ],
   "budget": {
     "week": "2026-10-05",
     "attempts_limit": 300,
     "tokens_limit": 1000000,
-    "planned_attempts": 3,
-    "planned_tokens": 0,
-    "attempts_used": 2,
-    "accounted_tokens": 0,
-    "reported_tokens": 0,
-    "estimated_attempts": 0
+    "planned_attempts": 48,
+    "planned_tokens": 484560,
+    "attempts_used": 52,
+    "accounted_tokens": 133080,
+    "reported_tokens": 31704,
+    "estimated_attempts": 20
   },
-  "queue_size": 0,
+  "queue_size": 120,
   "missed_deadlines": 0,
   "blockers": [
-    "OpenCode Zen API key is not configured",
     "Authenticated GPQA access is not configured",
-    "Docker is not installed",
     "Benchmark season awaits preparation and grader validation"
   ]
 }

@@ -5,8 +5,8 @@ RUN pip install --no-cache-dir -r /requirements.txt
 COPY livebench /opt/livebench
 COPY livecodebench /opt/livecodebench
 COPY worker.py /opt/worker.py
+RUN chmod -R a+rX /opt
 ENV PYTHONPATH=/opt/livebench:/opt/livecodebench
 WORKDIR /opt/livecodebench
 USER 65534:65534
 ENTRYPOINT ["python", "/opt/worker.py"]
-

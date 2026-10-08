@@ -9,7 +9,7 @@ uv sync --frozen --no-editable
 uv run --no-editable leaderboard status
 ```
 
-Python 3.11 is managed by uv. Install and start [Docker Desktop](https://docs.docker.com/desktop/setup/install/mac-install/) before grading. Accept access to [GPQA](https://huggingface.co/datasets/Idavidrein/gpqa) using your Hugging Face account; its terms prohibit publishing examples. Supply credentials in your own terminal, never in a commit or chat:
+Python 3.11 is managed by uv. Start [Docker Desktop](https://docs.docker.com/desktop/setup/install/mac-install/) or a working Colima Docker engine before grading. Budget roughly 15 GB of free local disk space for datasets, the grading image and rotating backups. Accept access to [GPQA](https://huggingface.co/datasets/Idavidrein/gpqa) using your Hugging Face account; its terms prohibit publishing examples. Supply credentials in your own terminal, never in a commit or chat:
 
 Use `uv run --no-editable` for commands on macOS if filesystem hidden flags cause editable-install `.pth` files to be skipped by Python. The installed launch agent directly uses the project's virtual environment with an explicit source path, avoiding dependency installation during scheduled runs.
 
@@ -18,7 +18,15 @@ uv run --no-editable leaderboard auth zen
 uv run --no-editable leaderboard auth hf
 ```
 
-Credentials are stored in macOS Keychain through Security.framework. Environment variables `OPENCODE_API_KEY` and `HF_TOKEN` are supported for portable manual runs. The installed launch agent uses Keychain. Configure the Zen account to disable paid access and auto-reload where available; this runner only submits exact IDs with fresh zero-price evidence.
+Credentials are stored in macOS Keychain through Security.framework. Environment variables `OPENCODE_API_KEY` and `HF_TOKEN`, an existing OpenCode API credential, and the standard local Hugging Face token file are supported. Without a Zen key, the runner uses [OpenCode's public free-model credential](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/provider/provider.ts). It still requires fresh official zero-price evidence and never substitutes a paid endpoint.
+
+For a reliable scheduled runtime outside the public checkout:
+
+```sh
+UV_PROJECT_ENVIRONMENT="$HOME/Library/Application Support/OpenCodeFreeLeaderboard/runtime" uv sync --frozen --no-editable --link-mode copy
+```
+
+The launch agent prefers that private runtime when installed. `PYTHONPATH` points to the checkout's source so scheduled runs use current code. The computer and Docker engine must be running.
 
 ## First evaluation
 
@@ -43,6 +51,12 @@ uv run --no-editable leaderboard pilot
 
 Profile changes create an evaluation epoch on the next discovery. There is no automatic parameter fallback, model substitution, or paid provider fallback. Muse Spark Contributor endpoints are excluded.
 
+While GPQA access is pending, `prepare-panels --public-only` freezes a separate compatibility panel. Run `pilot --season PUBLIC_PILOT_ID` to evaluate six synthetic probes and two held-out questions each from LiveBench and LiveCodeBench per selected model. This pilot cannot be promoted or used for headline rankings. `prepare-panels --season SEASON_ID` validates an already frozen panel without downloading or resampling it. Download caches can be discarded after the selected questions and manifest are stored and backed up; preserve the private SQLite state.
+
+`pilot --season SEASON_ID --local-opencode --model MODEL_ID` uses the installed OpenCode client for an explicitly unranked experiment. It selects one exact verified free ID, denies tools, disables title/summary/compaction agents and sharing, sets temperature zero and the output cap, and requires one zero-cost completion. OpenCode's system/environment context and message formatting differ from the headline protocol, so these answers use separate epochs and cannot enter or be reused in rankings. Normal OpenCode integration remains enabled; this runner does not spoof client identity to bypass free-tier restrictions. Provider rejection is a blocker, even when the same model works in a normal interactive agent session.
+
+The native parser treats OpenCode's visible output and reasoning as separate token counts, and cached input as separate from uncached input. It adds each exactly once and checks the combined output cap. Native experiments reserve extra input capacity for OpenCode context. Their usage is OpenCode-normalized rather than a raw provider invoice; unverified outcomes retain a conservative reservation. Native attempts count CLI invocations, not internal HTTP retries that OpenCode does not expose. This limitation is displayed publicly and is another reason native pilots are separate from the headline runner.
+
 ## Routine operation
 
 The `launchd` agent runs at 09:15 local time and at login. Keep this checkout at its installed path and keep Docker running. Daily execution revalidates eligibility and resumes work; health jobs are unique to each model/epoch/week. Models have four stable refresh cohorts. A 28-day deadline depends on provider availability and the computer running.
@@ -52,6 +66,8 @@ The `launchd` agent runs at 09:15 local time and at login. Keep this checkout at
 Private state defaults to `~/Library/Application Support/OpenCodeFreeLeaderboard/`, with SQLite WAL, response files, pinned datasets and upstream source archives, logs, and seven daily backups. All commands share a nonblocking process lock. Use `--state /absolute/private/path` before the command to override storage; placing it inside the checkout is rejected.
 
 Responses are written atomically before grading. If the runner crashes with a saved response, recovery grades it without regeneration. Requests with no durable response are marked ambiguous; no automatic replay occurs. Authentication errors, quotas, and infrastructure errors do not count as failed benchmark answers. Explicit retryable HTTP failures have at most two retries. Failed/ambiguous jobs remain visible and prevent a complete-panel rank; do not erase them to obtain a better sample.
+
+Missing output usage or inconsistent reasoning accounting also blocks headline eligibility, retaining the response without replay. Recovery applies the same cap checks as normal execution. Historical rows retain the configuration used by their evaluation cycle.
 
 ## Protocol and statistics
 
@@ -66,6 +82,8 @@ Panels are nested and deterministic (seed 20261008). GPQA is stratified by subje
 One completion, no tools, no self-repair, temperature zero where supported, 4,096 maximum generated tokens including reasoning where supported. Invalid formats, refusals, wrong answers and truncations are graded objectively. LiveBench zebra grading preserves upstream fractional credit.
 
 Reasoning equally averages GPQA and LiveBench. Coding is pass@1. Optional overall weights are 40% reasoning and 60% coding. Complete panels alone receive scores; screens and confirmations never share a ranking. Ten thousand deterministic stratified bootstrap resamples estimate question-sampling uncertainty. Identical question IDs use identical draws for paired comparisons. An interval containing zero is unresolved; comparisons are exploratory and not corrected for multiple comparisons.
+
+These small, older public subsets may have appeared in model training. The intervals do not measure contamination, hidden alias changes, provider reporting errors, or repeated-generation variability. Exact point-score ties share a displayed position; unresolved comparisons do not establish a winner. No code review can establish absolute fairness or trustworthiness.
 
 Weekly minimums are 300 provider HTTP attempts and one million accounted tokens. Capacity scales to outstanding headline questions, six probes per eligible model and 25% retry headroom. Accounted tokens conservatively use UTF-8 prompt bytes plus overhead and the generation cap until actual totals are reported. These estimates are not provider invoices. Metadata calls and failed attempts count toward the HTTP budget. Provider-reported token overruns are recorded even if they exceed a reserved estimate; subsequent requests stop at the budget boundary.
 
@@ -86,4 +104,4 @@ uv run --no-editable pytest -q tests/test_core.py
 uv run --no-editable ruff check src tests grading/worker.py
 ```
 
-See [architecture and acceptance notes](docs/architecture.md).
+See [architecture and acceptance notes](docs/architecture.md) and the [2026-10-08 code review and pilot execution record](docs/review-2026-10-08.md).

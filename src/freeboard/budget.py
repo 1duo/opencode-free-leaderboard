@@ -19,13 +19,20 @@ def estimate(messages: list[dict], cap: int) -> int:
 def usage_total(usage: dict | None) -> int | None:
     if not usage:
         return None
-    if isinstance(usage.get("total_tokens"), int):
-        return max(0, usage["total_tokens"])
+    def valid(value):
+        return type(value) is int and value >= 0
+    total = usage.get('total_tokens')
+    components = None
     for a, b in [("input_tokens", "output_tokens"), ("prompt_tokens", "completion_tokens")]:
-        if isinstance(usage.get(a), int) and isinstance(usage.get(b), int):
+        if a in usage or b in usage:
+            if not valid(usage.get(a)) or not valid(usage.get(b)):
+                return None
             # Cached tokens and reasoning are subsets of these totals, not additional tokens.
-            return max(0, usage[a]) + max(0, usage[b])
-    return None
+            components = usage[a] + usage[b]
+            break
+    if total is not None:
+        return total if valid(total) and (components is None or total >= components) else None
+    return components
 
 
 class Budget:
@@ -89,4 +96,3 @@ class Budget:
             accounted_tokens=?,reported_tokens=?,usage=?,response_path=? WHERE id=?""",
                         (now(), status, http_status, charged, reported,
                          json.dumps(usage) if usage else None, response_path, attempt))
-
