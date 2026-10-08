@@ -61,6 +61,11 @@ def main() -> None:
             save_credential(args.provider, getpass.getpass(f"{args.provider} credential (stored in Keychain): "))
             print("Credential saved in macOS Keychain")
             return
+        if args.command == 'schedule':
+            # RunAtLoad may start immediately; do not hold the runner lock during bootstrap.
+            print(json.dumps({'launch_agent': str(install(settings, checkout)),
+                              'schedule': '09:15 local time daily and at login'}, indent=2))
+            return
         db = DB(settings.state)
         with db.locked():
             runner = Runner(db, settings, checkout)
@@ -125,8 +130,6 @@ def main() -> None:
                 result = export(db, settings, checkout)
             elif args.command == "publish":
                 result = publish(db, settings, checkout, args.create_repository)
-            elif args.command == "schedule":
-                result = {"launch_agent": str(install(settings, checkout)), "schedule": "09:15 local time daily and at login"}
             elif args.command == "profile":
                 model = db.one("SELECT * FROM models WHERE id=?", (args.model,))
                 if not model:

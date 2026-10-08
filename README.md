@@ -26,7 +26,7 @@ For a reliable scheduled runtime outside the public checkout:
 UV_PROJECT_ENVIRONMENT="$HOME/Library/Application Support/OpenCodeFreeLeaderboard/runtime" uv sync --frozen --no-editable --link-mode copy
 ```
 
-The launch agent prefers that private runtime when installed. `PYTHONPATH` points to the checkout's source so scheduled runs use current code. The computer and Docker engine must be running.
+The launch agent prefers that private runtime when installed. It uses a managed public-source clone at `state/scheduler-checkout`, outside macOS's protected Documents directory. Installing the schedule clones or fast-forwards the already published source and sets an explicit source path. Reinstall the schedule after publishing code updates; scheduled snapshots are committed from the managed clone. The computer and Docker engine must be running.
 
 ## First evaluation
 
@@ -59,7 +59,7 @@ The native parser treats OpenCode's visible output and reasoning as separate tok
 
 ## Routine operation
 
-The `launchd` agent runs at 09:15 local time and at login. Keep this checkout at its installed path and keep Docker running. Daily execution revalidates eligibility and resumes work; health jobs are unique to each model/epoch/week. Models have four stable refresh cohorts. A 28-day deadline depends on provider availability and the computer running.
+The `launchd` agent runs at 09:15 local time and at login. Keep the private runtime and managed scheduled checkout at their installed paths and keep Docker running. Daily execution revalidates eligibility and resumes work; health jobs are unique to each model/epoch/week. Models have four stable refresh cohorts. A 28-day deadline depends on provider availability and the computer running.
 
 `run --limit 10` processes at most ten jobs. `confirm MODEL_ID` queues 160 extra questions on the model's completed, current screen cycle. The next run processes headline obligations before confirmation extensions; confirmations do not automatically expand the weekly budget.
 
