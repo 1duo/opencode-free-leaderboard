@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "snapshot_id": "50ed27d6b8c905326067",
-  "generated_at": "2026-10-08T20:47:23+00:00",
+  "snapshot_id": "4366927281355150d3c3",
+  "generated_at": "2026-10-08T21:14:11+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-08T20:28:57+00:00",
+  "discovery_at": "2026-10-08T20:47:47+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -19,7 +19,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -54,7 +54,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -89,7 +89,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -124,7 +124,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -159,7 +159,7 @@
       "protocol": "unsupported",
       "endpoint": "https://opencode.ai/zen/v1/systemone",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -194,7 +194,7 @@
       "protocol": "unsupported",
       "endpoint": "https://opencode.ai/zen/v1/systemone",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -229,7 +229,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -264,7 +264,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -299,7 +299,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -334,7 +334,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -369,7 +369,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -404,7 +404,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -439,7 +439,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -474,7 +474,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -509,7 +509,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -544,7 +544,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -579,7 +579,7 @@
       "protocol": "responses",
       "endpoint": "https://opencode.ai/zen/v1/responses",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -614,7 +614,7 @@
       "protocol": "responses",
       "endpoint": "https://opencode.ai/zen/v1/responses",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -649,7 +649,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -684,7 +684,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -719,7 +719,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -754,7 +754,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -789,7 +789,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": true,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -824,7 +824,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": true,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -859,7 +859,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -894,7 +894,7 @@
       "protocol": "chat",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-08T20:28:57+00:00",
+      "observed_at": "2026-10-08T20:47:47+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -1434,6 +1434,7 @@
       "unranked": true,
       "extra_system_context": true,
       "cap_verified": false,
+      "client_version": "1.18.31",
       "status": "complete",
       "progress": {
         "gpqa": 0,
@@ -1479,6 +1480,7 @@
       "unranked": true,
       "extra_system_context": false,
       "cap_verified": true,
+      "client_version": null,
       "status": "complete",
       "progress": {
         "gpqa": 0,
@@ -4560,7 +4562,7 @@
     "tokens_limit": 1263073,
     "planned_attempts": 32,
     "planned_tokens": 179969,
-    "attempts_used": 188,
+    "attempts_used": 190,
     "accounted_tokens": 518669,
     "reported_tokens": 364367,
     "estimated_attempts": 26

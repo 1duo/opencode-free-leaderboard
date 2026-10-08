@@ -81,6 +81,7 @@ class PublicScreen(Strict):
     unranked: bool = True
     extra_system_context: bool
     cap_verified: bool
+    client_version: str | None = None
     status: str
     progress: dict[str, int]
     expected: dict[str, int]
@@ -336,9 +337,11 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             AND a.status IN ('received','recovered')""", (cycle['id'], b))['stamp'] for b in completed_components}
         generated_items = [r for r in items if r['latency'] is not None]
         native = cycle['kind'] == 'native_public_screen'
+        profile = json.loads(cycle['profile'])
         public_screens.append(PublicScreen(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
             transport='local-opencode' if native else 'zen-api', extra_system_context=native,
-            cap_verified=json.loads(cycle['profile']).get('cap_verified', False) and not any(
+            client_version=profile.get('version') if native else None,
+            cap_verified=profile.get('cap_verified', False) and not any(
                 r['status'] == 'cap_unverified' or 'output cap' in (r.get('error') or '').lower() for r in items),
             status='complete' if complete else 'pending', progress=progress, expected=expected,
             pending_reasons={s: sum(('grading_blocked' if r['status'] == 'generated' and r.get('error') else r['status']) == s for r in items)
