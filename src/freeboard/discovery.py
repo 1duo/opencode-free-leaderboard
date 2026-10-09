@@ -7,7 +7,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from .budget import Budget
-from .config import ZEN_BASE, ZEN_DOCS, credential, digest, now, week
+from .config import OMITTED_MODELS, ZEN_BASE, ZEN_DOCS, credential, digest, now, week
 from .db import DB
 
 
@@ -56,7 +56,7 @@ def profile_for(endpoint: str | None, reasoning: dict | None = None) -> dict:
 
 
 def excluded(ident: str) -> bool:
-    return "muse" in ident.lower() and "contributor" in ident.lower()
+    return ident in OMITTED_MODELS or ("muse" in ident.lower() and "contributor" in ident.lower())
 
 
 def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict:

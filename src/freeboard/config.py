@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict
 ZEN_BASE = "https://opencode.ai/zen/v1"
 ZEN_DOCS = "https://docs.opencode.ai/docs/zen/"
 SEED = 20261008
+OMITTED_MODELS = frozenset({'exo-free', 'ling-3.0-flash-fin-free', 'nemotron-3-ultra-free'})
 COUNTS = {"screen": {"gpqa": 20, "livebench": 20, "livecodebench": 40},
           "confirmation": {"gpqa": 60, "livebench": 60, "livecodebench": 120},
           "pilot": {"gpqa": 2, "livebench": 2, "livecodebench": 2}}

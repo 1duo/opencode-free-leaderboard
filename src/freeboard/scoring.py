@@ -11,7 +11,7 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict
 
 from .budget import Budget
-from .config import COUNTS, Settings, credential, digest, now
+from .config import COUNTS, OMITTED_MODELS, Settings, credential, digest, now
 from .db import DB
 from .opencode import REVISION, VERSION, interruption_status
 
@@ -270,6 +270,8 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
     active = db.one("SELECT id FROM seasons WHERE active=1")
     season_id = active["id"] if active else ""
     for model in db.rows("SELECT * FROM models ORDER BY id"):
+        if model['id'] in OMITTED_MODELS:
+            continue
         cycles = db.rows(f"""SELECT * FROM cycles WHERE model_id=? AND kind='screen'
             AND json_extract(profile,'$.transport')='local-opencode'
             AND json_extract(profile,'$.protocol_revision')={REVISION} ORDER BY started_at DESC""", (model["id"],))
@@ -328,14 +330,17 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
     queue = db.one(f"""SELECT COUNT(*) AS n FROM jobs j JOIN cycles c ON c.id=j.cycle_id
         JOIN models m ON m.id=c.model_id AND m.epoch=c.epoch
         WHERE j.status!='graded' AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen')
+        AND m.id NOT IN ({','.join('?' for _ in OMITTED_MODELS)})
         AND json_extract(c.profile,'$.transport')='local-opencode'
-        AND json_extract(c.profile,'$.protocol_revision')={REVISION}""")["n"]
+        AND json_extract(c.profile,'$.protocol_revision')={REVISION}""", tuple(sorted(OMITTED_MODELS)))["n"]
     pilots = []
     for cycle in db.rows(f"""SELECT * FROM cycles WHERE kind='pilot'
         AND json_extract(profile,'$.transport')='local-opencode'
         AND json_extract(profile,'$.protocol_revision')={REVISION}
         AND epoch=(SELECT epoch FROM models WHERE id=cycles.model_id)
         ORDER BY started_at,model_id"""):
+        if cycle['model_id'] in OMITTED_MODELS:
+            continue
         items = records(db, cycle, 'pilot')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='pilot'", (cycle['season'],))
         expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['pilot']}
@@ -372,6 +377,8 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         AND json_extract(profile,'$.transport')='local-opencode'
         AND json_extract(profile,'$.protocol_revision')={REVISION}
         AND epoch=(SELECT epoch FROM models WHERE id=cycles.model_id) ORDER BY started_at,model_id"""):
+        if cycle['model_id'] in OMITTED_MODELS:
+            continue
         items = records(db, cycle, 'screen')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='screen'", (cycle['season'],))
         expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['screen']}

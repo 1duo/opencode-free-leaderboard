@@ -62,7 +62,7 @@ Once a model's public pilot completes, finish the frozen 20 LiveBench and 40 Liv
 uv run --no-editable leaderboard run --public-only --season PUBLIC_PILOT_ID --model MODEL_ID
 ```
 
-Use `pilot --all-models --season PUBLIC_PILOT_ID` to check the entire verified free catalog. Pilot capacity scales to the selected unfinished work plus already-accounted usage. Then `run --public-only --season PUBLIC_PILOT_ID` finishes screens for all models with successful matching pilots and verified caps. Access failures remain visible and unscored.
+Use `pilot --all-models --season PUBLIC_PILOT_ID` to check the verified free evaluation list. Pilot capacity scales to the selected unfinished work plus already-accounted usage. Then `run --public-only --season PUBLIC_PILOT_ID` finishes screens for all models with successful matching pilots and verified caps. Configured omissions stay outside evaluations and public reports across rediscovery. Private records and budget charges are retained.
 
 These 60-question public screens have separate persistent cycles, component scores and stratified intervals; they never receive headline ranks, reasoning/overall scores, or automatic confirmation extensions. Screens require a verified cap and a matching completed OpenCode pilot. Saved answers resume by grading, and pilot answers are never reused. Adding GPQA creates a new full season with fresh answers rather than silently turning these partial results into headline scores.
 

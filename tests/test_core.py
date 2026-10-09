@@ -113,6 +113,68 @@ def test_generation_endpoint_and_free_gates():
             completion_events({**native_result(),**changed},'test-free')
 
 
+def test_omitted_models_stay_out_of_runs_reports_and_rediscovery(context, monkeypatch):
+    import httpx
+    from freeboard.config import OMITTED_MODELS, ZEN_BASE, ZEN_DOCS
+    from freeboard.discovery import discover
+    from freeboard.public_run import plan_public_screen
+    from freeboard.scoring import snapshot
+    db, settings, checkout = context
+    active = season(db)
+    runner = Runner(db, settings, checkout)
+    add_item(db, tier='screen')
+    add_item(db, tier='pilot')
+    ids = [*sorted(OMITTED_MODELS), 'test-free']
+    for ident in ids:
+        m = model(db, ident)
+        for kind, tier in [('pilot', 'pilot'), ('public_screen', 'screen')]:
+            runner.add_panel(runner.cycle(m, active, kind, f'{kind}:{ident}'), tier)
+        if ident in OMITTED_MODELS:
+            assert excluded(ident)
+            completed = runner.cycle(m, active, 'screen', f'screen:{ident}')
+            db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), completed['id']))
+            with pytest.raises(ValueError):
+                runner.confirm(ident)
+            with pytest.raises(ValueError):
+                configuration(ident, 4096)
+            with pytest.raises(ValueError):
+                prompt_body(m, [{'role': 'user', 'content': 'Question'}])
+    assert [m['id'] for m in runner.models()] == ['test-free']
+    saved_job = db.one('SELECT id FROM jobs WHERE cycle_id=?', (f'pilot:{ids[0]}',))
+    attempt = runner.budget.reserve('opencode_generation', 1000, saved_job['id'], ids[0])
+    runner.budget.finish(attempt, 'ambiguous')
+    db.execute("UPDATE jobs SET status='ambiguous' WHERE id=?", (saved_job['id'],))
+    charged = runner.budget.summary()['accounted_tokens']
+    cycle = db.one("SELECT * FROM cycles WHERE id='public_screen:test-free'")
+    assert plan_public_screen(runner, cycle)['planned_attempts'] == 4
+    report = snapshot(db, settings)
+    assert report.queue_size == 2
+    assert {r.model_id for r in report.rows} == {'test-free'}
+    assert {p.model_id for p in report.pilots} == {'test-free'}
+    assert {p.model_id for p in report.public_screens} == {'test-free'}
+    assert not any(ident in report.model_dump_json() for ident in OMITTED_MODELS)
+    dispatched = []
+    monkeypatch.setattr(runner.opencode, 'generate', lambda m, *_: dispatched.append(m['id']) or native_result())
+    assert runner.drain(active, limit=1)['processed'] == 1
+    assert dispatched == ['test-free']
+    assert db.one('SELECT status FROM jobs WHERE id=?', (saved_job['id'],))['status'] == 'ambiguous'
+    def inspect(_, selected):
+        assert selected == ['test-free']
+        return {'test-free': {'api': {'id': 'test-free', 'url': ZEN_BASE}, 'providerID': 'opencode',
+            'cost': {'input': 0, 'output': 0}, 'capabilities': {'reasoning': False}, 'options': {}, 'variants': {}}}
+    monkeypatch.setattr('freeboard.opencode.client_version', lambda _: '1.18.31')
+    monkeypatch.setattr('freeboard.opencode.inspect_models', inspect)
+    html = '<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr>' + ''.join(
+        f'<tr><td>{i}</td><td>{i}</td><td>{ZEN_BASE}/chat/completions</td></tr>' for i in ids) + '</table>'
+    html += '<table><tr><th>Model</th><th>Input</th><th>Output</th></tr>' + ''.join(
+        f'<tr><td>{i}</td><td>Free</td><td>Free</td></tr>' for i in ids) + '</table>'
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, text=html)
+        if str(r.url) == ZEN_DOCS else httpx.Response(200, json={'data': [{'id': i} for i in ids]})))
+    assert discover(db, runner.budget, client)['ok']
+    assert all(db.one('SELECT status FROM models WHERE id=?', (i,))['status'] == 'excluded' for i in OMITTED_MODELS)
+    assert db.one('SELECT accounted_tokens FROM attempts WHERE id=?', (attempt,))['accounted_tokens'] == charged
+
+
 def test_highest_reasoning_is_explicit_and_fail_closed(context):
     from freeboard.scoring import reasoning_label
     from freeboard.config import digest

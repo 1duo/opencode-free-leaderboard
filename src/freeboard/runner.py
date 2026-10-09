@@ -12,7 +12,7 @@ from .adapters import parse
 from .budget import Budget, BudgetExhausted, estimate
 from .config import Settings, credential, digest, now, week
 from .db import DB
-from .discovery import discover
+from .discovery import discover, excluded
 from .grading import DockerGrader, GradingUnavailable, gpqa_score
 from .opencode import OpenCode, REVISION, completion_events, failure_status, interruption_status, prompt_body
 from .recovery import recover_quota_rejections
@@ -45,7 +45,8 @@ class Runner:
         return season
 
     def models(self) -> list[dict]:
-        return self.db.rows("SELECT * FROM models WHERE status='eligible' ORDER BY id")
+        return [m for m in self.db.rows("SELECT * FROM models WHERE status='eligible' ORDER BY id")
+                if not excluded(m['id'])]
 
     def cycle(self, model: dict, season: dict, kind: str, ident: str) -> dict:
         started = now()
@@ -298,6 +299,7 @@ class Runner:
                     WHEN c.kind='screen' AND EXISTS(SELECT 1 FROM panels p WHERE p.season=c.season AND p.tier='screen' AND p.item_id=j.item_id) THEN 1
                     WHEN c.kind='health' THEN 2 ELSE 3 END,
                 c.due_at,j.id""", (season["id"], week(), now()))
+            jobs = [j for j in jobs if not excluded(j['model_id'])]
             if kind:
                 jobs = [j for j in jobs if j["kind"] == kind or (kind == "pilot" and j["kind"] in {'health','cap_calibration'})]
             if model_ids is not None:
@@ -389,7 +391,7 @@ class Runner:
     def confirm(self, model_id: str) -> dict:
         season = self.active_season()
         model = self.db.one("SELECT * FROM models WHERE id=? AND status='eligible'", (model_id,))
-        if not model:
+        if not model or excluded(model_id):
             raise ValueError("Model is not currently eligible")
         cycle = self.db.one("""SELECT * FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind='screen'
             AND completed_at IS NOT NULL ORDER BY started_at DESC LIMIT 1""", (model_id, model["epoch"], season["id"]))

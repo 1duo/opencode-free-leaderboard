@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 
 from .budget import estimate
-from .config import COUNTS, digest, week
+from .config import COUNTS, OMITTED_MODELS, digest, week
 from .discovery import discover
 from .opencode import REVISION
 from .recovery import recover_quota_rejections
@@ -22,12 +22,13 @@ def validate_public_screen(runner, season: dict) -> None:
 
 
 def plan_public_screen(runner, cycle: dict) -> dict:
-    items = runner.db.rows(f"""SELECT i.content FROM jobs j JOIN items i ON i.id=j.item_id JOIN cycles c ON c.id=j.cycle_id
+    items = runner.db.rows(f"""SELECT i.content,c.model_id FROM jobs j JOIN items i ON i.id=j.item_id JOIN cycles c ON c.id=j.cycle_id
         WHERE c.season=? AND c.kind='public_screen' AND j.status IN ('pending','deferred')
         AND json_extract(c.profile,'$.transport')='local-opencode'
         AND json_extract(c.profile,'$.protocol_revision')={REVISION}""",
                            (cycle['season'],))
-    estimates = [estimate(json.loads(i['content'])['messages'], 4096) for i in items]
+    estimates = [estimate(json.loads(i['content'])['messages'], 4096) for i in items
+                 if i['model_id'] not in OMITTED_MODELS]
     used = runner.budget.summary()
     planned = runner.budget.plan(estimates, 0)
     runner.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?) WHERE week=?',
