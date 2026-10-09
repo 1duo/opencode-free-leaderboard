@@ -405,6 +405,66 @@ def test_native_free_limit_interruption_stays_unscored_and_visible(context, monk
     assert len(runner.db.rows('SELECT * FROM attempts')) == 1
 
 
+@pytest.mark.parametrize('blocker', [None, 'content', 'extra_turn', 'unknown', 'limit', 'wrong_prompt'])
+def test_only_proven_quota_rejections_resume_within_original_allowance(context, blocker):
+    import sqlite3
+    from freeboard.recovery import recover_quota_rejections
+    runner, job, item_model, item = job_context(context)
+    path = runner.settings.state / 'logs' / 'quota.json'
+    path.write_text(json.dumps({'model_id': item_model['id'], 'session_id': 'session',
+        'error': 'outcome unknown' if blocker == 'unknown' else 'OpenCode retry allowance exhausted; no automatic replay',
+        'observed_retries': [{'action': {'reason': 'free_tier_limit'}, 'next': 1791590400000}]}))
+    for _ in range(3 if blocker == 'limit' else 1):
+        attempt = runner.budget.reserve('opencode_generation', 1000, job['id'], item_model['id'])
+        runner.budget.finish(attempt, 'ambiguous', response_path=str(path))
+    runner.db.execute("UPDATE jobs SET status='ambiguous' WHERE id=?", (job['id'],))
+    native = runner.settings.state / 'opencode-data-v3/opencode/opencode.db'
+    native.parent.mkdir(parents=True)
+    with sqlite3.connect(native) as conn:
+        conn.executescript('CREATE TABLE message(id TEXT,session_id TEXT,data TEXT); CREATE TABLE part(message_id TEXT,data TEXT);')
+        infos = [('user', {'role': 'user', 'agent': 'benchmark',
+            'model': {'providerID': 'opencode', 'modelID': item_model['id']}}),
+            ('assistant', {'role': 'assistant', 'agent': 'benchmark', 'providerID': 'opencode',
+            'modelID': item_model['id'], 'tokens': {'input': 0, 'output': 0, 'reasoning': 0, 'cache': {'read': 0, 'write': 0}}})]
+        if blocker == 'extra_turn':
+            infos.append(('another', infos[-1][1]))
+        conn.executemany('INSERT INTO message VALUES(?,?,?)', [(ident, 'session', json.dumps(info)) for ident, info in infos])
+        conn.execute('INSERT INTO part VALUES(?,?)', ('user', json.dumps({'type': 'text',
+            'text': 'different question' if blocker == 'wrong_prompt' else item['messages'][-1]['content']})))
+        if blocker == 'content':
+            conn.execute('INSERT INTO part VALUES(?,?)', ('assistant', json.dumps({'type': 'text', 'text': 'partial answer'})))
+    before = runner.budget.summary()['accounted_tokens']
+    assert recover_quota_rejections(runner.db) == int(blocker is None)
+    assert runner.db.one('SELECT status,score FROM jobs') == {
+        'status': 'deferred' if blocker is None else 'ambiguous', 'score': None}
+    assert runner.budget.summary()['accounted_tokens'] == before
+    assert recover_quota_rejections(runner.db) == 0
+    if blocker is None:
+        row, _ = make_row(runner.db, runner.settings, item_model, None, 'screen')
+        assert row.availability == 'quota_limited' and row.next_retry_at == '2026-10-10T00:00:00+00:00'
+
+
+@pytest.mark.parametrize('full_season', [False, True])
+def test_daily_resumes_validated_public_work_only_when_full_season_is_blocked(context, monkeypatch, full_season):
+    from freeboard.cli import daily_work
+    db, settings, checkout = context
+    active = season(db)
+    if not full_season:
+        manifest = {**json.loads(active['manifest']), 'partial': True}
+        db.execute('UPDATE seasons SET manifest=?,active=0', (json.dumps(manifest),))
+    runner = Runner(db, settings, checkout)
+    calls = []
+    def run(**kwargs):
+        calls.append(kwargs)
+        return {'processed': 1} if kwargs else {'blocked': 'Setup incomplete'}
+    monkeypatch.setattr(runner, 'run', run)
+    monkeypatch.setattr('freeboard.public_run.run_public', lambda r, s: {'processed': 1, 'season': s['id']})
+    result = daily_work(runner)
+    assert result['blocked'] == 'Setup incomplete'
+    assert calls == ([{}] if full_season else [{}, {'pilot': True, 'all_models': True}])
+    assert ('public_screen' in result) is not full_season
+
+
 def test_unavailable_catalog_id_does_not_block_three_completed_full_pilots(context, monkeypatch):
     db, settings, checkout = context
     active = season(db)

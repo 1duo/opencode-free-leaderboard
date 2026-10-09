@@ -49,6 +49,21 @@ def parser() -> argparse.ArgumentParser:
     return root
 
 
+def daily_work(runner: Runner) -> dict:
+    try:
+        result = runner.run()
+    except RuntimeError as exc:
+        result = {'blocked': str(exc)}
+    full = runner.db.one("SELECT id FROM seasons WHERE active=1 AND validated=1 AND COALESCE(json_extract(manifest,'$.partial'),0)=0")
+    public = runner.db.one("SELECT * FROM seasons WHERE validated=1 AND json_extract(manifest,'$.partial')=1 ORDER BY created_at DESC LIMIT 1")
+    if result.get('blocked') and not full and public:
+        from .public_run import run_public
+        runner.active_season = lambda: public
+        result['public_pilot'] = runner.run(pilot=True, all_models=True)
+        result['public_screen'] = run_public(runner, public)
+    return result
+
+
 def main() -> None:
     args = parser().parse_args()
     settings = Settings(state=args.state)
@@ -138,14 +153,12 @@ def main() -> None:
                 result = publish(db, settings, checkout, args.create_repository)
             else:  # daily
                 refresh_publications(db, settings, checkout)
-                try:
-                    result = runner.run()
-                except RuntimeError as exc:
-                    result = {"blocked": str(exc)}
+                result = daily_work(runner)
                 # Avoid identical publication churn while required setup is missing.
                 if result.get("blocked"):
                     result["local_export"] = export(db, settings, checkout)
-                    if not db.one("SELECT id FROM publications WHERE created_at>=?", (week(),)):
+                    progressed = any(result.get(k, {}).get('processed', 0) for k in ['public_pilot', 'public_screen'])
+                    if progressed or not db.one("SELECT id FROM publications WHERE created_at>=?", (week(),)):
                         result["publication"] = publish(db, settings, checkout)
                 else:
                     result["publication"] = publish(db, settings, checkout)

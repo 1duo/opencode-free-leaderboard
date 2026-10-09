@@ -23,8 +23,8 @@ nemotron-3.5-lightning-free,screen,local-opencode,,0084f3a865a425f7,pending,cap_
 nemotron-3.5-lightning-free,confirmation,local-opencode,,0084f3a865a425f7,pending,cap_violation,,Provider-managed · no selectable level,,,,,,,0,0,0,,,0,0,
 space-bunny-free,screen,local-opencode,,96f0cbade880597b,pending,eligible,,Highest exposed: max,max,,,,,,0,0,0,,,0,0,
 space-bunny-free,confirmation,local-opencode,,96f0cbade880597b,pending,eligible,,Highest exposed: max,max,,,,,,0,0,0,,,0,0,
-step-5-preview-free,screen,local-opencode,,7bb6f2263f89c8f8,cap_unverified,model_unavailable,,Highest exposed: high,high,,,,,,0,0,0,,,0,0,
-step-5-preview-free,confirmation,local-opencode,,7bb6f2263f89c8f8,cap_unverified,model_unavailable,,Highest exposed: high,high,,,,,,0,0,0,,,0,0,
+step-5-preview-free,screen,local-opencode,,7bb6f2263f89c8f8,cap_unverified,eligible,,Highest exposed: high,high,,,,,,0,0,0,,,0,0,
+step-5-preview-free,confirmation,local-opencode,,7bb6f2263f89c8f8,cap_unverified,eligible,,Highest exposed: high,high,,,,,,0,0,0,,,0,0,
 big-pickle,public-screen,local-opencode,public-pilot-424b7a865093c836,2a5f9426c518d425,pending,,,Provider-managed · no selectable level,,,,,,65.0,0,19,40,,2026-10-09T05:26:02+00:00,401033,361559,0.3898305084745763
 longcat-2.5-preview-free,public-screen,local-opencode,public-pilot-424b7a865093c836,e66042f250e9e706,pending,,,Highest exposed: high,high,,,,45.0,,0,20,39,2026-10-09T03:45:56+00:00,,382168,368805,0.4576271186440678
 nemotron-3.5-lightning-free,public-screen,local-opencode,public-pilot-424b7a865093c836,0084f3a865a425f7,pending,,,Provider-managed · no selectable level,,,,,,,0,4,0,,,44881,32201,1.0

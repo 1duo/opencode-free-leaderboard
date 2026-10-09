@@ -146,7 +146,9 @@ function renderSupporting() {
     const row = node("tr"), name = node("td");
     name.append(node("strong", model.name), node("span", `Reasoning: ${reasoningSetting(model)}`, "sub"), node("span", model.model_id, "sub"));
     const state = model.availability === "eligible" && !model.cap_verified ? "cap_unverified" : model.availability;
-    row.append(name, node("td", statusLabel(state))); list.append(row);
+    const availability = node("td", statusLabel(state));
+    if (model.next_retry_at) availability.append(node("span", `Retry after ${new Date(model.next_retry_at).toLocaleString()}`, "sub"));
+    row.append(name, availability); list.append(row);
   }
   byId("execution-summary").textContent = `Execution details · week of ${fmtDate(`${report.budget.week}T12:00:00`)}`;
   byId("budget").replaceChildren(...facts([["Recorded client attempts", num(report.budget.opencode_attempts)], ["Discovery requests", num(report.budget.discovery_attempts)], ["Client accounted / recorded tokens", `${num(report.budget.opencode_accounted_tokens)} / ${num(report.budget.opencode_reported_tokens)}`], ["Dispatches with estimated usage", num(report.budget.opencode_estimated_attempts)], ["Total attempts / limit", `${num(report.budget.attempts_used)} / ${num(report.budget.attempts_limit)}`], ["Total accounted tokens / limit", `${num(report.budget.accounted_tokens)} / ${num(report.budget.tokens_limit)}`], ["Planned requests / tokens", `${num(report.budget.planned_attempts)} / ${num(report.budget.planned_tokens)}`], ["Queued OpenCode jobs (includes blocked)", num(report.queue_size)], ["Missed refresh deadlines", num(report.missed_deadlines)]]).childNodes);

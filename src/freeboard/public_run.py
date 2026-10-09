@@ -7,6 +7,7 @@ from .budget import estimate
 from .config import COUNTS, digest, week
 from .discovery import discover
 from .opencode import REVISION
+from .recovery import recover_quota_rejections
 
 
 def validate_public_screen(runner, season: dict) -> None:
@@ -40,6 +41,7 @@ def run_public(runner, season: dict, selected: list[str] | None = None, limit: i
     evidence = discover(runner.db, runner.budget, runner.client)
     if not evidence['ok']:
         return {'blocked': evidence['error']}
+    recover_quota_rejections(runner.db)
     available = {m['id']: m for m in runner.models()}
     runnable = {ident: m for ident, m in available.items() if json.loads(m['profile']).get('cap_verified')
                 and runner.db.one("SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind='pilot' AND completed_at IS NOT NULL",

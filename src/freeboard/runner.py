@@ -15,6 +15,7 @@ from .db import DB
 from .discovery import discover
 from .grading import DockerGrader, GradingUnavailable, gpqa_score
 from .opencode import OpenCode, REVISION, completion_events, failure_status, interruption_status, prompt_body
+from .recovery import recover_quota_rejections
 
 PROBES = [
     {"stratum": "format", "prompt": "Return a JSON array of all integers from 1 to 10000, without omitting any. No prose.", "check": "cap"},
@@ -338,6 +339,7 @@ class Runner:
         result = discover(self.db, self.budget, self.client)
         if not result["ok"]:
             return {"blocked": result["error"], "discovery": result}
+        recover_quota_rejections(self.db)
         if not credential("zen"):
             return {"blocked": "OpenCode Zen credential missing", "discovery": result}
         season = self.active_season()

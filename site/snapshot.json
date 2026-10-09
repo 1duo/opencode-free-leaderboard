@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "snapshot_id": "16fc9d6dfaefe0c06fe8",
-  "generated_at": "2026-10-09T05:29:57+00:00",
+  "snapshot_id": "04a4ab5005c49ff5bf7b",
+  "generated_at": "2026-10-09T14:42:42+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-09T04:54:31+00:00",
+  "discovery_at": "2026-10-09T14:40:03+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -22,7 +22,8 @@
       "cap_verified": true,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -60,7 +61,8 @@
       "cap_verified": true,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -98,7 +100,8 @@
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -136,7 +139,8 @@
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -174,7 +178,8 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -212,7 +217,8 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -250,7 +256,8 @@
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -288,7 +295,8 @@
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -326,7 +334,8 @@
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -364,7 +373,8 @@
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -402,7 +412,8 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": "2026-10-10T00:00:00.228000+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -440,7 +451,8 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": "2026-10-10T00:00:00.228000+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -478,7 +490,8 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -516,7 +529,8 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -554,7 +568,8 @@
       "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -592,7 +607,8 @@
       "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -630,7 +646,8 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -668,7 +685,8 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -706,7 +724,8 @@
       "cap_verified": true,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -744,7 +763,8 @@
       "cap_verified": true,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -782,7 +802,8 @@
       "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -820,7 +841,8 @@
       "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -858,7 +880,8 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -896,7 +919,8 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -927,14 +951,15 @@
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "model_unavailable",
+      "availability": "eligible",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -965,14 +990,15 @@
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "model_unavailable",
+      "availability": "eligible",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T04:54:31+00:00",
+      "observed_at": "2026-10-09T14:40:03+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -1246,7 +1272,7 @@
       "season": "public-pilot-424b7a865093c836",
       "unranked": true,
       "status": "pending",
-      "health_graded": 4,
+      "health_graded": 5,
       "cap_probe_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
@@ -1261,7 +1287,7 @@
         "livecodebench": 2
       },
       "pending_reasons": {
-        "pending": 4
+        "deferred": 4
       },
       "benchmark_scores": {},
       "evaluated_at": null
@@ -1338,7 +1364,7 @@
         "livecodebench": 40
       },
       "pending_reasons": {
-        "ambiguous": 1
+        "deferred": 1
       },
       "benchmark_scores": {
         "livebench": 45.0
@@ -4487,22 +4513,22 @@
     "week": "2026-10-05",
     "attempts_limit": 924,
     "tokens_limit": 7840078,
-    "planned_attempts": 122,
-    "planned_tokens": 1688650,
-    "attempts_used": 811,
-    "accounted_tokens": 3883194,
-    "reported_tokens": 2706203,
-    "estimated_attempts": 134,
-    "opencode_attempts": 569,
-    "opencode_invocations": 498,
-    "opencode_accounted_tokens": 3306071,
-    "opencode_reported_tokens": 2334664,
-    "opencode_estimated_attempts": 102,
-    "discovery_attempts": 68,
+    "planned_attempts": 73,
+    "planned_tokens": 988840,
+    "attempts_used": 833,
+    "accounted_tokens": 3963498,
+    "reported_tokens": 2709589,
+    "estimated_attempts": 143,
+    "opencode_attempts": 579,
+    "opencode_invocations": 503,
+    "opencode_accounted_tokens": 3386375,
+    "opencode_reported_tokens": 2338050,
+    "opencode_estimated_attempts": 111,
+    "discovery_attempts": 80,
     "prior_attempts": 174,
     "prior_accounted_tokens": 577123
   },
-  "queue_size": 98,
+  "queue_size": 97,
   "missed_deadlines": 0,
   "blockers": [
     "Authenticated GPQA access is not configured",

@@ -11,6 +11,8 @@
 - Native model definitions determine the highest exposed reasoning variant. Discovery fingerprints the controls into the evaluation epoch; generation validates them before dispatch and verifies the selected variant in the saved native user message. Public rows expose the requested setting. Models without a selectable control remain explicitly provider-managed, with no claim that a maximum is verified.
 - LCB compressed/pickled private tests are deserialized only in the isolated grading container. Pin both source repositories and data snapshots. Prompts come from the pinned upstream function; code extraction and test checking come from upstream inside Docker.
 - The runner owns its lock, backup, durable job transitions, retry counters and budget decisions. Unknown network outcomes are not automatically retried.
+- An explicit native free-quota rejection can be reclassified as deferred only after a read-only native transcript check confirms the exact question/model/variant, one empty assistant message, zero recorded usage and no response parts. Its original reservation and evidence remain; a later attempt waits for the provider's timestamp and uses the existing three-attempt allowance. Exhausted retries and unknown outcomes remain blocked.
+- Without a validated full season, daily execution can resume the latest validated public season. New public progress is published; GPQA and headline rankings remain blocked. Future retries resume on a subsequent local invocation after their provider reset time.
 - Public exports are constructed from allowlisted schema fields; manifests cannot include arbitrary content. GitHub Pages receives only an explicit seven-file site directory. Publication Actions have no model or dataset credentials.
 
 ## Release acceptance

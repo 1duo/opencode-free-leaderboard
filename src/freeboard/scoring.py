@@ -45,6 +45,7 @@ class PublicRow(Strict):
     reasoning_setting: str = 'Unverified'
     reasoning_variant: str | None = None
     observed_at: str
+    next_retry_at: str | None = None
     evaluated_at: str | None = None
     cycle_started_at: str | None = None
     progress: dict[str, int]
@@ -241,12 +242,16 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                 pass
     if not cycle:
         status = "cap_unverified" if model["status"] == "eligible" and not profile.get("cap_verified") else "pending"
+    retry = db.one("""SELECT MIN(j.next_after) AS at FROM jobs j JOIN cycles c ON c.id=j.cycle_id
+        WHERE c.model_id=? AND c.epoch=? AND j.status='deferred'
+        AND j.error='Verified quota rejection; awaiting retry window'""", (model['id'], model['epoch']))
     return PublicRow(model_id=model["id"], name=model["name"], epoch=cycle["epoch"] if cycle else model["epoch"],
                      tier=tier, season=cycle["season"] if cycle else None, status=status,
                      availability=availability, free_eligible=model['status'] in {'eligible','authentication_failed','quota_limited',
                          'model_unavailable','configuration_error','cap_violation','cap_unverified','client_access_restricted','provider_error'},
                      protocol=profile['protocol'], endpoint=profile.get('endpoint', model['endpoint']),
                      cap_verified=profile.get("cap_verified", False), observed_at=model["observed_at"],
+                     next_retry_at=retry['at'] if availability == 'quota_limited' else None,
                      reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
                      evaluated_at=stamp if complete else None,
                      cycle_started_at=cycle["started_at"] if cycle else None,
