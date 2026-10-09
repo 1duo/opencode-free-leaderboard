@@ -32,7 +32,10 @@ function facts(entries) {
   return dl;
 }
 function pendingText(reasons) {
-  return Object.entries(reasons || {}).map(([s, n]) => s === "grading_blocked" ? `${n} saved answer awaiting grading` : `${n} ${statusLabel(s).toLowerCase()}`).join(" · ");
+  return Object.entries(reasons || {}).map(([s, n]) => s === "ambiguous"
+    ? `${n} unknown outcome${n === 1 ? "" : "s"}`
+    : s === "grading_blocked" ? `${n} saved answer${n === 1 ? "" : "s"} awaiting grading`
+      : `${n} ${statusLabel(s).toLowerCase()}`).join(" · ");
 }
 function intervalPlot(value, interval) {
   const plot = node("div", null, "interval-plot");
