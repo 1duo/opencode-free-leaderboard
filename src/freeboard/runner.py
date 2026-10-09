@@ -91,9 +91,13 @@ class Runner:
             self.health(model, season)
             if not json.loads(model["profile"]).get("cap_verified"):
                 continue
+            if not self.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
+                    AND kind='pilot' AND completed_at IS NOT NULL""",
+                    (model['id'], model['epoch'], season['id'])):
+                continue
             latest = self.db.one("""SELECT * FROM cycles WHERE model_id=? AND epoch=? AND season=?
                 AND kind='screen' ORDER BY started_at DESC LIMIT 1""", (model["id"], model["epoch"], season["id"]))
-            if latest and not latest["completed_at"]:
+            if latest and not latest["completed_at"] and (dt - datetime.fromisoformat(latest["started_at"])).days < 28:
                 continue
             due = (not latest or (dt - datetime.fromisoformat(latest["started_at"])).days >= 28)
             # Cohort checks may refresh slightly early; overdue work always takes priority.
@@ -239,7 +243,26 @@ class Runner:
         clause = "" if tier is None else " AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)"
         args = (cycle_id,) if tier is None else (cycle_id, cycle["season"], tier)
         counts = self.db.one("SELECT COUNT(*) AS n,SUM(j.status='graded') AS done FROM jobs j WHERE cycle_id=?" + clause, args)
-        if counts["n"] == expected and counts["done"] == expected:
+        ready = counts['n'] == expected and counts['done'] == expected
+        if ready and cycle['kind'] == 'pilot':
+            health = self.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
+                AND kind='health' ORDER BY started_at DESC LIMIT 1""",
+                (cycle['model_id'], cycle['epoch'], cycle['season']))
+            checks = self.db.rows("""SELECT j.status,j.score,i.content FROM jobs j JOIN items i ON i.id=j.item_id
+                WHERE j.cycle_id=?""", ((health or {}).get('id'),))
+            missing = [j for j in checks if j['status'] != 'graded']
+            replacement = (len(missing) == 1 and missing[0]['status'] == 'ambiguous'
+                           and json.loads(missing[0]['content']).get('check') == 'cap')
+            verified = any(j['status'] == 'graded' and j['score'] == 1
+                           and json.loads(j['content']).get('check') == 'cap' for j in checks)
+            verified = verified or bool(self.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=?
+                AND season=? AND kind='cap_calibration' AND completed_at IS NOT NULL AND EXISTS
+                (SELECT 1 FROM jobs WHERE cycle_id=cycles.id AND status='graded' AND score=1)""",
+                (cycle['model_id'], cycle['epoch'], cycle['season'])))
+            current = self.db.one('SELECT * FROM models WHERE id=?', (cycle['model_id'],))
+            ready = (len(checks) == 6 and (not missing or replacement) and verified
+                     and current['epoch'] == cycle['epoch'] and json.loads(current['profile']).get('cap_verified'))
+        if ready:
             self.db.execute("UPDATE cycles SET completed_at=COALESCE(completed_at,?) WHERE id=?", (now(), cycle_id))
         if cycle['kind'] == 'health' and counts['done'] == 5 and counts['n'] == 6:
             outstanding = self.db.one("""SELECT j.status,i.content FROM jobs j JOIN items i ON i.id=j.item_id
@@ -295,10 +318,16 @@ class Runner:
                 AND (j.status='generated' OR (c.epoch=m.epoch AND m.status='eligible'
                     AND j.status IN ('pending','deferred') AND (c.kind!='health' OR c.started_at>=?)))
                 AND (j.next_after IS NULL OR j.next_after<=?)
+                AND (j.status='generated' OR NOT EXISTS (
+                    SELECT 1 FROM jobs q JOIN cycles qc ON qc.id=q.cycle_id
+                    JOIN attempts a ON a.job_id=q.id
+                    WHERE qc.model_id=c.model_id AND qc.epoch=c.epoch
+                    AND q.status='deferred' AND q.next_after>?
+                    AND a.status='quota_limited'))
                 ORDER BY CASE WHEN c.kind IN ('health','cap_calibration') AND json_extract(m.profile,'$.cap_verified')!=1 THEN 0
                     WHEN c.kind='screen' AND EXISTS(SELECT 1 FROM panels p WHERE p.season=c.season AND p.tier='screen' AND p.item_id=j.item_id) THEN 1
                     WHEN c.kind='health' THEN 2 ELSE 3 END,
-                c.due_at,j.id""", (season["id"], week(), now()))
+                c.due_at,j.id""", (season["id"], week(), now(), now()))
             jobs = [j for j in jobs if not excluded(j['model_id'])]
             if kind:
                 jobs = [j for j in jobs if j["kind"] == kind or (kind == "pilot" and j["kind"] in {'health','cap_calibration'})]
@@ -371,7 +400,12 @@ class Runner:
             self.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?) WHERE week=?',
                             (used['attempts_used']+planned['planned_attempts'],
                              used['accounted_tokens']+planned['planned_tokens'],week()))
-            return self.drain(season, "pilot", limit, set(selected))
+            result = self.drain(season, "pilot", limit, set(selected))
+            for cycle in self.db.rows("""SELECT id,model_id FROM cycles WHERE season=? AND kind='pilot'
+                    AND epoch=(SELECT epoch FROM models WHERE id=cycles.model_id)""", (season['id'],)):
+                if cycle['model_id'] in selected:
+                    self.finish_cycle(cycle['id'])
+            return result
         # Fresh zero pricing alone cannot prove that a catalog endpoint runs.
         # Use completed matching pilots, so an unavailable earlier ID cannot
         # block three other successfully validated endpoints.

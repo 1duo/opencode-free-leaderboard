@@ -18,7 +18,7 @@ uv run --no-editable leaderboard auth zen
 uv run --no-editable leaderboard auth hf
 ```
 
-Credentials are stored in macOS Keychain through Security.framework. Environment variables `OPENCODE_API_KEY` and `HF_TOKEN`, an existing OpenCode API credential, and the standard local Hugging Face token file are supported. Without a Zen key, the runner uses [OpenCode's public free-model credential](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/provider/provider.ts). It still requires fresh official zero-price evidence and never substitutes a paid endpoint.
+Credentials are stored and read in macOS Keychain through Security.framework using the dedicated `freeboard` account. Environment variables `OPENCODE_API_KEY` and `HF_TOKEN`, an existing OpenCode API credential, and the standard local Hugging Face token file are supported. Without a Zen key, the runner uses [OpenCode's public free-model credential](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/provider/provider.ts). It still requires fresh official zero-price evidence and never substitutes a paid endpoint.
 
 For a reliable scheduled runtime outside the public checkout:
 
@@ -46,7 +46,7 @@ Generation requires the validated OpenCode version 1.18.31. Each question uses a
 
 The cap probe deliberately requests a long JSON array. Cap verification requires bounded usage for the five other synthetic checks and a synthetic cap check truncated at the 256-token limit. If the initial probe ends early or has an unknown outcome, one separate fixed text-streaming calibration can establish the limit; the original outcome remains recorded and no accepted probe or benchmark question is repeated. Cached input and hidden reasoning subfields are never added twice. This checks observed gateway behavior, not an assurance about every future response. A cap violation removes verification and prevents further headline requests. A client, configuration, or endpoint change creates a new evaluation epoch and requires a new pilot. There is no model substitution or paid provider fallback. Muse Spark Contributor endpoints are excluded.
 
-A native free-quota interruption may resume only when its explicit rejection and saved native transcript prove that no response content was produced. The exact model, variant and question must match. The provider's retry time is honored, the original conservative charge is retained, and the same three-attempt limit applies. Partial content, unknown outcomes and exhausted retries are never replayed.
+A native free-quota interruption may resume only when its explicit rejection and saved native transcript prove that no response content was produced. The exact model, variant and question must match. The provider's retry time gates every pending request to that model across seasons, the original conservative charge is retained, and the same three-attempt limit applies. Partial content, unknown outcomes and exhausted retries are never replayed.
 
 While GPQA access is pending, `prepare-panels --public-only` freezes a separate compatibility panel. Run `pilot --season PUBLIC_PILOT_ID` to evaluate six synthetic probes and two held-out questions each from LiveBench and LiveCodeBench per selected model. This pilot cannot be promoted or used for headline rankings. `prepare-panels --season SEASON_ID` validates an already frozen panel without downloading or resampling it. Download caches can be discarded after the selected questions and manifest are stored and backed up; preserve the private SQLite state.
 
@@ -68,7 +68,7 @@ These 60-question public screens have separate persistent cycles, component scor
 
 ## Routine operation
 
-The `launchd` agent runs at 09:15 local time and at login. Keep the private runtime and managed scheduled checkout at their installed paths and keep Docker running. Daily execution revalidates eligibility and resumes work; health jobs are unique to each model/epoch/week. Models have four stable refresh cohorts. A 28-day deadline depends on provider availability and the computer running.
+The `launchd` agent runs at 09:15 local time and at login. Keep the private runtime and managed scheduled checkout at their installed paths and keep Docker running. Daily execution revalidates eligibility, completes missing pilots for the active full season, and resumes screens only after each model's matching pilot and health evidence are complete; health jobs are unique to each model/epoch/season/week. Models have four stable refresh cohorts. A 28-day deadline depends on provider availability and the computer running.
 
 While GPQA setup is incomplete, daily execution resumes the latest validated public pilot and screen. It publishes new progress without promoting these subsets into full rankings. Future quota retries wait for both the provider's reset window and the next local invocation.
 
@@ -76,7 +76,7 @@ While GPQA setup is incomplete, daily execution resumes the latest validated pub
 
 Private state defaults to `~/Library/Application Support/OpenCodeFreeLeaderboard/`, with SQLite WAL, response files, isolated OpenCode session/config/cache directories, pinned datasets and upstream source archives, logs, and seven daily backups. All commands share a nonblocking process lock. Use `--state /absolute/private/path` before the command to override storage; placing it inside the checkout is rejected.
 
-Responses are written atomically before grading. If the runner crashes with a saved response, recovery grades it without regeneration. Requests with no durable response are marked ambiguous; no automatic replay occurs. Authentication errors, quotas, and infrastructure errors do not count as failed benchmark answers. Observed client retries have at most two retries; no repair completions are allowed. Failed/ambiguous jobs remain visible and prevent a complete-panel rank; do not erase them to obtain a better sample.
+Responses are written atomically before grading. If the runner crashes with a saved response, recovery grades it without regeneration. Requests with no durable response are marked ambiguous; no automatic replay occurs. Generation has a ten-minute overall deadline; the event listener has no separate idle read timeout. Listener failure journals record the exception type for private diagnosis. Authentication errors, quotas, and infrastructure errors do not count as failed benchmark answers. Observed client retries have at most two retries; no repair completions are allowed. Failed/ambiguous jobs remain visible and prevent a complete-panel rank; do not erase them to obtain a better sample. A new scheduled cycle may start after 28 days even if the previous screen is incomplete; its original records remain.
 
 Missing output usage or inconsistent reasoning accounting also blocks headline eligibility, retaining the response without replay. Recovery applies the same cap checks as normal execution. Historical rows retain the configuration used by their evaluation cycle.
 

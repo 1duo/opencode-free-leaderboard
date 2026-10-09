@@ -56,6 +56,11 @@ def daily_work(runner: Runner) -> dict:
         result = {'blocked': str(exc)}
     full = runner.db.one("SELECT id FROM seasons WHERE active=1 AND validated=1 AND COALESCE(json_extract(manifest,'$.partial'),0)=0")
     public = runner.db.one("SELECT * FROM seasons WHERE validated=1 AND json_extract(manifest,'$.partial')=1 ORDER BY created_at DESC LIMIT 1")
+    if full and any(not runner.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
+            AND kind='pilot' AND completed_at IS NOT NULL""",
+            (m['id'], m['epoch'], full['id'])) for m in runner.models()):
+        pilot = runner.run(pilot=True, all_models=True)
+        result = {**runner.run(), 'pilot': pilot}
     if result.get('blocked') and not full and public:
         from .public_run import run_public
         runner.active_season = lambda: public

@@ -283,10 +283,15 @@ class OpenCode:
         events = queue.Queue()
         ready, done, stop = threading.Event(), threading.Event(), threading.Event()
         response = []
+        listener_errors = []
+        request_timeout = max(self.settings.request_timeout, 600)
 
         def listen():
             try:
-                with self.client.stream('GET', '/event') as stream:
+                # The completion's overall deadline bounds this listener too.
+                # An idle SSE feed must not shorten a slower reasoning request.
+                with self.client.stream('GET', '/event',
+                        timeout=httpx.Timeout(5, read=None)) as stream:
                     stream.raise_for_status()
                     ready.set()
                     for line in stream.iter_lines():
@@ -294,8 +299,11 @@ class OpenCode:
                             break
                         if line.startswith('data:'):
                             events.put(json.loads(line[5:]))
-            except Exception:
+                    if not stop.is_set() and not done.is_set():
+                        raise RuntimeError('Event stream closed before completion')
+            except Exception as error:
                 if not stop.is_set():
+                    listener_errors.append(type(error).__name__)
                     events.put({'type': 'listener.error'})
                 ready.set()
 
@@ -304,7 +312,7 @@ class OpenCode:
                 # The local server returns the complete message, so its read
                 # timeout must allow slower reasoning models to finish.
                 result = self.client.post(f'/session/{session_id}/message', json=body,
-                                          timeout=max(self.settings.request_timeout, 600))
+                                          timeout=request_timeout)
                 result.raise_for_status()
                 response.append(result.json())
             except Exception:
@@ -313,14 +321,17 @@ class OpenCode:
                 done.set()
 
         threading.Thread(target=listen, daemon=True).start()
-        if not ready.wait(5):
+        if not ready.wait(5) or listener_errors:
             stop.set()
             self.close()
             raise RuntimeError('OpenCode event stream did not connect; no prompt dispatched')
+        deadline = time.monotonic() + request_timeout
         threading.Thread(target=request, daemon=True).start()
         observed, retry_attempt, end_polls, assistant_ids, denied = [], 0, 0, set(), []
         try:
             while True:
+                if time.monotonic() >= deadline:
+                    raise RuntimeError('OpenCode request deadline exceeded; outcome unknown; no replay')
                 try:
                     event = events.get(timeout=.1)
                 except queue.Empty:
@@ -372,6 +383,8 @@ class OpenCode:
         except BaseException as error:
             # Kill this private server immediately during retry backoff, before
             # another provider dispatch can occur. Unknown outcomes stay private.
+            # A stream closed by this abort is not the original listener failure.
+            stop.set()
             if self.process and self.process.poll() is None:
                 self.process.kill()
                 self.process.wait()
@@ -380,6 +393,7 @@ class OpenCode:
                 json.dump({'session_id': session_id, 'model_id': model['id'], 'cap': cap,
                            'error_type': type(error).__name__, 'error': str(error),
                            'observed_retries': observed, 'assistant_turns_observed': len(assistant_ids),
+                           'listener_error_types': listener_errors,
                            'denied_permissions': denied, 'effective_settings': self.metadata}, evidence)
                 self.failure_path = evidence.name
             raise

@@ -10,7 +10,7 @@
 <header><a class="brand" href="./"><span class="mark">o/f</span> OPEN / FREE</a><nav aria-label="Page navigation"><a href="#methodology">Method</a><a href="leaderboard.csv">CSV ↗</a><a href="snapshot.json">JSON ↗</a></nav></header>
 <main id="main-content" tabindex="-1">
 <section class="hero"><div class="eyebrow">OPENCODE CLIENT</div><h1>Free model benchmarks.</h1><p>Fixed questions. One answer per question.</p></section>
-<section class="metrics" aria-label="Evaluation overview"><div><span>Models scored</span><strong id="evaluated-models">—</strong></div><div><span>Completed screens</span><strong id="completed-runs">—</strong></div><div><span>Graded screen answers</span><strong id="graded-answers">—</strong></div><div><span>Published</span><strong class="date" id="published">—</strong></div></section>
+<section class="metrics" aria-label="Evaluation overview"><div><span>Models screened</span><strong id="evaluated-models">—</strong></div><div><span>Completed screens</span><strong id="completed-runs">—</strong></div><div><span>Graded screen answers</span><strong id="graded-answers">—</strong></div><div><span>Published</span><strong class="date" id="published">—</strong></div></section>
 <div id="notice" class="notice" role="status">Loading results…</div>
 <noscript><p>Enable JavaScript to view results, or download the <a href="snapshot.json">JSON</a> and <a href="leaderboard.csv">CSV</a>.</p></noscript>
 <section id="headline" class="section" hidden>
@@ -22,13 +22,13 @@
 <details id="comparisons" hidden><summary>Pairwise comparisons</summary><div id="comparison-list"></div></details>
 </section>
 <section id="results" class="section" hidden>
-<div class="section-heading"><h2>Benchmark results</h2><span class="badge">Unranked subsets</span></div><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>
+<div class="section-heading"><h2 id="results-heading">Benchmark results</h2><span class="badge">60-question subsets · unranked</span></div><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>
 <div id="public-screen-list"></div>
 <details id="run-details"><summary>Run details</summary><div id="run-detail-list" class="detail-grid"></div></details>
 </section>
 <section id="supporting" class="section supporting" hidden>
 <details id="availability"><summary id="availability-summary">Model availability</summary><p id="discovery-date" class="fine"></p><div class="table-scroll"><table><caption class="sr-only">Discovered model availability</caption><thead><tr><th scope="col">Model</th><th scope="col">Status</th></tr></thead><tbody id="availability-list"></tbody></table></div></details>
-<details id="execution"><summary id="execution-summary">Execution details</summary><dl id="budget" class="facts"></dl><p id="prior-budget" class="fine" hidden></p><p class="fine">Tokens are reported by OpenCode. Attempts include reservations and retries observed in its event stream; they are not a provider HTTP audit. Missing usage is conservatively accounted.</p><p class="fine">Full panels target a 28-day refresh once GPQA is configured. Completion depends on provider access and the local machine.</p></details>
+<details id="execution"><summary id="execution-summary">Execution details</summary><dl id="budget" class="facts"></dl><p id="prior-budget" class="fine" hidden></p><p class="fine">Tokens are reported by OpenCode. Attempts include reservations and retries observed in its event stream; they are not a provider HTTP audit. Missing usage is conservatively accounted.</p><p class="fine">Full panels target a 28-day refresh. Completion depends on provider access and the local machine.</p></details>
 <details id="pilots" hidden><summary>Compatibility pilots</summary><p class="fine">Held-out checks, excluded from benchmark scores. Counts show answers graded, not checks passed.</p><div id="pilot-list" class="detail-grid"></div></details>
 <details id="archive" hidden><summary>Previous evaluations</summary><div id="history-list"></div></details>
 </section>

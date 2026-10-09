@@ -4,7 +4,7 @@ const byId = id => document.getElementById(id);
 const num = value => value == null ? "—" : value.toLocaleString();
 const pct = value => value == null ? "—" : `${value.toFixed(1)}%`;
 const fmtDate = value => value ? new Date(value).toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"}) : "—";
-const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", client_access_restricted:"Free-tier access restricted", provider_error:"Provider error", provider_overloaded:"Provider overloaded", protocol_violation:"Single-turn check failed", cap_violation:"Cap verification failed", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
+const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", client_access_restricted:"Free-tier access restricted", provider_error:"Request interrupted", ambiguous:"Unknown outcome", dispatching:"Running", provider_overloaded:"Provider overloaded", protocol_violation:"Single-turn check failed", cap_violation:"Cap verification failed", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
 function node(tag, text, className) {
   const element = document.createElement(tag);
   if (text != null) element.textContent = text;
@@ -52,6 +52,8 @@ function intervalPlot(value, interval) {
 function renderPublicScreens() {
   const screens = report.public_screens || [];
   byId("results").hidden = !screens.length;
+  byId("results-heading").textContent = report.seasons.some(s => s.active && !s.partial)
+    ? "Earlier public screens" : "Benchmark results";
   const groups = new Map();
   for (const run of screens) {
     if (!groups.has(run.season)) groups.set(run.season, []);
@@ -154,14 +156,16 @@ function renderSupporting() {
   byId("budget").replaceChildren(...facts([["Recorded client attempts", num(report.budget.opencode_attempts)], ["Discovery requests", num(report.budget.discovery_attempts)], ["Client accounted / recorded tokens", `${num(report.budget.opencode_accounted_tokens)} / ${num(report.budget.opencode_reported_tokens)}`], ["Dispatches with estimated usage", num(report.budget.opencode_estimated_attempts)], ["Total attempts / limit", `${num(report.budget.attempts_used)} / ${num(report.budget.attempts_limit)}`], ["Total accounted tokens / limit", `${num(report.budget.accounted_tokens)} / ${num(report.budget.tokens_limit)}`], ["Planned requests / tokens", `${num(report.budget.planned_attempts)} / ${num(report.budget.planned_tokens)}`], ["Queued OpenCode jobs (includes blocked)", num(report.queue_size)], ["Missed refresh deadlines", num(report.missed_deadlines)]]).childNodes);
   byId("prior-budget").hidden = !report.budget.prior_attempts;
   byId("prior-budget").textContent = `Budget totals retain ${num(report.budget.prior_attempts)} prior experiment attempts and ${num(report.budget.prior_accounted_tokens)} accounted tokens. These are excluded from current results.`;
-  const pilots = (report.pilots || []).filter(p => p.status === "complete" || total(p.progress) > 0 || p.health_graded > 0);
+  const activeSeason = report.seasons.find(s => s.active)?.id;
+  const pilots = (report.pilots || []).filter(p => (!activeSeason || p.season === activeSeason)
+    && (p.status === "complete" || total(p.progress) > 0 || p.health_graded > 0));
   byId("pilots").hidden = !pilots.length;
   const pilotList = byId("pilot-list"); pilotList.replaceChildren();
   for (const pilot of pilots) {
     const card = node("article", null, "run-card");
     card.append(node("h3", modelName(pilot.model_id)));
     card.append(facts([["Reasoning", pilot.reasoning_setting], ["Health graded", `${pilot.health_graded}/6`], ["Benchmark graded", `${total(pilot.progress)}/${total(pilot.expected)}`], ["Cap probe", pilot.cap_probe_verified ? "Verified" : "Unverified"], ["Evaluated", dateNode(pilot.evaluated_at)]]));
-    for (const [b, s] of Object.entries(pilot.benchmark_scores)) card.append(node("p", `${b === "livebench" ? "LiveBench" : "LiveCodeBench"}: ${pct(s)} · ${pilot.expected[b]} questions`, "fine"));
+    for (const [b, s] of Object.entries(pilot.benchmark_scores)) card.append(node("p", `${{gpqa:"GPQA Diamond", livebench:"LiveBench", livecodebench:"LiveCodeBench"}[b]}: ${pct(s)} · ${pilot.expected[b]} questions`, "fine"));
     pilotList.append(card);
   }
   byId("archive").hidden = !report.history.length;
@@ -172,8 +176,10 @@ async function load() {
     const response = await fetch("snapshot.json", {cache:"no-store"});
     if (!response.ok) throw new Error("Snapshot unavailable");
     report = await response.json();
-    const runs = [...(report.public_screens || []), ...report.rows.filter(r => r.tier === "screen")];
-    byId("evaluated-models").textContent = new Set(runs.filter(r => r.scores || Object.keys(r.benchmark_scores || {}).length).map(r => r.model_id)).size;
+    const activeSeason = report.seasons.find(s => s.active && !s.partial)?.id;
+    const runs = activeSeason ? report.rows.filter(r => r.tier === "screen" && r.season === activeSeason)
+      : report.public_screens || [];
+    byId("evaluated-models").textContent = new Set(runs.filter(r => total(r.progress) > 0).map(r => r.model_id)).size;
     byId("completed-runs").textContent = runs.filter(r => r.scores || r.status === "complete").length;
     byId("graded-answers").textContent = num(runs.reduce((n, r) => n + total(r.progress), 0));
     byId("published").replaceChildren(report.published_at ? dateNode(report.published_at) : node("span", "Local preview"));

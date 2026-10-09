@@ -253,7 +253,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                      cap_verified=profile.get("cap_verified", False), observed_at=model["observed_at"],
                      next_retry_at=retry['at'] if availability == 'quota_limited' else None,
                      reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
-                     evaluated_at=stamp if complete else None,
+                     evaluated_at=stamp,
                      cycle_started_at=cycle["started_at"] if cycle else None,
                      progress=progress, pending_reasons={s: sum(r['status'] == s for r in items) for s in
                          sorted({r['status'] for r in items if r['status'] != 'graded'})},

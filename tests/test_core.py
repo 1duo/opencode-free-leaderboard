@@ -6,7 +6,7 @@ import pytest
 
 from freeboard.adapters import parse
 from freeboard.budget import Budget, BudgetExhausted, usage_total
-from freeboard.config import COUNTS, Settings, now
+from freeboard.config import COUNTS, Settings, digest, now
 from freeboard.db import DB
 from freeboard.discovery import excluded, parse_evidence
 from freeboard.grading import DockerGrader, GradingUnavailable, gpqa_score
@@ -75,6 +75,69 @@ def native_result(tokens=10, text='FINAL: A', reason='stop', missing_usage=False
 
 def native_error(code, message):
     return {'info': {'error': {'name': 'APIError', 'data': {'statusCode': code, 'message': message}}}}
+
+@pytest.mark.parametrize('mode', ['complete', 'deadline', 'closed_stream'])
+def test_native_listener_allows_slow_completion_but_deadline_never_replays(context, monkeypatch, mode):
+    import threading
+    import httpx
+    db, settings, checkout = context
+    m = model(db)
+    native = Runner(db, settings, checkout).opencode
+    dispatched, release = threading.Event(), threading.Event()
+    calls = []
+    class Events(httpx.SyncByteStream):
+        def __iter__(self):
+            yield b'data: {"type":"server.connected"}\n\n'
+            if mode == 'closed_stream':
+                assert dispatched.wait(1)
+                return
+            release.wait(2)
+    def handle(request):
+        if request.url.path == '/event':
+            assert request.extensions['timeout'] == {'connect': 5, 'read': None, 'write': 5, 'pool': 5}
+            return httpx.Response(200, stream=Events())
+        if request.url.path == '/session':
+            return httpx.Response(200, json={'id': 'session'})
+        if request.method == 'POST':
+            calls.append(request)
+            dispatched.set()
+            if mode != 'complete':
+                release.wait(2)
+            return httpx.Response(200, json=native_result())
+        return httpx.Response(200, json=[
+            {'info': {'role': 'user', 'model': {'providerID': 'opencode', 'modelID': m['id']}}, 'parts': []},
+            {'info': {'role': 'assistant'}, 'parts': []}])
+    native.client = httpx.Client(base_url='http://fixture', transport=httpx.MockTransport(handle))
+    native.metadata = {'reasoning': json.loads(m['profile'])['reasoning']}
+    monkeypatch.setattr(native, 'start', lambda *_: None)
+    original_close = native.close
+    def close():
+        release.set()
+        original_close()
+    monkeypatch.setattr(native, 'close', close)
+    if mode == 'deadline':
+        reads = 0
+        def clock():
+            nonlocal reads
+            reads += 1
+            if reads > 1:
+                assert dispatched.wait(1)
+                return 601
+            return 0
+        monkeypatch.setattr('freeboard.opencode.time.monotonic', clock)
+        with pytest.raises(RuntimeError, match='deadline exceeded; outcome unknown; no replay'):
+            native.generate(m, [{'role': 'user', 'content': 'fixture'}], 4096, lambda _: None)
+        journal = json.loads(Path(native.failure_path).read_text())
+        assert journal['listener_error_types'] == []
+    elif mode == 'closed_stream':
+        with pytest.raises(RuntimeError, match='event stream interrupted; outcome unknown'):
+            native.generate(m, [{'role': 'user', 'content': 'fixture'}], 4096, lambda _: None)
+        assert json.loads(Path(native.failure_path).read_text())['listener_error_types'] == ['RuntimeError']
+    else:
+        assert native.generate(m, [{'role': 'user', 'content': 'fixture'}], 4096, lambda _: None)['assistant_turns'] == 1
+    assert len(calls) == 1
+    assert calls[0].extensions['timeout']['read'] == 600
+
 
 def test_fail_closed_prices_and_exact_join():
     html = '<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr><tr><td>Alias</td><td>alias</td><td>https://opencode.ai/zen/v1/chat/completions</td></tr></table>'
@@ -356,6 +419,24 @@ def test_public_source_rejects_private_artifact_paths():
         assert not public_source(path)
 
 
+def test_csv_keeps_partial_scores_blank_but_reports_graded_counts(context, monkeypatch, tmp_path):
+    import csv
+    import shutil
+    runner, job, _, _ = job_context(context)
+    attempt = runner.budget.reserve('opencode_generation', 100, job['id'])
+    runner.budget.finish(attempt, 'received', usage={'total_tokens': 20})
+    runner.db.execute("UPDATE jobs SET status='graded',score=1 WHERE id=?", (job['id'],))
+    target = tmp_path / 'public-checkout'
+    shutil.copytree(runner.checkout / 'web', target / 'web')
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    export(runner.db, runner.settings, target)
+    with (target / 'site/leaderboard.csv').open() as handle:
+        row = next(r for r in csv.DictReader(handle) if r['tier'] == 'screen')
+    assert row['status'] == 'pending' and row['reasoning'] == '' and row['coding'] == '' and row['gpqa'] == ''
+    assert row['gpqa_n'] == '1' and row['livebench_n'] == row['livecodebench_n'] == '0'
+    assert row['evaluated_at'] == runner.db.one('SELECT finished_at FROM attempts WHERE id=?', (attempt,))['finished_at']
+
+
 def test_reservation_reconciliation_and_week_rollover(context, monkeypatch):
     db, settings, _ = context
     budget = Budget(db, settings)
@@ -547,6 +628,100 @@ def test_unavailable_catalog_id_does_not_block_three_completed_full_pilots(conte
     # A previous epoch's successful pilot cannot validate the current settings.
     db.execute("UPDATE cycles SET completed_at=?,epoch='old' WHERE id='d-free'", (now(),))
     assert 'blocked' in runner.run()
+
+
+def test_full_screens_require_matching_completed_pilot(context):
+    db, settings, checkout = context
+    active, m = season(db), model(db)
+    add_item(db)
+    runner = Runner(db, settings, checkout)
+    runner.schedule(active)
+    assert not db.one("SELECT id FROM cycles WHERE kind='screen'")
+    pilot = runner.cycle(m, active, 'pilot', 'pilot')
+    db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), pilot['id']))
+    runner.schedule(active)
+    assert db.one("SELECT id FROM cycles WHERE kind='screen'")
+
+
+def test_incomplete_screen_keeps_unknown_job_but_next_month_can_refresh(context):
+    from datetime import datetime, timedelta, timezone
+    db, settings, checkout = context
+    active, m = season(db), model(db)
+    add_item(db)
+    runner = Runner(db, settings, checkout)
+    pilot = runner.cycle(m, active, 'pilot', 'pilot')
+    db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), pilot['id']))
+    prior = runner.cycle(m, active, 'screen', 'prior-screen')
+    runner.add_panel(prior, 'screen')
+    db.execute("UPDATE jobs SET status='ambiguous' WHERE cycle_id=?", (prior['id'],))
+    runner.schedule(active)
+    assert db.one("SELECT count(*) n FROM cycles WHERE kind='screen'")['n'] == 1
+    db.execute('UPDATE cycles SET started_at=? WHERE id=?',
+               ((datetime.now(timezone.utc) - timedelta(days=28)).isoformat(), prior['id']))
+    runner.schedule(active)
+    assert db.one("SELECT count(*) n FROM cycles WHERE kind='screen'")['n'] == 2
+    assert db.one("SELECT status FROM jobs WHERE cycle_id='prior-screen'")['status'] == 'ambiguous'
+
+
+def test_pilot_completion_requires_matching_health_evidence(context):
+    from freeboard.runner import PROBES
+    db, settings, checkout = context
+    active, m = season(db), model(db)
+    runner = Runner(db, settings, checkout)
+    pilot = runner.cycle(m, active, 'pilot', 'pilot')
+    for n in range(6):
+        add_item(db, f'pilot-{n}', tier='pilot')
+    runner.add_panel(pilot, 'pilot')
+    db.execute("UPDATE jobs SET status='graded',score=1 WHERE cycle_id='pilot'")
+    runner.finish_cycle('pilot')
+    assert not db.one("SELECT completed_at FROM cycles WHERE id='pilot'")['completed_at']
+    health = runner.health(m, active)
+    db.execute("UPDATE jobs SET status='graded',score=1 WHERE cycle_id=?", (health['id'],))
+    cap_item = 'health:' + digest(PROBES[0])
+    db.execute("UPDATE jobs SET status='ambiguous',score=NULL WHERE cycle_id=? AND item_id=?", (health['id'], cap_item))
+    runner.finish_cycle('pilot')
+    assert not db.one("SELECT completed_at FROM cycles WHERE id='pilot'")['completed_at']
+    runner.calibrate_cap(m, active['id'])
+    calibration = db.one("SELECT id FROM cycles WHERE kind='cap_calibration'")['id']
+    db.execute("UPDATE jobs SET status='graded',score=1 WHERE cycle_id=?", (calibration,))
+    db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), calibration))
+    runner.finish_cycle('pilot')
+    assert db.one("SELECT completed_at FROM cycles WHERE id='pilot'")['completed_at']
+
+
+def test_quota_window_blocks_other_seasons_but_saved_answers_can_grade(context, monkeypatch):
+    from datetime import datetime, timedelta, timezone
+    runner, job, m, item = job_context(context)
+    runner.db.execute("INSERT INTO seasons SELECT 'previous',created_at,manifest,validated,0 FROM seasons WHERE id='season'")
+    prior = runner.db.one("SELECT * FROM seasons WHERE id='previous'")
+    runner.cycle(m, prior, 'public_screen', 'prior-quota')
+    runner.db.execute("INSERT INTO jobs(cycle_id,item_id,status,next_after) VALUES('prior-quota','q','deferred',?)",
+                      ((datetime.now(timezone.utc)+timedelta(hours=1)).isoformat(),))
+    deferred = runner.db.one("SELECT * FROM jobs WHERE cycle_id='prior-quota'")
+    attempt = runner.budget.reserve('opencode_generation', 100, deferred['id'], m['id'])
+    runner.budget.finish(attempt, 'quota_limited')
+    runner.db.execute("UPDATE jobs SET status='deferred' WHERE id=?", (deferred['id'],))
+    monkeypatch.setattr(runner, 'generate', lambda *_: pytest.fail('Quota window must gate every season'))
+    active = runner.db.one("SELECT * FROM seasons WHERE id='season'")
+    assert runner.drain(active)['processed'] == 0
+    runner.db.execute("UPDATE jobs SET status='generated',response_path='saved' WHERE id=?", (job['id'],))
+    monkeypatch.setattr(runner, 'grade', lambda j, *_: runner.db.execute("UPDATE jobs SET status='graded' WHERE id=?", (j['id'],)))
+    assert runner.drain(active)['processed'] == 1
+
+
+def test_daily_bootstraps_full_pilots_and_resumes_screens(context, monkeypatch):
+    from freeboard.cli import daily_work
+    db, settings, checkout = context
+    season(db)
+    model(db)
+    runner = Runner(db, settings, checkout)
+    calls = []
+    def run(**kwargs):
+        calls.append(kwargs)
+        return {'processed': 1} if kwargs or len(calls)>1 else {'blocked': 'Pilot incomplete'}
+    monkeypatch.setattr(runner, 'run', run)
+    assert daily_work(runner) == {'processed': 1, 'pilot': {'processed': 1}}
+    assert calls == [{}, {'pilot': True, 'all_models': True}, {}]
 
 
 def test_malformed_success_never_retried(context, monkeypatch):

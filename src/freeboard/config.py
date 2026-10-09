@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import subprocess
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -60,15 +60,40 @@ class Settings(BaseModel):
             folder.chmod(0o700)
 
 
-def credential(name: str) -> str | None:
-    service = f"opencode-free-leaderboard.{name}"
+def keychain_credential(name: str) -> str | None:
+    if sys.platform != "darwin":
+        return None
+    # Match the native writer and its exact account. Spawning `security` uses a
+    # different Keychain reader and can leave unattended runs awaiting a dialog.
+    import ctypes
+
     try:
-        result = subprocess.run(["security", "find-generic-password", "-s", service, "-w"],
-                                capture_output=True, text=True, timeout=10)
-        if result.returncode == 0:
-            return result.stdout.strip()
-    except (OSError, subprocess.TimeoutExpired):
-        pass
+        security = ctypes.CDLL("/System/Library/Frameworks/Security.framework/Security")
+        service, account = f"opencode-free-leaderboard.{name}".encode(), b"freeboard"
+        length, data = ctypes.c_uint32(), ctypes.c_void_p()
+        find = security.SecKeychainFindGenericPassword
+        find.argtypes = [ctypes.c_void_p, ctypes.c_uint32, ctypes.c_char_p, ctypes.c_uint32,
+                         ctypes.c_char_p, ctypes.POINTER(ctypes.c_uint32),
+                         ctypes.POINTER(ctypes.c_void_p), ctypes.c_void_p]
+        find.restype = ctypes.c_int32
+        status = find(None, len(service), service, len(account), account,
+                      ctypes.byref(length), ctypes.byref(data), None)
+        if status:
+            return None
+        try:
+            return ctypes.string_at(data, length.value).decode().strip() or None
+        finally:
+            free = security.SecKeychainItemFreeContent
+            free.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+            free(None, data)
+    except (OSError, UnicodeError):
+        return None
+
+
+def credential(name: str) -> str | None:
+    saved = keychain_credential(name)
+    if saved:
+        return saved
     value = os.environ.get("OPENCODE_API_KEY" if name == "zen" else "HF_TOKEN")
     if value:
         return value

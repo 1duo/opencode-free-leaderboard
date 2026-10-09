@@ -3034,5 +3034,2015 @@
       "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
       "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
     }
+  },
+  {
+    "id": "s1-eb8afe28e8eafc97",
+    "seed": 20261008,
+    "sources": {
+      "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+      "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+      "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+      "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+      "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24"
+    },
+    "livebench_release": "2024-11-25",
+    "livecodebench_release": "release_v6",
+    "language": "Python",
+    "counts": {
+      "screen": {
+        "gpqa": 20,
+        "livebench": 20,
+        "livecodebench": 40
+      },
+      "confirmation": {
+        "gpqa": 60,
+        "livebench": 60,
+        "livecodebench": 120
+      },
+      "pilot": {
+        "gpqa": 2,
+        "livebench": 2,
+        "livecodebench": 2
+      }
+    },
+    "panels": {
+      "screen": [
+        {
+          "id": "livebench:09719ca5e81c332df5d59ed37737c7351b5d68568933f4e7bbe08f0b22f2d030",
+          "hash": "bc5168505c49e8fb4a1a54005f2bc4a8a270300654fbb52910b6d18c51bc872b",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:27780ecab68b99ba747722d3e536086049ba4a8fc768b1357c0e20871a92e41c",
+          "hash": "9b1bf689358f5e672b84ce07bebe20748d08403b74843be477674d96d9dff653",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:2a886a49a7c9afb9b30d299d6de0b67558ae1076da4178faaf08e8b24d4a2994",
+          "hash": "37a636e208a5c7726ac5f7b11818f01bebd90acf17cc6e81163ea2316bac5493",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:40a8ca9e0abcfe1a1ddcdcc44ca837131ed669f51eafcb1d27b361da7d8d1165",
+          "hash": "1dd76fce8a15f76bac527b38d3c584d06a48f619d69005d08ca311f1b28f8c8c",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:4f78225af2661b5b2f22f126fba54723cdbd02e16a8f89fe024f9f21fd54248b",
+          "hash": "58703f35a1956a3cecbf8e6459e2430bc26f18b80014c0b792fb2ac90d372b2d",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:7c59f01508ae8297658af14d0af57e4d1eaf95bed6fb729d27de2c45faf61eef",
+          "hash": "317229eecaea977ad9ab65ac0b5291fedbb67b06987b3f38be079415a6b84cdc",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:87af7bdf47fa02d0fc18d13cf81cda012d1edb0c3458a2dd4ab4f9ca3113988c",
+          "hash": "605f3f63a68a87ecfc7ca424ed7a56b15274c717e9cadcb84b43c3c4800e5fa5",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:92e4b2cc3b6a16e3e4ad52e89731bd602cb5bf42c884c540981284b28a415929",
+          "hash": "712105f1bf7ffb0880b52f87af274288842616b8921c2c6609bcce8b03f8f5c7",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:977a0ea5fc1727ca664cd2af90b5c4a2f36648891e8f5b6ad047512df081a4d8",
+          "hash": "4fb49d77f0ef38ba6f96ff73d5a16810e1d1ba0fd324eb7a6b54054dbaef89a9",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:9c7c693083342fc0622081516bebd935c7b1d08f3bea9969944d1ef2bf5864fc",
+          "hash": "3f2b0924df203cb7fd8b87c6a1d58920fa06dc30f66fe1e5d244ff42eabc7ef2",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:a0383235b91e3e448468d0764fedb901f39a8c7855b214ba364e6956722c89cf",
+          "hash": "2c6f9785ff19f719336d7ae42c76684bf34c49fecb55a591df0563ce1797530b",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:b1b1678a4f290c8ab2b85f957a0cdbba93ef0c97d1e7ab4663e46e92ebac70e8",
+          "hash": "bdb2046a8b864dc403ad8455ff784d76553fa44b2e05c27c43f0c20e70fac89f",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:b7b7e331df4614775210ef5e524ed7f20c5fec6655fb0dd179c94e4d71170862",
+          "hash": "2c215bbfef6812e56c320b2caaf17f5049662c29facba607ae0871dd66072519",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:c89fdda34dcddd50a92fd79332f22c31b7f0fd94d3ce05062fd7a874bd36e224",
+          "hash": "db20ab1ddcdde3fc21655e912e9bfbadf7b244f1edfcb533d6a943cf62037278",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:d60075facb5ecdbc3618620e77f29db9dc5f24b11eb789c771b3180b48866fbf",
+          "hash": "57f4ce743f1c6daad88427f60420c461bd5cd6d62cef0b68ca445931619c542e",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:db55a7cc2ceaa32778ecbb91aecaca4b905b0de218f9a2080a2b3548bbf507b0",
+          "hash": "eb96c260580beba4bd7b2a5209fa1452191050e553d5ec46ab44a06e99e7bcad",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:e0df6bab9a48ea72072778dc1f8a804810438529347c88b5028b15045b20a203",
+          "hash": "e0384394a845a0839935cb2a7b08f2e437b87c1b4085915026a9d85645c93755",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:ed015ab9a9b9c84e1b5d45695a46f91880ced969877640ef9eafd4c231a8960a",
+          "hash": "a0ee463149b8126694da4d19d01317a13aed921c8660a8859020baa9c068e893",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:f32bae4c10c136c2e8c1180b6bd43c70aeb916935ff767779d95b3093354dd5b",
+          "hash": "c811f7f139c891790e38cbf1fa3b4f783d20d5c79e63faa8b888ee243e4ce3f5",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:f8e84ee53942b7e6881fd483a404f6d2c875e816fd79f07cf4181d5d0e3a5b31",
+          "hash": "23579fa4a1a1b927c7b783b73d73abdd4a287bf69b15c433559d41010ac1fcbe",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livecodebench:atcoder:abc305_c",
+          "hash": "55da33f800e3aa15cd7c48f191f0264abe483728c60ef14ed1dd59753f9bd28e",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc310_d",
+          "hash": "fad7b1bd90f252cc2d349a68fadd8071d546769b7798a7c7b31d1668d5ae4641",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc311_a",
+          "hash": "b8035cd2d06500b24c0962710a45224e9b78b44a06f045568bf888ddb3ba2e38",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc318_e",
+          "hash": "4a52f45d96e267355a79650136aba5cbd1a6fd92b4a7423586471ec725be7309",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc321_d",
+          "hash": "0365c8318a30113d8520a59e4d6220122fa6a5b0c62e9fb10de217f43392a62b",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc324_f",
+          "hash": "9b3912f0bf3f0b71deb05229c00d73481591f34078d3d661352bc5235a0fe058",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc331_d",
+          "hash": "9c143fe7dc0ed4bda79ce97bf7a51c2f8e19440ad9ad67d05c463f8e5808a878",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc333_d",
+          "hash": "5f95b94191a38ad6edc7a1ec7ea867c386734e737b09179de237612e2b3386ba",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc334_a",
+          "hash": "d72ade6c101facbf1296bb8e9cfb98bc237dbcaf61f692c976ee45a495279d76",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc341_c",
+          "hash": "2863d8aa506d54b3118739ee27272aa83381b7465d98c6291782c527c09b47e3",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc344_b",
+          "hash": "85f49ca83d0d2e6fccb2c33d4aaf688df97ba7c89c6fc98791f7c23397714a7f",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc352_a",
+          "hash": "b861f1e23783e279cb8243e3d97c1b193b70de641685d540a4a3801410c34ee6",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc354_a",
+          "hash": "c06e3a46d1302dca3a61e9cdc2997b6e2c890c6934d3211a65ed3a50c3202294",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc354_b",
+          "hash": "6ef6c11677330641d88ce3215624ab80c83e288585bf76e0a0c6d6e88d7b0f18",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc368_f",
+          "hash": "b1362305d6f132ac66b480218bbcf7f2e5e8366cba941ecccd365b8316e81e20",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc370_e",
+          "hash": "6bd7ec8b3ec0d5aed010d5bc4f6c47ab662c4478fc2e1eba250100a80fc5ebc5",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc376_e",
+          "hash": "8e5077eb52fb06d8b833e84ef69bbcdd76eff1a84f4aeac598296d9a191cbc16",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc379_c",
+          "hash": "b1cb3109e6cc8952c201ba3e74a7a50d5ae5117eb4603e6287e39ebfc60163bd",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc386_a",
+          "hash": "c9b511dc173394a0d764066e97d063d5f6d4323c599a294e3c0b2525a4a308cd",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc386_e",
+          "hash": "2eeabd411fcd53c243001e5bafe59e921567d0905124154a5a0f9712f07f9c55",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc390_g",
+          "hash": "f0f91345b6f7618989d7845f6a16ec3c7cdf037e6a81f8e08401413f3939ea04",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc398_b",
+          "hash": "80fc1d805b86c38634dbcbef228401f3242797c3302de708225c38d753f9f6db",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc400_a",
+          "hash": "2caaf171bf87ed273f761465988dcc915b3abb4ffa1314cb07bf3c1e8bc9ecff",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:arc192_b",
+          "hash": "6bc2e7226d9ff0a42a094e77d5e1caa62f214cc9befd4d43772aa536beb7d4ef",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:2728",
+          "hash": "d28a6f6d7b3b3335af92cf6dc34b0721bdd98dec0162b90a6fbbb4c6c7810b24",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:2839",
+          "hash": "8455d4ad17997145291ae512349b862d948bcf269c2542a65e262db2559ee308",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:2854",
+          "hash": "f881162840ca29db1cec18e197c4601cc650286d352c56862103e3d5a54bc1bb",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3031",
+          "hash": "f9b6aec3e10b648f2202ba702b1b122749da729df836040a2c3738479a1ac683",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3261",
+          "hash": "2fadd701ce3df2f460fe3d8970e0d32b05d4266c46d24254cc09322fdee7ba6b",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3292",
+          "hash": "63f6a29215ae6809910bf22185efa19edcaf3912d6f0869626f166370144e7a2",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3312",
+          "hash": "1ab5ac30fbf165b2349816121e6df8f9123c81fe51c3b34dab0cbddb809e25ad",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3396",
+          "hash": "1db9769f2b9c6b8b2507a6f294c02e9d95950897eefb8edf18da7eecd6a580a3",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3412",
+          "hash": "0d32109e311ea3a8c0c4b19ddae3ee538f57e1a1e939339edadd7836fc6b4ef7",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3421",
+          "hash": "241004cf07c551204a44bffd4589d7a2e99b928e3a6c9389e1cf0934b070a680",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3492",
+          "hash": "6793d9ab4c02e7e0f816ba51b44aac15253d54270efd1d85ac10f9e4ca4e099e",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3594",
+          "hash": "91de24f204e22d8d3ce6015694d9292a2b249d7a300a885fd32f10038e207f17",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3659",
+          "hash": "5bef0ddfe897d2e61324454b51fe3e1292b6a916170e26dab486b2855b7865c1",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3696",
+          "hash": "d263f0256facf9710a585659550ae63e78f94c8c400bd2d7cef85993b2dbbe9d",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3788",
+          "hash": "4da0b974ae81dd14ba91a5479d2c21e1266a9c142d4206aab2a8ca1b01cc1272",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3801",
+          "hash": "621269bcf81d65591505e2c3a2d858c7841c086bd5f11b1f743625778444d3e8",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "gpqa:046d6136baab5453a639392bace71af6bc6838bac75576e7c2fa5d957680b2fa",
+          "hash": "7a6d362aec7433c8b9a2b7383ed42f107d80e01ccd7a93eca42091996b458dd0",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:07552ef6af897354e3e46700d5ba866d55b0ee5fe5278a741ed435d02f6cb32e",
+          "hash": "8d7527d93baa8714454235937bc28f8818159de17f2e8c49ed1fa467dec0253d",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:082bf5b5f5bdb1a733eeb769b85b93b796c5c156438f39114b9b619fbd48d61d",
+          "hash": "c000009bb6067ba14abf6e2fa62d2325623e081472166375bb86dd8b27a4e0ae",
+          "benchmark": "gpqa",
+          "stratum": "biology"
+        },
+        {
+          "id": "gpqa:191d158cbbf3b7abb3097d42c1af8457093c90ed614e00e7f0a7cfdc5847d094",
+          "hash": "15c590ed8269af8df675cbe33d6fe034208cc2116f300e713a52ab4fc274aa60",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:32543c372045d6a5eb380b4dacb1d4cba797d566fe107c90a38031cd9842bab8",
+          "hash": "4d4d284889d7f35dc67e254450674be37c209c082591a8667e8ad8c7d908695e",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:5c66f61b322b4108ee63acb5019a2eeeb496a55957789ec5860319a679947c53",
+          "hash": "cee7164fb294078f543ed38118917fb42cd4d08c9d40dc728c6a8de3107537fb",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:68564e00a9b54d18a3920b0bb68fb43863c89f23c3d021802d159fd6d05d5832",
+          "hash": "90765cf97f4c1c450a86a5787ddf9e9a3a1bdeab0becba4f0d4418e0941af8c7",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:7166ff4e23fa08326d1bb136fcb5da99a0a1ea6e1f200b2548d3319179529c09",
+          "hash": "2a3fc834ac6eb876d217a975ff7be3737ae5e7d526aadd99fa0cbfcfc8e4b8c6",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:7a8d5cd6e5ec72b0ebb784a7c4ce7bd5bde94d3efbbcfde101228fa82e7ed125",
+          "hash": "47ef638bc6e1757cd5c7f4d8d721206f4d374b59f368a2c7d8903fdecfb9cc3b",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:7c88842a1ea3440e9f9ff639f5f0976790835f0f0b38fe51ede90ecd058f903b",
+          "hash": "33a9fb6085f92ac559fa94125e592e364f92aa44484ba43feeead5b4a8bee962",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:87de9936d36e8f41b4ea321594bbddb5ddde1b33eaaa4245ee19463d57b508af",
+          "hash": "b90c6845f79e06a3ab4aafb97c1f7de723dc3a19d87f08e21ed616bf2c4e3606",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:8ab34d8aee2311cf5f120a95b8eab3c8a17f542c1db77fe7defffeeb3446cd3d",
+          "hash": "d427786ece405cd8119618876b625a0d43b17fdbb8381154541a774c8ea29800",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:8ac8a5a6495760005bc16b14bdc09a43ae900add8036324dcaf358f797db94d2",
+          "hash": "e56a78e7d97136ce121501900db226e9ebee578a345d572629101607ffe9051d",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:92b981b8cc14ed56b88d622a8a2d8129094e32a12594e11de7809b3d8a8b9a98",
+          "hash": "5cc29ff56129dc340aa0f6656f38cda0707ddbb55c1a8b9d0b506e668833cf29",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:a07f53a3cf0103c4c861e3ca2fcd78255b136eacca145ea4419ad9196962b55b",
+          "hash": "f0c7ca6f59ca4c0489189c5dec6f3eb68e46e903eb87e27203fdf17852880b2e",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:a8b0d0f98bbdd54bf7642c8f733d5770928678d0482d02f628e4f386939b8620",
+          "hash": "c3fd8b8e0af642a78f699e065166186bf1929aa8c9f815e67cddce709f380912",
+          "benchmark": "gpqa",
+          "stratum": "biology"
+        },
+        {
+          "id": "gpqa:c0a641c88d6d77bd3df1af1001cc139e23dc2f0529b9a0196621ef08b44aeda4",
+          "hash": "3a7b7bcd4919bba3d5b7586f796bec6c52af1891cf33731d2c06910f7deeecfa",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:dded26760d57dba7b8bf1e2133d814870889fdd8055dd485dd5c8aa27dc3158d",
+          "hash": "e21ad089837cbd041ebf9e4d2face79a5176b44f0d772158e819fdb94d961e0f",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:ebaddc643722d56e49516240b83d8d78e82ed2f36dd6b5a2c96398e7b475759e",
+          "hash": "26b0d5f5033dd9d20a75ab49a3d33f23157d4d32e1c2a10fc10967820525f06d",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:f1d35c2fd4de2586a6a71b877b51c7544bf7f3797b219d171a33d8d1fe282b71",
+          "hash": "d6ff24a9a6f994afdb08a3e650709b24d3b5e4cc7fec47ba7159841d1b4048c1",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        }
+      ],
+      "confirmation": [
+        {
+          "id": "livebench:09719ca5e81c332df5d59ed37737c7351b5d68568933f4e7bbe08f0b22f2d030",
+          "hash": "bc5168505c49e8fb4a1a54005f2bc4a8a270300654fbb52910b6d18c51bc872b",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:15a572d195b127489b50b0a4fc86c36a38fcfe6542ca3e2aa309e46f4d56edb5",
+          "hash": "7caa5ddfa0af8c3f183944363a8d6cc0d968b0a89e66fa144cdeb93c63a58295",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:1836f6b0486252c504e3eb25ca060651488abc7952bb9cab58f8ce7c4fe2c5a2",
+          "hash": "df3f915f9623ceb2e89d2a8fc7e37b2f23022e4c0056a22d0e669b996ffb70db",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:1c6eda54001bf87aa1b9d833e89448168f0c3020a026b618ba346b18afa6ef26",
+          "hash": "9998bce7cae0f0a3cc16d22eea6cb380d3f2f538d1e8c95a6a394f3115408d5a",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:1fdd436a43f1a7d242602871b37275ee09a69a64094f619b91bee96095846452",
+          "hash": "2e41835a48bf796fdfdcc86384bb2c267c43c99f36f3d493be10809979207df3",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:20d48b97e524cd64f82b0e4fb3c597a37bae1d9357e9b2c93aad96b4c70e098e",
+          "hash": "6c19a90afe1ff28b544d72c3808e4321f0e6e8031407aff7c661910007225ef0",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:2102018493646d369865e04813606d3170a25f31f0fad3aece558969b56f97d0",
+          "hash": "41bb500703501441c55c17257018f2ec29628c4fea78c1195b7f386bc992230c",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:27780ecab68b99ba747722d3e536086049ba4a8fc768b1357c0e20871a92e41c",
+          "hash": "9b1bf689358f5e672b84ce07bebe20748d08403b74843be477674d96d9dff653",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:27eb08badf45383af3d99130de55ffe01e5723504d6d5fca8f9a7f672aad7e82",
+          "hash": "ea505056d9cc96ba5a5722a4e77254a0e51ff6e438f5461cb7ae8cb305fa8a18",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:2a886a49a7c9afb9b30d299d6de0b67558ae1076da4178faaf08e8b24d4a2994",
+          "hash": "37a636e208a5c7726ac5f7b11818f01bebd90acf17cc6e81163ea2316bac5493",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:34efb95856af4045015f9d8f46390d1ca13ae96c4aa4098a62da4b4d4cda2049",
+          "hash": "31b880befb458f9b12a473383713a693d3f83873c3befe58568adb7283c6fc96",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:363d6a519f6ce7572b752357e5008d054f34fb01ff1e8864326889bd2b24f626",
+          "hash": "b363598dc2b2ca9e89489729288fcb761ecb1319397d06a699d7bbd4f357e100",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:36a9c56b72919f6ee03ed6e929a2e9abfb58b0084a8cab91119393f396faa26e",
+          "hash": "43f819508519ec69bcaca64941403854d7fe2e038cff9d5bc25a7263fdf0f065",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:407a91d3d4fa5ae79f9b36285582a7ad8738dcf8d9e2104faecb69fca08e07a6",
+          "hash": "c2681a0dd8c26207176519434352def643f4646362f14c58f0d8cdd2844bc3c4",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:40a8ca9e0abcfe1a1ddcdcc44ca837131ed669f51eafcb1d27b361da7d8d1165",
+          "hash": "1dd76fce8a15f76bac527b38d3c584d06a48f619d69005d08ca311f1b28f8c8c",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:46c71f6c8010ba06139e2df649ad68b93d6386d40065301f33e9c3c6d04a81d0",
+          "hash": "edf9da8eda22c59c30c324e017eb055f6818da8136cdaedb42afa3f0e89c0584",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:484f9d95e130b527cf40c85b560fc70edf30efc56fd57750ad78ee81f64deb47",
+          "hash": "7a8732112522249e413650e48dda4befafa3284f47e4a1fe653c4172acba7e28",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:4c6e9d7cd2f5506ef5d07f1545dad8d1ca31bfd74ad3ca3e1a6d34accac62db2",
+          "hash": "6da9c53db4ca942f595dfe2d69749293aa2bd2b15aa96bed2918110af420f26b",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:4d307a56c0beed06090c18b6a431f82f1292d895bdc3186452a36eb33bc6f095",
+          "hash": "312372b7429ca7a9cf5210f816990743a5cc6ebbbe042ce67d2d9c319303fbd7",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:4f78225af2661b5b2f22f126fba54723cdbd02e16a8f89fe024f9f21fd54248b",
+          "hash": "58703f35a1956a3cecbf8e6459e2430bc26f18b80014c0b792fb2ac90d372b2d",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:5b5d24ca717950268327ba8a8a14ebd116476e226be68ff3663d577df7fa3ed1",
+          "hash": "a5bf262e18c387581d8c31ccf3cfef24cff08fb6dbc09b8db2823e7ad2d1adf7",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:5c484e793c5fbab10f9d42025bd34db662a33f04ccf3f2157fad7fba1d3fe843",
+          "hash": "259afef20f292af132610f7466cb70bf99218b7549cdda0d402fe37af7bac0f8",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:6882b248e31a65f287a7a2ab617b31ebfed771511e730697ceb43f0b5a3dd067",
+          "hash": "9c33d42fdc2b4ef6e77d575a37b183c8c4472386833c129a32c7910f5771baec",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:69f8b6614de6be6712544c2ee92e323be657baea3072e5d8fe2b61b3fde4b6d2",
+          "hash": "6c0872798bac0d805bbf8ff774e26b2b455b93eb2e1f4575ab808c8f541d3ab3",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:6a4ca003d6cce2477e549d195b01bf093e37784a9566afc8239f5169e32e3818",
+          "hash": "0bad699d376a3aa86ef9c2cf896c5f2c2331a9502caa2bdd0c8b0e57a445388b",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:709c3cb6f68c39f7fac17d28cbfef62a41eb2ab52cb44d2b35c402395d0126c4",
+          "hash": "6a71a9c7b3fa5ef0353d7e181695ba448746db3a69c4f04d6928ef751a731fd7",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:7456b78b84937f3f7d137c1af263bfbb1987075e6d093f1bcaf89751e9d30b9c",
+          "hash": "deb64256d37b24ad8f80a6241991503cb7eec9146e82701fb61a880843c1e4c6",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:763d6bf2ce815f919798705460bf9199302ffc581f1aec7031275ec60bdb36a3",
+          "hash": "273a7478f58583a40ed1388fcb078d69b0807af2e69ceb5be7eb81b5509dcebd",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:7c59f01508ae8297658af14d0af57e4d1eaf95bed6fb729d27de2c45faf61eef",
+          "hash": "317229eecaea977ad9ab65ac0b5291fedbb67b06987b3f38be079415a6b84cdc",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:84650f1042abf3d267bb79b6d1e1d899d27327a11ab81f1079121734a68306b1",
+          "hash": "e9e359b464f85c2fd1d031b033e6bd62d90a7922c52cca9a3d062bf14a563e90",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:8701a5c0c217906a7982be7725249353ee02d5fad80c6f8fc9ad22241072b89d",
+          "hash": "71bb1167d312f62dc14e970dd67a211ad0451b556bd2212507aeca290867b249",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:87af7bdf47fa02d0fc18d13cf81cda012d1edb0c3458a2dd4ab4f9ca3113988c",
+          "hash": "605f3f63a68a87ecfc7ca424ed7a56b15274c717e9cadcb84b43c3c4800e5fa5",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:92e4b2cc3b6a16e3e4ad52e89731bd602cb5bf42c884c540981284b28a415929",
+          "hash": "712105f1bf7ffb0880b52f87af274288842616b8921c2c6609bcce8b03f8f5c7",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:95af6ecc707197ef62b26adf0f0b5eb0ac8a4335b304bc0b77b87feffc1b5fc3",
+          "hash": "f491b00c23cd23483dbaa9ca576d4a10519fda4867b6b85cfcaab770b01414e0",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:95ef46b58759a1595006301bebb7be5edff15ad5fcaec453d3483c6d8d554b10",
+          "hash": "cee3e45e71c8af50036aabac8a1b5281fc2ed020af558282e68dc78807bf83db",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:977a0ea5fc1727ca664cd2af90b5c4a2f36648891e8f5b6ad047512df081a4d8",
+          "hash": "4fb49d77f0ef38ba6f96ff73d5a16810e1d1ba0fd324eb7a6b54054dbaef89a9",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:9aafbce875263fd96f7bec10666dde3534e82b01bc2545cf9d4ade501ea943f0",
+          "hash": "0b66490e29e43c47bbec878d865287c76bee300efac7364fe3da5cc85a756428",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:9c7c693083342fc0622081516bebd935c7b1d08f3bea9969944d1ef2bf5864fc",
+          "hash": "3f2b0924df203cb7fd8b87c6a1d58920fa06dc30f66fe1e5d244ff42eabc7ef2",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:9e3c878ffe6ee807e3b01746de0f4a8da254e96c865f7b518ddc1b16f564ce9c",
+          "hash": "10329e483e5b05faa880bf8ae94cc2f5a930c253930f015fb9b58fd287deeda2",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:a0383235b91e3e448468d0764fedb901f39a8c7855b214ba364e6956722c89cf",
+          "hash": "2c6f9785ff19f719336d7ae42c76684bf34c49fecb55a591df0563ce1797530b",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:a07f06973712c26654d728911aaef7046af825e1d449c731aa7af32a94d9cbd1",
+          "hash": "5e5ae74d2b9891db15d971bf07988cdd8a4a971025d5d1c12959545d1b309e7c",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:a0f4b0be2055ef97c455771f2de3eb3f41c9018603d96c93225be734b70dcdce",
+          "hash": "d11ccf1d783cba88b8e32fd68f1fa9c23c9832078b81027e79a98fb4d610087a",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:afb99e750d3a60adef0795fffb10a9c7639d06be30c5119c1003238abc6f9b46",
+          "hash": "0b0ad6e69269aef07666d945f5c8e17355248104dcb384ae6054b670f4c05c4e",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:b1b1678a4f290c8ab2b85f957a0cdbba93ef0c97d1e7ab4663e46e92ebac70e8",
+          "hash": "bdb2046a8b864dc403ad8455ff784d76553fa44b2e05c27c43f0c20e70fac89f",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:b7b7e331df4614775210ef5e524ed7f20c5fec6655fb0dd179c94e4d71170862",
+          "hash": "2c215bbfef6812e56c320b2caaf17f5049662c29facba607ae0871dd66072519",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:bd14ba82d1fe813dcdf6c16f0f868e5f3fe92e4cee9cf5eb3fd5cb6f03d68517",
+          "hash": "f6e5216c653205beb6ca10281d240ca606688f6119d4059a131b7f06f823ddb3",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:bd6776bfffbd81eaa021c33ffbd833e0c75ee50c5827094ccb469d421cd5b8ab",
+          "hash": "2d0736cdff8a4c2ca0315710a9fc76664b237495aefd18dbdc64733b1651f595",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:c2b235761e06ab22ef1bfba7fa61461b6f6536e5b2a7709674193c7cc96b192c",
+          "hash": "934cb852909e1842a530e27672a6fa583070be0cbc4fd01bac7a83bf21eec030",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:c89fdda34dcddd50a92fd79332f22c31b7f0fd94d3ce05062fd7a874bd36e224",
+          "hash": "db20ab1ddcdde3fc21655e912e9bfbadf7b244f1edfcb533d6a943cf62037278",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:d60075facb5ecdbc3618620e77f29db9dc5f24b11eb789c771b3180b48866fbf",
+          "hash": "57f4ce743f1c6daad88427f60420c461bd5cd6d62cef0b68ca445931619c542e",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:d977e70d05f737b3df36dbe997420820c43a0c43cfb0ff32290d45667b53987d",
+          "hash": "11a26912d55b22ab6206d1fa58eea4150829ff5586008e330a7115a396c7e182",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:d99123f5dae428ffc74487c853ff6a440a5d3f3ffdc47006175db53ff4a5054c",
+          "hash": "598d9908cb037bb4736a3531a3cd829226146bc1393c1bf3d9eff1cb6693e8e7",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:db55a7cc2ceaa32778ecbb91aecaca4b905b0de218f9a2080a2b3548bbf507b0",
+          "hash": "eb96c260580beba4bd7b2a5209fa1452191050e553d5ec46ab44a06e99e7bcad",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:e0df6bab9a48ea72072778dc1f8a804810438529347c88b5028b15045b20a203",
+          "hash": "e0384394a845a0839935cb2a7b08f2e437b87c1b4085915026a9d85645c93755",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:ed015ab9a9b9c84e1b5d45695a46f91880ced969877640ef9eafd4c231a8960a",
+          "hash": "a0ee463149b8126694da4d19d01317a13aed921c8660a8859020baa9c068e893",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:f2a76bdd345c47700ec8b8df974d871d3f2102114c24933b6da249af92ee7f33",
+          "hash": "6d51c74ee59535af7b02a32b5460a9aa34d54e85e93559aca729392f58ed369b",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:f32bae4c10c136c2e8c1180b6bd43c70aeb916935ff767779d95b3093354dd5b",
+          "hash": "c811f7f139c891790e38cbf1fa3b4f783d20d5c79e63faa8b888ee243e4ce3f5",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:f8e84ee53942b7e6881fd483a404f6d2c875e816fd79f07cf4181d5d0e3a5b31",
+          "hash": "23579fa4a1a1b927c7b783b73d73abdd4a287bf69b15c433559d41010ac1fcbe",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:fb970027cec594189294af351537cff1a9a860a8acad597f7f8854fc0ec8875e",
+          "hash": "256dcbcebf020ed6ba8e19f4979135322ebde1a75eb131e4d0a034211dd8b589",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livebench:fd87ac63ae2222cc816095cc4f9cbecbdeb65eae64c9e92cccbae3514c7c7354",
+          "hash": "a828c60c4fede4f7c8f5061a684ab56420389fc83ab3a0b276ac9a063f6eb55c",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livecodebench:atcoder:abc302_b",
+          "hash": "4479acec3e8561623f17d234c6eb2878e86db083e478b7b2b647d76fe37a530f",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc302_f",
+          "hash": "2cdd95f660d72ff5797c536903855e0d3c71ae48158b8387ecd70a8d6f159fb1",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc304_d",
+          "hash": "b856e3b1d0cc7af302e8b2ae6d3d8e6414cc91b271ab5a1039ff9e71e8ee6832",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc305_c",
+          "hash": "55da33f800e3aa15cd7c48f191f0264abe483728c60ef14ed1dd59753f9bd28e",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc306_d",
+          "hash": "2b6fc0ebbd60afcacbbfd36c0f56439f0de5d7841bff40b14cdfc84955c71943",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc307_e",
+          "hash": "4b708cdce642bfaeedf85a9522093aaefb8a892520b88be9c4f76046746ec9f5",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc309_a",
+          "hash": "43fcb2d8183ff67f82e0ad456139147b464cd4356f4655f715282a1920f64bf2",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc310_d",
+          "hash": "fad7b1bd90f252cc2d349a68fadd8071d546769b7798a7c7b31d1668d5ae4641",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc311_a",
+          "hash": "b8035cd2d06500b24c0962710a45224e9b78b44a06f045568bf888ddb3ba2e38",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc312_e",
+          "hash": "0172b8f497ca98be1f1fffef91e453e68c6f2902322dd0f21c62f0a1de920a91",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc318_e",
+          "hash": "4a52f45d96e267355a79650136aba5cbd1a6fd92b4a7423586471ec725be7309",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc319_b",
+          "hash": "17263bfcd9be8e1f4d6126b2ea111a28a8e7f8c7eac3e0f5034d0ceff5dbcbdc",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc321_d",
+          "hash": "0365c8318a30113d8520a59e4d6220122fa6a5b0c62e9fb10de217f43392a62b",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc324_f",
+          "hash": "9b3912f0bf3f0b71deb05229c00d73481591f34078d3d661352bc5235a0fe058",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc325_e",
+          "hash": "64384a8019c71c104adfd442646717d9d4333a30ae506362fa7f956aa83e8bc1",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc330_a",
+          "hash": "0fd424d9f4db4222b24af352b78ee7559f2033c5e821415aa30f0a4df4a3b39c",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc330_d",
+          "hash": "3d1ae3a81641bbeaed5823ba8b712648431a916f51081dbdb8909abaeebd1590",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc331_d",
+          "hash": "9c143fe7dc0ed4bda79ce97bf7a51c2f8e19440ad9ad67d05c463f8e5808a878",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc333_a",
+          "hash": "068f44357b498b561a2a92174e32ed86e01994cbb64f470c6cbc758336ca0604",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc333_d",
+          "hash": "5f95b94191a38ad6edc7a1ec7ea867c386734e737b09179de237612e2b3386ba",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc334_a",
+          "hash": "d72ade6c101facbf1296bb8e9cfb98bc237dbcaf61f692c976ee45a495279d76",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc334_d",
+          "hash": "369c30fa102e1c412d7cf08a6c8117e2d87301484b1844d63ff50924dc83664f",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc338_b",
+          "hash": "8a2922ef13056b3d8e6ecbe86738330fbd28bcaa64ea407d16c2fa20572d2b91",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc340_b",
+          "hash": "ad57b8500fa8edde57000bf2ee143492132cadff2c972d8ed9147ca3255efc9a",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc341_c",
+          "hash": "2863d8aa506d54b3118739ee27272aa83381b7465d98c6291782c527c09b47e3",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc344_b",
+          "hash": "85f49ca83d0d2e6fccb2c33d4aaf688df97ba7c89c6fc98791f7c23397714a7f",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc348_a",
+          "hash": "2945e5d84c2e6b7eadbfd816a119fe27237eba8cb7252f620f73fc7355f08882",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc351_a",
+          "hash": "d90b1cadcf8808801bb4da0a5ddea1a33c4e03b2d14c75b944568575d5905155",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc351_c",
+          "hash": "4441d70faba61c1649a58a713765f0f8269117d66ed1a74f588ce0876a6dc7eb",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc352_a",
+          "hash": "b861f1e23783e279cb8243e3d97c1b193b70de641685d540a4a3801410c34ee6",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc353_c",
+          "hash": "1f31f07acb5f942a846005aae0012f9a3dba3b2aac30aaccfcc8e1c53f56aaef",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc353_d",
+          "hash": "aeda17b2f497a4340132f67037fe177167a7371b2696fe3abf41228e57ecf0ed",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc354_a",
+          "hash": "c06e3a46d1302dca3a61e9cdc2997b6e2c890c6934d3211a65ed3a50c3202294",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc354_b",
+          "hash": "6ef6c11677330641d88ce3215624ab80c83e288585bf76e0a0c6d6e88d7b0f18",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc354_d",
+          "hash": "627cd901c75bd6a692ab4033850aefad1c68de7b055a3ffaf58541fa93143d6b",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc359_d",
+          "hash": "d37665ea8335b14a100aaeaeb325dcc1009102687bd714bf67cff1f345fcfcd6",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc362_b",
+          "hash": "3215f481d53173322325e8f341ae46a796b710a1ed7d3e9fcfec488426ec07d3",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc363_f",
+          "hash": "83180024079ec68d8ca2f6e0c938aba9107455e87b28f9a832c2586787eaa428",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc367_d",
+          "hash": "3dab21f9c5909dda8ec1c438903f15dbcb1050e7b9fa6c272214f869772bc4fe",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc368_c",
+          "hash": "0c4d9b7a2ea931a3c4e2377ee6d7a144a584cc153fcf383ee223e4a4438220ed",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc368_e",
+          "hash": "833cb0597d0573553a8738630984f74aaa9262294ce63b88ac2c723d583a88b8",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc368_f",
+          "hash": "b1362305d6f132ac66b480218bbcf7f2e5e8366cba941ecccd365b8316e81e20",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc370_d",
+          "hash": "356dfdae5ae3e63c49a2216e5af61fe505638170a357935abac71f00e04b7cab",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc370_e",
+          "hash": "6bd7ec8b3ec0d5aed010d5bc4f6c47ab662c4478fc2e1eba250100a80fc5ebc5",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc374_a",
+          "hash": "a81e12cbdab64dfc2ad10f569ffd02448b3f7492cc5a421aa78ee1a4ca79a13a",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc375_b",
+          "hash": "9f46b0c9047b1de657660a33b1cc788b02a3994484b8acf40f2a1fd0bd8fdd9d",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc376_a",
+          "hash": "61ce7c853dc3bf77024d8ddc21825ad919e1072ad35fe196509817ad992c98c8",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc376_e",
+          "hash": "8e5077eb52fb06d8b833e84ef69bbcdd76eff1a84f4aeac598296d9a191cbc16",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc377_d",
+          "hash": "0de57573e9be2f97ccf4a950e1e4d68f4c1f94fd51b5b5c2e5ca3e49f4f3e01b",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc378_f",
+          "hash": "78bb42b1df2ea824078eebe980c649b11e0f94cc965141ec3f953a131d8724b7",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc379_c",
+          "hash": "b1cb3109e6cc8952c201ba3e74a7a50d5ae5117eb4603e6287e39ebfc60163bd",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc380_d",
+          "hash": "5d47dee9044b51490a60ec1d33e8bf022ce542b9a83721f24ce49c5386a941e8",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc380_g",
+          "hash": "56a3b5bfd5962a80fe0be5f203c44839145598c38b1a90a62dd799a61301b513",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc381_b",
+          "hash": "37cfd886996b7bbaf87a5199a0fb906148fb32bad0bab7268fa56de2e821f00a",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc382_g",
+          "hash": "091eefb3e4ffe1a21d24f3df7fa4f03111efb17b84d46439bf7e3e346aeeadc2",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc384_a",
+          "hash": "fdd256d50dc5a13b20af2f4751dc2812c919c65488b60c1c48615c803b2e8a7a",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc384_d",
+          "hash": "25ef7f7aeac15212e8e50e3ac38a8dabf9d3b7097e2cd483c77091ce52d6e879",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc386_a",
+          "hash": "c9b511dc173394a0d764066e97d063d5f6d4323c599a294e3c0b2525a4a308cd",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc386_e",
+          "hash": "2eeabd411fcd53c243001e5bafe59e921567d0905124154a5a0f9712f07f9c55",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc386_f",
+          "hash": "26a6e81e34993364acac8d234b7af18353579396b7bd5b09558cd2c77e0b895e",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc390_b",
+          "hash": "5bc946013136c88f1be4b3634e15302ae169efc49bf54f241b341a6d7f4afaf9",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:abc390_d",
+          "hash": "2eb9ac09dee961c3e1be21d124633fb7e535ef23c58d349777ac6977a57d017d",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc390_e",
+          "hash": "4dba3a8466ab4f2ae37653a8a0c4a9e5d9692e37efe04a87510a1c21a015c551",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc390_g",
+          "hash": "f0f91345b6f7618989d7845f6a16ec3c7cdf037e6a81f8e08401413f3939ea04",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:abc398_b",
+          "hash": "80fc1d805b86c38634dbcbef228401f3242797c3302de708225c38d753f9f6db",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:atcoder:abc400_a",
+          "hash": "2caaf171bf87ed273f761465988dcc915b3abb4ffa1314cb07bf3c1e8bc9ecff",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:atcoder:arc183_c",
+          "hash": "20a601ef3ae56f874d422b7b3acb48c49a99d0b999372f271753d16dc0d650e1",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:arc187_b",
+          "hash": "eb284c0fef87ee60b7125bd96d0806094d205a0813e1497d8929582059c51a95",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:arc188_b",
+          "hash": "e1535e6b58f028bc356bd2787f7ee3013f4fb986642344752f5c4c076c4a9f10",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:arc192_b",
+          "hash": "6bc2e7226d9ff0a42a094e77d5e1caa62f214cc9befd4d43772aa536beb7d4ef",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:arc194_c",
+          "hash": "870f9de252e12c365511b6f44025f344bd6332e1ea683063be5658a3f8704c18",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:atcoder:arc194_e",
+          "hash": "6fd5313b448ee47c5a95c7a24231d7f62608718aada8a2257b8dc94babdf56d3",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:codeforces:1883_B",
+          "hash": "addd901423c31374829e80bc458e1dc4bbbac3fda81c7af3468e9b2d316ae667",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:2728",
+          "hash": "d28a6f6d7b3b3335af92cf6dc34b0721bdd98dec0162b90a6fbbb4c6c7810b24",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:2800",
+          "hash": "f329e38ee4448ef4237a378d3fb370daccbc068f729444cc03c74e50751736be",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:2839",
+          "hash": "8455d4ad17997145291ae512349b862d948bcf269c2542a65e262db2559ee308",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:2850",
+          "hash": "724442ba40a5ba7dc9dbd8b78b59315ead9e2eaba4c9440b6a678294d76bb479",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:2854",
+          "hash": "f881162840ca29db1cec18e197c4601cc650286d352c56862103e3d5a54bc1bb",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:2881",
+          "hash": "4adf9f593db9db5c61f6d5e0440a9aaf4aa3b05ae311abd129db374597e3a36f",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:2999",
+          "hash": "7e5ce4d3d277a71bc84f1f47c8ee331fc9c347b1c45195074741f3cda44217fa",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3031",
+          "hash": "f9b6aec3e10b648f2202ba702b1b122749da729df836040a2c3738479a1ac683",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3114",
+          "hash": "40948bebb6b424d4e058b37302efa66dec207dd90247c071bf53644a2dc199fd",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3171",
+          "hash": "210b660169e66c928cd7c61d578e51f3a844c1c4fd2491247991deb3306f0582",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3206",
+          "hash": "11b24bd640cf3bbd2665f9e94d490bde98b936ff35805dfec748bd14d8344cc9",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3239",
+          "hash": "3b1e11f6051d1e3dd32910fb89ac065e8694214acc43d481c4a20617d85906a2",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3261",
+          "hash": "2fadd701ce3df2f460fe3d8970e0d32b05d4266c46d24254cc09322fdee7ba6b",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3265",
+          "hash": "357bdd1f5632471d93f5aa5acf46f35f8ecdd3edda93d2a5e40daca2bdf7027c",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3292",
+          "hash": "63f6a29215ae6809910bf22185efa19edcaf3912d6f0869626f166370144e7a2",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3311",
+          "hash": "69442593ac768967ab67f6db82d92f055af039fa9ad1d003745f6574b7b3a7c7",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3312",
+          "hash": "1ab5ac30fbf165b2349816121e6df8f9123c81fe51c3b34dab0cbddb809e25ad",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3313",
+          "hash": "d95742027fd50aa948cb17178baf9f8f22300fa30923e5ce9ba4c35072f71533",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3344",
+          "hash": "2bf739f41caae9d2f0cc233dd00263f2feb177b2393f21e46da7c6f3a9899573",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3375",
+          "hash": "42a870482bc231b4c46953add7f06c763dcf6e1a3bffcb5612305962eedd6bda",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3388",
+          "hash": "70d436acb2130e301ff61ec6961d4b5639794933f8202803d55f8c4f631a4880",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3396",
+          "hash": "1db9769f2b9c6b8b2507a6f294c02e9d95950897eefb8edf18da7eecd6a580a3",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3411",
+          "hash": "c4feb3aa969c4f1e8cf816e40a0a7d385d70186d533033d7716f89cf6ceba46f",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3412",
+          "hash": "0d32109e311ea3a8c0c4b19ddae3ee538f57e1a1e939339edadd7836fc6b4ef7",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3414",
+          "hash": "52e5f427823b62b6e0b53095dd8e6453b4c772f222ba47d44b5b544a5c0bcede",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3421",
+          "hash": "241004cf07c551204a44bffd4589d7a2e99b928e3a6c9389e1cf0934b070a680",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3426",
+          "hash": "40e1adc22610c7ecaec4dbc34680325c37ed7562ad4530a6a535ee0948b026ea",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3461",
+          "hash": "bba5e2680762656120e8b78621ee58b611cd939ef44f4c2c6a1da079ac9b143b",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3490",
+          "hash": "c446d6aa30429bb1044e22c8a8f1c1d3f9f0d8243730edbccf573e421fa18d1a",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3492",
+          "hash": "6793d9ab4c02e7e0f816ba51b44aac15253d54270efd1d85ac10f9e4ca4e099e",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3498",
+          "hash": "0201d71d782f4381b77bf9fb8562e2f7a690da72c4bb6d3f864962cb6ddeaed9",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3515",
+          "hash": "bd3174aa1e1f0364c70f82b41641d7fc4c804d4087ef8921e9631d37728b3661",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3522",
+          "hash": "6ab837b78f9e63d9a67cdfbd71e872368c53f8efa349d66903168e7c230c4fef",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3534",
+          "hash": "75da93b9c101b120badd966b9fdf9ce0b9d274442c7e48ddfb561e92c37436bc",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3540",
+          "hash": "69146ddb0a3dc624c9ef73ddf51852e54334fe491976794ddc97a767f7b21468",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3594",
+          "hash": "91de24f204e22d8d3ce6015694d9292a2b249d7a300a885fd32f10038e207f17",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3603",
+          "hash": "31a2429b00a5fd2253f1c81c830fcd4930e135e2ff19792fe788d897761f4372",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3626",
+          "hash": "a84459e4ba4d27faac8dce7914015f5c5d6051cb4a5709ee28ce5fc4c1fa85c4",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3659",
+          "hash": "5bef0ddfe897d2e61324454b51fe3e1292b6a916170e26dab486b2855b7865c1",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3680",
+          "hash": "ca407551f6f7787ab47d09db918c14d84cffadebd3ae5c51ea79148dbbe61d50",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3692",
+          "hash": "01ac3690820341e90aa6556eec09e76f39b891d73dc67d052faca56ebcc4b848",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3696",
+          "hash": "d263f0256facf9710a585659550ae63e78f94c8c400bd2d7cef85993b2dbbe9d",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3768",
+          "hash": "35604a50da4d3f9844c72b188cd7f682c437641fc1bc6d399da49e4852a2f7d4",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3776",
+          "hash": "e235eba756368c2db37cdbea9743454b767131b563ec3ec37009aad67a3fb4ec",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "livecodebench:leetcode:3777",
+          "hash": "16327691e3563df899ac5455ef0ea0dffc7335e9e1a3d1eb8be4d551ccb93269",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:3788",
+          "hash": "4da0b974ae81dd14ba91a5479d2c21e1266a9c142d4206aab2a8ca1b01cc1272",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "livecodebench:leetcode:3801",
+          "hash": "621269bcf81d65591505e2c3a2d858c7841c086bd5f11b1f743625778444d3e8",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "gpqa:000b0a733f8c0c43ecb2ccd1e0c6b1b903dbe7a86d7fc8110811649314fed494",
+          "hash": "63f4c7619255325a00fa1409611b6247f4bc33e32344528aacb2eb13893c30ef",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:00d3fb126c929228794666ca5db6d221c0ca3892c3cf8aaf3704c59d4f10eeff",
+          "hash": "83f38ad7998295fc84c607c443da6008090bc584d5ef09adb8da9920bb24cc98",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:025f6ccafbd375924f58558ada12984cc3e2e31cce5c0b5ad52d8d0271733785",
+          "hash": "f4b6130977a6bc3693b918508b4516bea79c7ade0b31a843a7143d59ffa9cf43",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:046d6136baab5453a639392bace71af6bc6838bac75576e7c2fa5d957680b2fa",
+          "hash": "7a6d362aec7433c8b9a2b7383ed42f107d80e01ccd7a93eca42091996b458dd0",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:07552ef6af897354e3e46700d5ba866d55b0ee5fe5278a741ed435d02f6cb32e",
+          "hash": "8d7527d93baa8714454235937bc28f8818159de17f2e8c49ed1fa467dec0253d",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:082bf5b5f5bdb1a733eeb769b85b93b796c5c156438f39114b9b619fbd48d61d",
+          "hash": "c000009bb6067ba14abf6e2fa62d2325623e081472166375bb86dd8b27a4e0ae",
+          "benchmark": "gpqa",
+          "stratum": "biology"
+        },
+        {
+          "id": "gpqa:1758b3cc35671064b4eadd0f53fc63f2f7292a78be3f764f0242f97f50bf77f3",
+          "hash": "14f2f12c042013524fa0d662f3b3f4b87c72550c3ec555c68b29fa56221579c0",
+          "benchmark": "gpqa",
+          "stratum": "biology"
+        },
+        {
+          "id": "gpqa:191d158cbbf3b7abb3097d42c1af8457093c90ed614e00e7f0a7cfdc5847d094",
+          "hash": "15c590ed8269af8df675cbe33d6fe034208cc2116f300e713a52ab4fc274aa60",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:1a3398a6dc396c9b5a045cb7d698712898c103743b23d957ec3bac05ded75b9d",
+          "hash": "8ff16cb6b438fcac5c52eae770c0dd0c3fa1280aca1cbd30113ff0727acd0482",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:1a7722fb4fb4f054c53bd0e3dd0a0b9d57dfb7bb0afe13fd79512c9d4cee5fdb",
+          "hash": "b548ee766489c5e64a43769a9e0205e52bba26d3a982bc1e5f082381ecaf5a6c",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:1b22a94a0f4dc449c28c42bdab8d57e7c6f1bae6d9b3ffc7a2db24e2e882bc87",
+          "hash": "d70345b1a440de8f6034a718ba7df0413baa5f60a38eb0f4e0c892ddd203136f",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:32543c372045d6a5eb380b4dacb1d4cba797d566fe107c90a38031cd9842bab8",
+          "hash": "4d4d284889d7f35dc67e254450674be37c209c082591a8667e8ad8c7d908695e",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:372e79e5c712323e35606ce1a19ffdd41ddbfc7f7ee3ea8e5cd3b476ce028996",
+          "hash": "62a97c7779fc3c0b1e7899ce54ba99ce389959ee14c2c51ead75f87bd3c8c77e",
+          "benchmark": "gpqa",
+          "stratum": "biology"
+        },
+        {
+          "id": "gpqa:3890c730889d3a7da40528e977128935316481dcbc652ee4e4fec9ea35db2c01",
+          "hash": "fe9164ec9cf43e1085147196eacbae7a3f647a6c87162b9ec54f959659b475f3",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:3c245bf7499ba44833c50bddad5faf74f2fa2761974c2efb63868f72f9c22390",
+          "hash": "3420a0e1ff120f8e4a5e2ec964ed85f251dc1c63466ba22dac40e96a47997ef9",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:48d7da5bd5544c0e3ce464a583dba58ebcf83dd9fc5fef23d97fe7d395ee98f3",
+          "hash": "8ee980c2cef8937c0e3b8b8daa4caa3c9b0c29127cb96e59d4a4820e6cef9ea3",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:497ae48861878aad6b4fbccfe23f5a49076f40f68ce34a26af2ead598b9be343",
+          "hash": "dd8d292c24bd806cf114c8cca53dc1c6e24c72ef5cbcd0e88030900a4c9ba22f",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:4efe53f71d2029092e67365bdddce07f061216ebb8826987939d8e07b6c34d99",
+          "hash": "243cb7cc07f4db45bf23f666a2498442132db4dad240092b8a5414ef2feae06f",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:57af1c76abf7631b7483956e0ac160202fea88e63dd8792e3025b07fe2430346",
+          "hash": "48a11fc7cdc3327186efac615e2f7b55cbaba35c5e61665c4099e3e00cb69c7a",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:5c66f61b322b4108ee63acb5019a2eeeb496a55957789ec5860319a679947c53",
+          "hash": "cee7164fb294078f543ed38118917fb42cd4d08c9d40dc728c6a8de3107537fb",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:5d97d1e97a3245041cdf4bb977455f9210788d63cf88b145d204a9a5a262a686",
+          "hash": "b865553ad05f6695f316664ea8890bf6ea0a4c0d760d55241c509c2171566e29",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:5f3af698a1b30ee2d44d345362af18089b1cdae76b549adc02cdbe6666cf63c1",
+          "hash": "fe7dd12e91e7f1cdd3be5d29a928583d71585d3e2c64fffe77c17217a0e0793a",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:68564e00a9b54d18a3920b0bb68fb43863c89f23c3d021802d159fd6d05d5832",
+          "hash": "90765cf97f4c1c450a86a5787ddf9e9a3a1bdeab0becba4f0d4418e0941af8c7",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:6898412618a48f74fbc65161cbe11cbfa0b6fef406a43862839a468160511fb2",
+          "hash": "80a10fa1555d596531ab74f7f261d7e6d1dc6f68f5f0d816f25615a596c84cbc",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:6de26f66ec7883324d58b3e2deffdbc91c1575b2be9774be4c4ece5afaecc299",
+          "hash": "2a325ce959be4d3c22591e7d0234045107d0fcecdf464873af4a95c68c3a7974",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:6ebc2d09be7c6878dd5637109b01cb218bfb2e3c2a3bc9950bfe3fef329d81ca",
+          "hash": "4850b808a15f771e20257da6b2aae105f8bb8eee7850a8edfc45ac4b1b4664ba",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:7166ff4e23fa08326d1bb136fcb5da99a0a1ea6e1f200b2548d3319179529c09",
+          "hash": "2a3fc834ac6eb876d217a975ff7be3737ae5e7d526aadd99fa0cbfcfc8e4b8c6",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:74545df748edcf52ec066a088c9925377c8416b4c9f6ad39946e7314c9ee2fbf",
+          "hash": "b38d22a074c20b0de54665463c4dcb546201aca20db7e80121d1acfc39c295f9",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:7a8d5cd6e5ec72b0ebb784a7c4ce7bd5bde94d3efbbcfde101228fa82e7ed125",
+          "hash": "47ef638bc6e1757cd5c7f4d8d721206f4d374b59f368a2c7d8903fdecfb9cc3b",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:7c012d48ce9e6e7a1154727bc0c92eeafa01d8e87c0af32c59906b9b59b60f43",
+          "hash": "8209bae37a98a3be7e2a3abbc4cb5b84420a64e8ecef2a4fb1a80ee76457562a",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:7c88842a1ea3440e9f9ff639f5f0976790835f0f0b38fe51ede90ecd058f903b",
+          "hash": "33a9fb6085f92ac559fa94125e592e364f92aa44484ba43feeead5b4a8bee962",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:7d482766aa71e400a6d7c945009f087d03ecea8c1fe753f8b83210f99afad05a",
+          "hash": "cd2186289ed3478272032a75801c62609aa1dab78a5b0b16be6c0a4f130672a0",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:87de9936d36e8f41b4ea321594bbddb5ddde1b33eaaa4245ee19463d57b508af",
+          "hash": "b90c6845f79e06a3ab4aafb97c1f7de723dc3a19d87f08e21ed616bf2c4e3606",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:88e4477f5c25ac5462789db5ed9b68998df86b00e2e38e86e879bdcc6c66662c",
+          "hash": "c01b4f91c499f9e5394607072abe5210395bf8f53c5a5a3ca91f713c3d45e42a",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:8ab34d8aee2311cf5f120a95b8eab3c8a17f542c1db77fe7defffeeb3446cd3d",
+          "hash": "d427786ece405cd8119618876b625a0d43b17fdbb8381154541a774c8ea29800",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:8ac8a5a6495760005bc16b14bdc09a43ae900add8036324dcaf358f797db94d2",
+          "hash": "e56a78e7d97136ce121501900db226e9ebee578a345d572629101607ffe9051d",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:92b981b8cc14ed56b88d622a8a2d8129094e32a12594e11de7809b3d8a8b9a98",
+          "hash": "5cc29ff56129dc340aa0f6656f38cda0707ddbb55c1a8b9d0b506e668833cf29",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:9d84dbfbaf6bcef011242590cd144bc5cbeeb27b8cbc9bcedf8d1cfdf08aed2e",
+          "hash": "108b3d998249a124b03416a97c568a28f51a88493ad2d2dbc80925f682a2b208",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:a06a4b3c4befd781268d4003a270195a37a11ba869d0344f38d998aa55cce0af",
+          "hash": "efdfd6118c0de895e67c2496b17f4849b70a086c0bbe746015bf6217422450dd",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:a07f53a3cf0103c4c861e3ca2fcd78255b136eacca145ea4419ad9196962b55b",
+          "hash": "f0c7ca6f59ca4c0489189c5dec6f3eb68e46e903eb87e27203fdf17852880b2e",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:a1aea354fa3366fa45ef2a225f5c260021bacf34022af2b4092c8e7ad14b2652",
+          "hash": "38d63b96e1692ba3430a22b9815141145cb55e7e0f42220221e1bd4620707173",
+          "benchmark": "gpqa",
+          "stratum": "biology"
+        },
+        {
+          "id": "gpqa:a6e55155c4930252d8d89c2b4ef95eb35ea9893b0b7ce0eafe52bb3e575bcded",
+          "hash": "8404ad29b64a98db4e9baee7dffc015528c70e66ed770e655a20f2700cad5608",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:a8b0d0f98bbdd54bf7642c8f733d5770928678d0482d02f628e4f386939b8620",
+          "hash": "c3fd8b8e0af642a78f699e065166186bf1929aa8c9f815e67cddce709f380912",
+          "benchmark": "gpqa",
+          "stratum": "biology"
+        },
+        {
+          "id": "gpqa:ac5b20404b99557fc3ad07302c764ea7e9d09999c24a6a67755217569020afff",
+          "hash": "7230b9d23154eee1b4e74f425f7a70926048f6606bc5d6cf707ff5f9f3a2afa8",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:be9c6abada69b660c44b53f7dc6423ca09995f08341504b7bfa31d66914c9cf2",
+          "hash": "8e68c40baf429ac762d22b921d7f333d5281be23f08cdec26c2b22550519f5db",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:c0a641c88d6d77bd3df1af1001cc139e23dc2f0529b9a0196621ef08b44aeda4",
+          "hash": "3a7b7bcd4919bba3d5b7586f796bec6c52af1891cf33731d2c06910f7deeecfa",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:c38d1d2831521d2fd78268ceb4c2409490393e6df5d2bd6348709c0f323ba6a3",
+          "hash": "47f3da0423f468f9060e03754488b8fa57578f16edd6d3a4bf7d47eb6dabf9ef",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:cc93f1a73ce6237f00a089cc5ab369eea97a05c2664be2735f7bba390149fccb",
+          "hash": "428bf11fa527d263c5cd5b109b1138938c70d0428c0bc6848cba694c0c1624c4",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:ce2b8d95254624d536cdc2aaae0006a29aa644dac719d8b40baba6c828761adb",
+          "hash": "2c36feb1b62509038ed293edd2ea8fa0c355bd61eda34d9dc8c070d291ee45e7",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:ce905c6dc2989af0f3ab7ee0ec0716789ff75350e077d122e74e4933afb8f2f0",
+          "hash": "f5d3971bc6322f25fc4c5200a19ba34bba0dc01fa04904fabe01485c3363e0be",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:d13ab808667a37575d8bf7148308c1f78941ad0cef350f3d18e9e1b300a1dfee",
+          "hash": "49a30b3b796366990e3e87af326fb96c5ef54378fcde858e5b14158dbf4e6bdd",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:d66806edb19b94f1f16feaac7ac1d86929b49b9d244c6040a5a5181834f7b4f4",
+          "hash": "c5c9b9eb77543d2038d3ec744749b2fc786d57c9b43d5f774dd899674bc9fb3e",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:d724f494d4d91180cd611ba9c2d029da4e36258f3109e4c763a7b727d3d233d3",
+          "hash": "ba4e30e9991fa526721e69459dc423379472f3aade82e14fd6a72d196eba31fd",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:d7b590c134771a40af2d44bef2a6631bffe09b776ae684de061591b42827a6fd",
+          "hash": "34668016ccf6f5d4826bc888ef17f701ddb1ab813e06f15fb38e9dd3737ef8f0",
+          "benchmark": "gpqa",
+          "stratum": "biology"
+        },
+        {
+          "id": "gpqa:dd6c98556071d1cd262a171ac7be51e70159abdc7903f8437dfbc012b769cec3",
+          "hash": "481ff8761d0c33bf2334c4112cc2b85ddb331deff8bf30ce2138ee1a8df3bb50",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:dded26760d57dba7b8bf1e2133d814870889fdd8055dd485dd5c8aa27dc3158d",
+          "hash": "e21ad089837cbd041ebf9e4d2face79a5176b44f0d772158e819fdb94d961e0f",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        },
+        {
+          "id": "gpqa:ea9dd05139ff7b1674f336b52cfef9755d98734edec84983b1938b403fae4a86",
+          "hash": "66732f75e000c61838a4574aed48685e4bb01d51b19876e97094e8373e63f477",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:ebaddc643722d56e49516240b83d8d78e82ed2f36dd6b5a2c96398e7b475759e",
+          "hash": "26b0d5f5033dd9d20a75ab49a3d33f23157d4d32e1c2a10fc10967820525f06d",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:ecdfe3529ac100ed15167f86d15f3cf416bf6c6135ea4423efa760d529f8f886",
+          "hash": "0012ce93106021b6e7dd7b5dcd53733dbc1ec15496e963674fcf8083dc14d272",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:f1d35c2fd4de2586a6a71b877b51c7544bf7f3797b219d171a33d8d1fe282b71",
+          "hash": "d6ff24a9a6f994afdb08a3e650709b24d3b5e4cc7fec47ba7159841d1b4048c1",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        }
+      ],
+      "pilot": [
+        {
+          "id": "livebench:b1a413b03774b8811bb97c0b238c16c3c122217a11aa51425918bd5315b0935b",
+          "hash": "efcace31b0f322ac38914424b338cea23e8c8813c5bf03a036514ec76fef3d25",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "livebench:b7d1f1dff19c7a17f5bed438461607ab663b76b783a55ccdd2b5efb2236c4831",
+          "hash": "569a4556e6c160f170e5774f56cf608bb5e24aed252b882f189a8e44fbe85f2a",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "livecodebench:atcoder:abc370_g",
+          "hash": "de1f12181485d88e5915e602c35ae957b93dc04109d6f015e89241e59eeda686",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "livecodebench:leetcode:2817",
+          "hash": "4351e9356b8260efa637f6cf651de096568631a1c2c7827ba9a65bbd0f42409a",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "gpqa:b9667eb82f30b27a4d41d5b2aff57582f4efe9fece2918534c1e922406924704",
+          "hash": "7219c22a275b08e97ceeb764cdaad9d63ad689fd285134a8896084c7e3a7b329",
+          "benchmark": "gpqa",
+          "stratum": "physics"
+        },
+        {
+          "id": "gpqa:f2bafdb8659e2c0733df14be1ddb7671a26380d7ffabefc8b4792113d1f95dd4",
+          "hash": "f1a968510cc760ac314f5f3e6fad8e52b8eb9ff8ce30f9b7dd1767262fa0f7df",
+          "benchmark": "gpqa",
+          "stratum": "chemistry"
+        }
+      ]
+    },
+    "validated": true,
+    "active": true,
+    "partial": false,
+    "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
+    "protocol": {
+      "output_cap": 4096,
+      "temperature": 0,
+      "tools": false,
+      "completions": 1
+    },
+    "grading_files": {
+      "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+      "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+      "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
+    }
   }
 ]
