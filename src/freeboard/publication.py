@@ -65,7 +65,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
         for name in ["app.js", "style.css"]:
             shutil.copy(checkout / "web" / name, stage / name)
         (stage / ".nojekyll").write_text("")
-        fields = ["model_id", "tier", "transport", "season", "epoch", "status", "availability", "evaluated_at", "reasoning", "coding", "overall", "livebench", "livecodebench",
+        fields = ["model_id", "tier", "transport", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "livebench", "livecodebench",
                   "gpqa_n", "livebench_n", "livecodebench_n", "livebench_evaluated_at", "livecodebench_evaluated_at",
                   "accounted_tokens", "reported_tokens", "truncation_rate"]
         with (stage / "leaderboard.csv").open("w", newline="") as handle:

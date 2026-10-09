@@ -4,6 +4,7 @@ import itertools
 import json
 import shutil
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Literal
 
 import numpy as np
@@ -12,11 +13,20 @@ from pydantic import BaseModel, ConfigDict
 from .budget import Budget
 from .config import COUNTS, Settings, credential, digest, now
 from .db import DB
-from .opencode import REVISION, VERSION
+from .opencode import REVISION, VERSION, interruption_status
 
 
 class Strict(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+def reasoning_label(profile: dict) -> str:
+    control = profile.get('reasoning', {})
+    if control.get('mode') == 'highest-exposed':
+        return f"Highest exposed: {control['variant']}"
+    if control.get('mode') == 'provider-managed':
+        return 'Provider-managed · no selectable level'
+    return 'Unverified'
 
 
 class PublicRow(Strict):
@@ -32,6 +42,8 @@ class PublicRow(Strict):
     protocol: str | None
     endpoint: str | None
     cap_verified: bool
+    reasoning_setting: str = 'Unverified'
+    reasoning_variant: str | None = None
     observed_at: str
     evaluated_at: str | None = None
     cycle_started_at: str | None = None
@@ -67,6 +79,8 @@ class PublicPilot(Strict):
     status: str
     health_graded: int
     cap_probe_verified: bool = False
+    reasoning_setting: str = 'Unverified'
+    reasoning_variant: str | None = None
     progress: dict[str, int]
     expected: dict[str, int]
     pending_reasons: dict[str, int]
@@ -85,6 +99,8 @@ class PublicScreen(Strict):
     tier: str = 'public-screen'
     unranked: bool = True
     cap_verified: bool
+    reasoning_setting: str = 'Unverified'
+    reasoning_variant: str | None = None
     status: str
     progress: dict[str, int]
     expected: dict[str, int]
@@ -206,15 +222,23 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
     status = "stale" if complete and stale else "complete" if complete else "pending"
     profile = json.loads(cycle['profile'] if cycle else model["profile"])
     availability = model['status']
-    if availability == 'eligible':
-        last = db.one("""SELECT a.status FROM attempts a JOIN jobs j ON j.id=a.job_id
-            JOIN cycles c ON c.id=j.cycle_id WHERE c.model_id=? AND c.epoch=? AND a.kind='opencode_generation'
-            ORDER BY a.id DESC LIMIT 1""", (model['id'], model['epoch']))
+    if availability in {'eligible', 'provider_error'}:
+        last = db.one("""SELECT a.status,a.response_path FROM attempts a LEFT JOIN jobs j ON j.id=a.job_id
+            LEFT JOIN cycles c ON c.id=j.cycle_id WHERE a.model_id=?
+            AND (c.epoch=? OR a.kind='opencode_access_diagnostic' AND a.started_at>=COALESCE(
+                (SELECT MIN(c2.started_at) FROM cycles c2 WHERE c2.model_id=a.model_id AND c2.epoch=?),?))
+            AND a.kind IN ('opencode_generation','opencode_access_diagnostic')
+            ORDER BY a.id DESC LIMIT 1""", (model['id'], model['epoch'], model['epoch'], model['observed_at']))
         if last and last['status'] in {'authentication_failed', 'quota_limited', 'model_unavailable',
                                       'client_access_restricted', 'configuration_error'}:
             availability = last['status']
         elif last and last['status'] == 'ambiguous':
             availability = 'provider_error'
+            try:
+                evidence = json.loads(Path(last['response_path']).read_text())
+                availability = interruption_status(evidence)
+            except (OSError, TypeError, ValueError):
+                pass
     if not cycle:
         status = "cap_unverified" if model["status"] == "eligible" and not profile.get("cap_verified") else "pending"
     return PublicRow(model_id=model["id"], name=model["name"], epoch=cycle["epoch"] if cycle else model["epoch"],
@@ -223,6 +247,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                          'model_unavailable','configuration_error','cap_violation','cap_unverified','client_access_restricted','provider_error'},
                      protocol=profile['protocol'], endpoint=profile.get('endpoint', model['endpoint']),
                      cap_verified=profile.get("cap_verified", False), observed_at=model["observed_at"],
+                     reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
                      evaluated_at=stamp if complete else None,
                      cycle_started_at=cycle["started_at"] if cycle else None,
                      progress=progress, pending_reasons={s: sum(r['status'] == s for r in items) for s in
@@ -240,9 +265,9 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
     active = db.one("SELECT id FROM seasons WHERE active=1")
     season_id = active["id"] if active else ""
     for model in db.rows("SELECT * FROM models ORDER BY id"):
-        cycles = db.rows("""SELECT * FROM cycles WHERE model_id=? AND kind='screen'
+        cycles = db.rows(f"""SELECT * FROM cycles WHERE model_id=? AND kind='screen'
             AND json_extract(profile,'$.transport')='local-opencode'
-            AND json_extract(profile,'$.protocol_revision')=3 ORDER BY started_at DESC""", (model["id"],))
+            AND json_extract(profile,'$.protocol_revision')={REVISION} ORDER BY started_at DESC""", (model["id"],))
         proofs = db.rows("SELECT evidence FROM observations WHERE model_id=?", (model["id"],))
         ever_free = any(json.loads(p["evidence"]).get("free") for p in proofs)
         if not ever_free and not cycles and model["status"] != "eligible":
@@ -295,16 +320,16 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         blockers.append("Benchmark season awaits preparation and grader validation")
     if discovery and not discovery["ok"]:
         blockers.append(discovery["error"])
-    queue = db.one("""SELECT COUNT(*) AS n FROM jobs j JOIN cycles c ON c.id=j.cycle_id
+    queue = db.one(f"""SELECT COUNT(*) AS n FROM jobs j JOIN cycles c ON c.id=j.cycle_id
         JOIN models m ON m.id=c.model_id AND m.epoch=c.epoch
-        WHERE j.status!='graded' AND c.kind IN ('health','pilot','screen','public_screen')
+        WHERE j.status!='graded' AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen')
         AND json_extract(c.profile,'$.transport')='local-opencode'
-        AND json_extract(c.profile,'$.protocol_revision')=3""")["n"]
+        AND json_extract(c.profile,'$.protocol_revision')={REVISION}""")["n"]
     pilots = []
-    for cycle in db.rows("""SELECT * FROM cycles WHERE kind='pilot'
+    for cycle in db.rows(f"""SELECT * FROM cycles WHERE kind='pilot'
         AND json_extract(profile,'$.transport')='local-opencode'
-        AND json_extract(profile,'$.protocol_revision')=3
-        AND (completed_at IS NOT NULL OR epoch=(SELECT epoch FROM models WHERE id=cycles.model_id))
+        AND json_extract(profile,'$.protocol_revision')={REVISION}
+        AND epoch=(SELECT epoch FROM models WHERE id=cycles.model_id)
         ORDER BY started_at,model_id"""):
         items = records(db, cycle, 'pilot')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='pilot'", (cycle['season'],))
@@ -319,9 +344,18 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             WHERE j.cycle_id=?""", ((health_cycle or {}).get('id'),))
         health = sum(j['status'] == 'graded' for j in cap_checks)
         verified = any(json.loads(j['content']).get('check') == 'cap' and j['score'] == 1 for j in cap_checks)
+        if not verified:
+            verified = bool(db.one("""SELECT j.id FROM jobs j JOIN cycles c ON c.id=j.cycle_id
+                WHERE c.model_id=? AND c.epoch=? AND c.season=? AND c.kind='cap_calibration'
+                AND j.status='graded' AND j.score=1 AND c.completed_at<=?""",
+                (cycle['model_id'],cycle['epoch'],cycle['season'],cycle['completed_at'] or now())))
+        replacement_cap = (health == 5 and verified and any(j['status'] == 'ambiguous'
+            and json.loads(j['content']).get('check') == 'cap' for j in cap_checks))
         complete = (sum(expected.values()) in {4, 6} and len(items) == sum(expected.values())
-                    and health == 6 and all(progress[b] == expected[b] for b in expected))
+                    and (health == 6 or replacement_cap) and all(progress[b] == expected[b] for b in expected))
         pilots.append(PublicPilot(model_id=cycle['model_id'],
+            reasoning_setting=reasoning_label(json.loads(cycle['profile'])),
+            reasoning_variant=json.loads(cycle['profile']).get('reasoning', {}).get('variant'),
             season=cycle['season'], status='complete' if complete else 'pending',
             health_graded=health, cap_probe_verified=verified, progress=progress, expected=expected,
             pending_reasons={s: sum(r['status'] == s for r in items) for s in sorted({r['status'] for r in items if r['status'] != 'graded'})},
@@ -329,9 +363,10 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
                               for b in expected if expected[b] and progress[b] == expected[b]},
             evaluated_at=cycle['completed_at'] if complete else None))
     public_screens = []
-    for cycle in db.rows("""SELECT * FROM cycles WHERE kind='public_screen'
+    for cycle in db.rows(f"""SELECT * FROM cycles WHERE kind='public_screen'
         AND json_extract(profile,'$.transport')='local-opencode'
-        AND json_extract(profile,'$.protocol_revision')=3 ORDER BY started_at,model_id"""):
+        AND json_extract(profile,'$.protocol_revision')={REVISION}
+        AND epoch=(SELECT epoch FROM models WHERE id=cycles.model_id) ORDER BY started_at,model_id"""):
         items = records(db, cycle, 'screen')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='screen'", (cycle['season'],))
         expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['screen']}
@@ -353,6 +388,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         generated_items = [r for r in items if r['latency'] is not None]
         profile = json.loads(cycle['profile'])
         public_screens.append(PublicScreen(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
+            reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
             cap_verified=profile.get('cap_verified', False) and not any(
                 r['status'] == 'cap_unverified' or 'output cap' in (r.get('error') or '').lower() for r in items),
             status='complete' if complete else 'pending', progress=progress, expected=expected,

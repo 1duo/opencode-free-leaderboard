@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "snapshot_id": "e5d29073bea6c098f9b1",
-  "generated_at": "2026-10-09T00:29:09+00:00",
+  "snapshot_id": "16fc9d6dfaefe0c06fe8",
+  "generated_at": "2026-10-09T05:29:57+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-09T00:12:21+00:00",
+  "discovery_at": "2026-10-09T04:54:31+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -11,16 +11,18 @@
       "model_id": "big-pickle",
       "transport": "local-opencode",
       "name": "Big Pickle",
-      "epoch": "322160ca2b6ad3b0",
+      "epoch": "2a5f9426c518d425",
       "tier": "screen",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "eligible",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "cap_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -47,16 +49,18 @@
       "model_id": "big-pickle",
       "transport": "local-opencode",
       "name": "Big Pickle",
-      "epoch": "322160ca2b6ad3b0",
+      "epoch": "2a5f9426c518d425",
       "tier": "confirmation",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "eligible",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "cap_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -83,7 +87,7 @@
       "model_id": "exo-free",
       "transport": "local-opencode",
       "name": "Exo Free",
-      "epoch": "7115d056fd3cc489",
+      "epoch": "26c4c011fd1ccdcc",
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
@@ -92,7 +96,9 @@
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -119,7 +125,7 @@
       "model_id": "exo-free",
       "transport": "local-opencode",
       "name": "Exo Free",
-      "epoch": "7115d056fd3cc489",
+      "epoch": "26c4c011fd1ccdcc",
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
@@ -128,7 +134,9 @@
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -164,7 +172,9 @@
       "protocol": "unsupported",
       "endpoint": "https://opencode.ai/zen/v1/systemone",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Unverified",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -200,7 +210,9 @@
       "protocol": "unsupported",
       "endpoint": "https://opencode.ai/zen/v1/systemone",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Unverified",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -227,16 +239,18 @@
       "model_id": "ling-3.0-flash-fin-free",
       "transport": "local-opencode",
       "name": "Ling 3.0 Flash Fin Free",
-      "epoch": "0937550ac9a06b44",
+      "epoch": "08649736d071d3af",
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "provider_error",
+      "availability": "model_unavailable",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -263,16 +277,18 @@
       "model_id": "ling-3.0-flash-fin-free",
       "transport": "local-opencode",
       "name": "Ling 3.0 Flash Fin Free",
-      "epoch": "0937550ac9a06b44",
+      "epoch": "08649736d071d3af",
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "provider_error",
+      "availability": "model_unavailable",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -299,16 +315,18 @@
       "model_id": "ling-3.1-flash-free",
       "transport": "local-opencode",
       "name": "Ling 3.1 Flash Free",
-      "epoch": "24722af8f0e30e10",
+      "epoch": "32a35d96381f6246",
       "tier": "screen",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "cap_violation",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -335,16 +353,18 @@
       "model_id": "ling-3.1-flash-free",
       "transport": "local-opencode",
       "name": "Ling 3.1 Flash Free",
-      "epoch": "24722af8f0e30e10",
+      "epoch": "32a35d96381f6246",
       "tier": "confirmation",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "cap_violation",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -371,16 +391,18 @@
       "model_id": "longcat-2.5-preview-free",
       "transport": "local-opencode",
       "name": "LongCat 2.5 Preview Free",
-      "epoch": "92793f2b5bfbd9f2",
+      "epoch": "e66042f250e9e706",
       "tier": "screen",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "quota_limited",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "cap_verified": true,
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -407,16 +429,18 @@
       "model_id": "longcat-2.5-preview-free",
       "transport": "local-opencode",
       "name": "LongCat 2.5 Preview Free",
-      "epoch": "92793f2b5bfbd9f2",
+      "epoch": "e66042f250e9e706",
       "tier": "confirmation",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "quota_limited",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "cap_verified": true,
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -443,7 +467,7 @@
       "model_id": "mimo-v2.5-free",
       "transport": "local-opencode",
       "name": "MiMo-V2.5 Free",
-      "epoch": "1d27bb1e366c4485",
+      "epoch": "aebdf0a223cf35cd",
       "tier": "screen",
       "season": null,
       "status": "pending",
@@ -452,7 +476,9 @@
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Unverified",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -479,7 +505,7 @@
       "model_id": "mimo-v2.5-free",
       "transport": "local-opencode",
       "name": "MiMo-V2.5 Free",
-      "epoch": "1d27bb1e366c4485",
+      "epoch": "aebdf0a223cf35cd",
       "tier": "confirmation",
       "season": null,
       "status": "pending",
@@ -488,7 +514,9 @@
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Unverified",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -515,16 +543,18 @@
       "model_id": "mimo-v2.6-flash-free",
       "transport": "local-opencode",
       "name": "MiMo-V2.6-Flash Free",
-      "epoch": "77bdfb4a1fa19afa",
+      "epoch": "f6a653d20ef33c1f",
       "tier": "screen",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "cap_violation",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -551,16 +581,18 @@
       "model_id": "mimo-v2.6-flash-free",
       "transport": "local-opencode",
       "name": "MiMo-V2.6-Flash Free",
-      "epoch": "77bdfb4a1fa19afa",
+      "epoch": "f6a653d20ef33c1f",
       "tier": "confirmation",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "cap_violation",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -587,7 +619,7 @@
       "model_id": "muse-spark-1.3-contributor-free",
       "transport": "local-opencode",
       "name": "Muse Spark 1.3 Contributor Free",
-      "epoch": "39ed49d0f41b391e",
+      "epoch": "44ccf574604d3386",
       "tier": "screen",
       "season": null,
       "status": "pending",
@@ -596,7 +628,9 @@
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/responses",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Unverified",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -623,7 +657,7 @@
       "model_id": "muse-spark-1.3-contributor-free",
       "transport": "local-opencode",
       "name": "Muse Spark 1.3 Contributor Free",
-      "epoch": "39ed49d0f41b391e",
+      "epoch": "44ccf574604d3386",
       "tier": "confirmation",
       "season": null,
       "status": "pending",
@@ -632,7 +666,9 @@
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/responses",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Unverified",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -659,16 +695,18 @@
       "model_id": "nemotron-3-ultra-free",
       "transport": "local-opencode",
       "name": "Nemotron 3 Ultra Free",
-      "epoch": "781339bdf89a989c",
+      "epoch": "2e4670a763f000a9",
       "tier": "screen",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "provider_overloaded",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "cap_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -695,16 +733,18 @@
       "model_id": "nemotron-3-ultra-free",
       "transport": "local-opencode",
       "name": "Nemotron 3 Ultra Free",
-      "epoch": "781339bdf89a989c",
+      "epoch": "2e4670a763f000a9",
       "tier": "confirmation",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "provider_overloaded",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "cap_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -731,16 +771,18 @@
       "model_id": "nemotron-3.5-lightning-free",
       "transport": "local-opencode",
       "name": "Nemotron 3.5 Lightning Free",
-      "epoch": "3b557ca36d89882b",
+      "epoch": "0084f3a865a425f7",
       "tier": "screen",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "cap_violation",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -767,16 +809,18 @@
       "model_id": "nemotron-3.5-lightning-free",
       "transport": "local-opencode",
       "name": "Nemotron 3.5 Lightning Free",
-      "epoch": "3b557ca36d89882b",
+      "epoch": "0084f3a865a425f7",
       "tier": "confirmation",
       "season": null,
-      "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "status": "pending",
+      "availability": "cap_violation",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -803,7 +847,7 @@
       "model_id": "space-bunny-free",
       "transport": "local-opencode",
       "name": "Space Bunny Free",
-      "epoch": "27b751942da04b7c",
+      "epoch": "96f0cbade880597b",
       "tier": "screen",
       "season": null,
       "status": "pending",
@@ -812,7 +856,9 @@
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": true,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: max",
+      "reasoning_variant": "max",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -839,7 +885,7 @@
       "model_id": "space-bunny-free",
       "transport": "local-opencode",
       "name": "Space Bunny Free",
-      "epoch": "27b751942da04b7c",
+      "epoch": "96f0cbade880597b",
       "tier": "confirmation",
       "season": null,
       "status": "pending",
@@ -848,7 +894,9 @@
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": true,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: max",
+      "reasoning_variant": "max",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -875,16 +923,18 @@
       "model_id": "step-5-preview-free",
       "transport": "local-opencode",
       "name": "Step 5 Preview Free",
-      "epoch": "6f84c6c227dbc332",
+      "epoch": "7bb6f2263f89c8f8",
       "tier": "screen",
       "season": null,
       "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "availability": "model_unavailable",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -911,16 +961,18 @@
       "model_id": "step-5-preview-free",
       "transport": "local-opencode",
       "name": "Step 5 Preview Free",
-      "epoch": "6f84c6c227dbc332",
+      "epoch": "7bb6f2263f89c8f8",
       "tier": "confirmation",
       "season": null,
       "status": "cap_unverified",
-      "availability": "client_access_restricted",
+      "availability": "model_unavailable",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": false,
-      "observed_at": "2026-10-09T00:12:21+00:00",
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "observed_at": "2026-10-09T04:54:31+00:00",
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -952,24 +1004,27 @@
       "transport": "local-opencode",
       "season": "public-pilot-424b7a865093c836",
       "unranked": true,
-      "status": "pending",
-      "health_graded": 0,
-      "cap_probe_verified": false,
+      "status": "complete",
+      "health_graded": 6,
+      "cap_probe_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
       "progress": {
         "gpqa": 0,
-        "livebench": 0,
-        "livecodebench": 0
+        "livebench": 2,
+        "livecodebench": 2
       },
       "expected": {
         "gpqa": 0,
         "livebench": 2,
         "livecodebench": 2
       },
-      "pending_reasons": {
-        "pending": 4
+      "pending_reasons": {},
+      "benchmark_scores": {
+        "livebench": 18.75,
+        "livecodebench": 50.0
       },
-      "benchmark_scores": {},
-      "evaluated_at": null
+      "evaluated_at": "2026-10-09T02:43:30+00:00"
     },
     {
       "model_id": "exo-free",
@@ -979,6 +1034,8 @@
       "status": "pending",
       "health_graded": 0,
       "cap_probe_verified": false,
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
       "progress": {
         "gpqa": 0,
         "livebench": 0,
@@ -1003,6 +1060,8 @@
       "status": "pending",
       "health_graded": 0,
       "cap_probe_verified": false,
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
       "progress": {
         "gpqa": 0,
         "livebench": 0,
@@ -1014,7 +1073,7 @@
         "livecodebench": 2
       },
       "pending_reasons": {
-        "deferred": 4
+        "pending": 4
       },
       "benchmark_scores": {},
       "evaluated_at": null
@@ -1027,6 +1086,8 @@
       "status": "pending",
       "health_graded": 0,
       "cap_probe_verified": false,
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
       "progress": {
         "gpqa": 0,
         "livebench": 0,
@@ -1048,24 +1109,27 @@
       "transport": "local-opencode",
       "season": "public-pilot-424b7a865093c836",
       "unranked": true,
-      "status": "pending",
-      "health_graded": 0,
-      "cap_probe_verified": false,
+      "status": "complete",
+      "health_graded": 6,
+      "cap_probe_verified": true,
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
       "progress": {
         "gpqa": 0,
-        "livebench": 0,
-        "livecodebench": 0
+        "livebench": 2,
+        "livecodebench": 2
       },
       "expected": {
         "gpqa": 0,
         "livebench": 2,
         "livecodebench": 2
       },
-      "pending_reasons": {
-        "pending": 4
+      "pending_reasons": {},
+      "benchmark_scores": {
+        "livebench": 50.0,
+        "livecodebench": 0.0
       },
-      "benchmark_scores": {},
-      "evaluated_at": null
+      "evaluated_at": "2026-10-09T02:49:41+00:00"
     },
     {
       "model_id": "mimo-v2.6-flash-free",
@@ -1073,11 +1137,13 @@
       "season": "public-pilot-424b7a865093c836",
       "unranked": true,
       "status": "pending",
-      "health_graded": 0,
-      "cap_probe_verified": false,
+      "health_graded": 6,
+      "cap_probe_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
       "progress": {
         "gpqa": 0,
-        "livebench": 0,
+        "livebench": 1,
         "livecodebench": 0
       },
       "expected": {
@@ -1086,7 +1152,8 @@
         "livecodebench": 2
       },
       "pending_reasons": {
-        "pending": 4
+        "failed": 1,
+        "pending": 2
       },
       "benchmark_scores": {},
       "evaluated_at": null
@@ -1097,12 +1164,14 @@
       "season": "public-pilot-424b7a865093c836",
       "unranked": true,
       "status": "pending",
-      "health_graded": 0,
-      "cap_probe_verified": false,
+      "health_graded": 6,
+      "cap_probe_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
       "progress": {
         "gpqa": 0,
-        "livebench": 0,
-        "livecodebench": 0
+        "livebench": 2,
+        "livecodebench": 1
       },
       "expected": {
         "gpqa": 0,
@@ -1110,9 +1179,11 @@
         "livecodebench": 2
       },
       "pending_reasons": {
-        "pending": 4
+        "ambiguous": 1
       },
-      "benchmark_scores": {},
+      "benchmark_scores": {
+        "livebench": 0.0
+      },
       "evaluated_at": null
     },
     {
@@ -1120,24 +1191,27 @@
       "transport": "local-opencode",
       "season": "public-pilot-424b7a865093c836",
       "unranked": true,
-      "status": "pending",
-      "health_graded": 0,
-      "cap_probe_verified": false,
+      "status": "complete",
+      "health_graded": 6,
+      "cap_probe_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
       "progress": {
         "gpqa": 0,
-        "livebench": 0,
-        "livecodebench": 0
+        "livebench": 2,
+        "livecodebench": 2
       },
       "expected": {
         "gpqa": 0,
         "livebench": 2,
         "livecodebench": 2
       },
-      "pending_reasons": {
-        "pending": 4
+      "pending_reasons": {},
+      "benchmark_scores": {
+        "livebench": 0.0,
+        "livecodebench": 0.0
       },
-      "benchmark_scores": {},
-      "evaluated_at": null
+      "evaluated_at": "2026-10-09T03:04:15+00:00"
     },
     {
       "model_id": "space-bunny-free",
@@ -1147,6 +1221,8 @@
       "status": "complete",
       "health_graded": 6,
       "cap_probe_verified": true,
+      "reasoning_setting": "Highest exposed: max",
+      "reasoning_variant": "max",
       "progress": {
         "gpqa": 0,
         "livebench": 2,
@@ -1162,7 +1238,7 @@
         "livebench": 50.0,
         "livecodebench": 50.0
       },
-      "evaluated_at": "2026-10-09T00:12:03+00:00"
+      "evaluated_at": "2026-10-09T03:06:02+00:00"
     },
     {
       "model_id": "step-5-preview-free",
@@ -1170,8 +1246,10 @@
       "season": "public-pilot-424b7a865093c836",
       "unranked": true,
       "status": "pending",
-      "health_graded": 0,
-      "cap_probe_verified": false,
+      "health_graded": 4,
+      "cap_probe_verified": true,
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
       "progress": {
         "gpqa": 0,
         "livebench": 0,
@@ -1191,16 +1269,145 @@
   ],
   "public_screens": [
     {
-      "model_id": "space-bunny-free",
-      "epoch": "27b751942da04b7c",
+      "model_id": "big-pickle",
+      "epoch": "2a5f9426c518d425",
       "transport": "local-opencode",
       "client_version": "1.18.31",
-      "protocol_revision": 3,
+      "protocol_revision": 6,
       "extra_system_context": true,
       "season": "public-pilot-424b7a865093c836",
       "tier": "public-screen",
       "unranked": true,
       "cap_verified": true,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "status": "pending",
+      "progress": {
+        "gpqa": 0,
+        "livebench": 19,
+        "livecodebench": 40
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 20,
+        "livecodebench": 40
+      },
+      "pending_reasons": {
+        "ambiguous": 1
+      },
+      "benchmark_scores": {
+        "livecodebench": 65.0
+      },
+      "intervals": {
+        "livecodebench": [
+          52.5,
+          77.5
+        ]
+      },
+      "benchmark_evaluated_at": {
+        "livecodebench": "2026-10-09T05:26:02+00:00"
+      },
+      "evaluated_at": null,
+      "latency_seconds": 22.394189750077203,
+      "accounted_tokens": 401033,
+      "reported_tokens": 361559,
+      "truncation_rate": 0.3898305084745763
+    },
+    {
+      "model_id": "longcat-2.5-preview-free",
+      "epoch": "e66042f250e9e706",
+      "transport": "local-opencode",
+      "client_version": "1.18.31",
+      "protocol_revision": 6,
+      "extra_system_context": true,
+      "season": "public-pilot-424b7a865093c836",
+      "tier": "public-screen",
+      "unranked": true,
+      "cap_verified": true,
+      "reasoning_setting": "Highest exposed: high",
+      "reasoning_variant": "high",
+      "status": "pending",
+      "progress": {
+        "gpqa": 0,
+        "livebench": 20,
+        "livecodebench": 39
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 20,
+        "livecodebench": 40
+      },
+      "pending_reasons": {
+        "ambiguous": 1
+      },
+      "benchmark_scores": {
+        "livebench": 45.0
+      },
+      "intervals": {
+        "livebench": [
+          25.0,
+          65.0
+        ]
+      },
+      "benchmark_evaluated_at": {
+        "livebench": "2026-10-09T03:45:56+00:00"
+      },
+      "evaluated_at": null,
+      "latency_seconds": 84.34164274996147,
+      "accounted_tokens": 382168,
+      "reported_tokens": 368805,
+      "truncation_rate": 0.4576271186440678
+    },
+    {
+      "model_id": "nemotron-3.5-lightning-free",
+      "epoch": "0084f3a865a425f7",
+      "transport": "local-opencode",
+      "client_version": "1.18.31",
+      "protocol_revision": 6,
+      "extra_system_context": true,
+      "season": "public-pilot-424b7a865093c836",
+      "tier": "public-screen",
+      "unranked": true,
+      "cap_verified": false,
+      "reasoning_setting": "Provider-managed · no selectable level",
+      "reasoning_variant": null,
+      "status": "pending",
+      "progress": {
+        "gpqa": 0,
+        "livebench": 4,
+        "livecodebench": 0
+      },
+      "expected": {
+        "gpqa": 0,
+        "livebench": 20,
+        "livecodebench": 40
+      },
+      "pending_reasons": {
+        "failed": 1,
+        "pending": 55
+      },
+      "benchmark_scores": {},
+      "intervals": {},
+      "benchmark_evaluated_at": {},
+      "evaluated_at": null,
+      "latency_seconds": 97.31989545794204,
+      "accounted_tokens": 44881,
+      "reported_tokens": 32201,
+      "truncation_rate": 1.0
+    },
+    {
+      "model_id": "space-bunny-free",
+      "epoch": "96f0cbade880597b",
+      "transport": "local-opencode",
+      "client_version": "1.18.31",
+      "protocol_revision": 6,
+      "extra_system_context": true,
+      "season": "public-pilot-424b7a865093c836",
+      "tier": "public-screen",
+      "unranked": true,
+      "cap_verified": true,
+      "reasoning_setting": "Highest exposed: max",
+      "reasoning_variant": "max",
       "status": "complete",
       "progress": {
         "gpqa": 0,
@@ -1214,28 +1421,28 @@
       },
       "pending_reasons": {},
       "benchmark_scores": {
-        "livebench": 65.0,
-        "livecodebench": 62.5
+        "livebench": 90.0,
+        "livecodebench": 55.00000000000001
       },
       "intervals": {
         "livebench": [
-          45.0,
-          85.0
+          75.0,
+          100.0
         ],
         "livecodebench": [
-          50.0,
-          75.0
+          42.5,
+          67.5
         ]
       },
       "benchmark_evaluated_at": {
-        "livebench": "2026-10-09T00:17:52+00:00",
-        "livecodebench": "2026-10-09T00:28:02+00:00"
+        "livebench": "2026-10-09T04:43:59+00:00",
+        "livecodebench": "2026-10-09T04:54:04+00:00"
       },
-      "evaluated_at": "2026-10-09T00:28:03+00:00",
-      "latency_seconds": 11.411970479530282,
-      "accounted_tokens": 155919,
-      "reported_tokens": 155919,
-      "truncation_rate": 0.26666666666666666
+      "evaluated_at": "2026-10-09T04:54:04+00:00",
+      "latency_seconds": 10.49055820866488,
+      "accounted_tokens": 345038,
+      "reported_tokens": 345038,
+      "truncation_rate": 0.2
     }
   ],
   "seasons": [
@@ -4278,24 +4485,24 @@
   ],
   "budget": {
     "week": "2026-10-05",
-    "attempts_limit": 321,
-    "tokens_limit": 1822344,
-    "planned_attempts": 78,
-    "planned_tokens": 1057867,
-    "attempts_used": 303,
-    "accounted_tokens": 920396,
-    "reported_tokens": 534806,
-    "estimated_attempts": 53,
-    "opencode_attempts": 97,
-    "opencode_invocations": 85,
-    "opencode_accounted_tokens": 401727,
-    "opencode_reported_tokens": 170439,
-    "opencode_estimated_attempts": 27,
-    "discovery_attempts": 40,
-    "prior_attempts": 166,
-    "prior_accounted_tokens": 518669
+    "attempts_limit": 924,
+    "tokens_limit": 7840078,
+    "planned_attempts": 122,
+    "planned_tokens": 1688650,
+    "attempts_used": 811,
+    "accounted_tokens": 3883194,
+    "reported_tokens": 2706203,
+    "estimated_attempts": 134,
+    "opencode_attempts": 569,
+    "opencode_invocations": 498,
+    "opencode_accounted_tokens": 3306071,
+    "opencode_reported_tokens": 2334664,
+    "opencode_estimated_attempts": 102,
+    "discovery_attempts": 68,
+    "prior_attempts": 174,
+    "prior_accounted_tokens": 577123
   },
-  "queue_size": 90,
+  "queue_size": 98,
   "missed_deadlines": 0,
   "blockers": [
     "Authenticated GPQA access is not configured",

@@ -104,3 +104,16 @@ class Budget:
             accounted_tokens=?,reported_tokens=?,usage=?,response_path=? WHERE id=?""",
                         (now(), status, http_status, charged, reported,
                          json.dumps(usage) if usage else None, response_path, attempt))
+
+    def record_unrequested_turn(self, parent: int, turn: int, evidence: str) -> int:
+        """Charge a possible SDK continuation after abort; never authorize another dispatch."""
+        existing = self.db.one("SELECT id FROM attempts WHERE json_extract(usage,'$.unrequested_from')=? AND json_extract(usage,'$.turn')=?", (parent, turn))
+        if existing:
+            return existing['id']
+        row = self.db.one('SELECT * FROM attempts WHERE id=?', (parent,))
+        stamp = now()
+        return self.db.execute("""INSERT INTO attempts(job_id,model_id,week,kind,started_at,finished_at,status,
+            reserved_tokens,accounted_tokens,usage,response_path) VALUES(?,?,?,?,?,?,?,?,?,?,?)""",
+            (row['job_id'],row['model_id'],row['week'],'opencode_generation',stamp,stamp,'ambiguous',
+             row['reserved_tokens'],row['reserved_tokens'],json.dumps({'source':'opencode-unrequested-turn',
+             'unrequested_from':parent,'turn':turn}),evidence)).lastrowid

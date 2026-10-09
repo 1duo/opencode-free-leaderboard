@@ -45,13 +45,13 @@ def parse_evidence(html: str) -> dict[str, dict]:
     return result
 
 
-def profile_for(endpoint: str | None) -> dict:
+def profile_for(endpoint: str | None, reasoning: dict | None = None) -> dict:
     from .opencode import profile
     path = urlparse(endpoint or "").path
     if path.endswith("/chat/completions"):
-        return profile('chat')
+        return profile('chat', reasoning)
     if path.endswith("/responses"):
-        return profile('responses')
+        return profile('responses', reasoning)
     return {"protocol": "unsupported", "cap_verified": False}
 
 
@@ -60,7 +60,7 @@ def excluded(ident: str) -> bool:
 
 
 def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict:
-    from .opencode import client_version
+    from .opencode import client_version, inspect_models, reasoning_policy
     client_version(db.state)
     client = client or httpx.Client(timeout=30, follow_redirects=False)
     content = {}
@@ -88,6 +88,13 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
     except (ValueError, KeyError, TypeError):
         ok, ids = False, set()
         error = error or "Official discovery schema is unavailable or changed"
+    free_ids = sorted(i for i in ids if not excluded(i) and evidence.get(i, {}).get('free')
+                      and profile_for(evidence[i]['endpoint'])['protocol'] == 'opencode') if ok else []
+    try:
+        native_models = inspect_models(budget.settings, free_ids) if free_ids else {}
+    except (RuntimeError, httpx.HTTPError, ValueError, KeyError, TypeError):
+        ok, native_models = False, {}
+        error = 'Native OpenCode model metadata unavailable'
     stamp = now()
     raw = {"sources": [ZEN_DOCS, f"{ZEN_BASE}/models"], "pricing": evidence,
            "catalog_ids": sorted(ids), "hashes": {k: digest(v) for k, v in content.items()}}
@@ -98,7 +105,15 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
     for model in sorted(candidates):
         old, proof = previous.get(model), evidence.get(model)
         endpoint = proof["endpoint"] if proof else (old or {}).get("endpoint")
-        default = profile_for(endpoint)
+        try:
+            native = native_models.get(model)
+            if native and (native['api']['id'] != model or native['api']['url'] != ZEN_BASE
+                           or native['providerID'] != 'opencode' or native['cost']['input'] != 0 or native['cost']['output'] != 0):
+                raise ValueError('Native route or zero pricing is inconsistent')
+            reasoning = reasoning_policy(native)
+        except (ValueError, KeyError, TypeError):
+            reasoning = reasoning_policy(None)
+        default = profile_for(endpoint, reasoning)
         prior = json.loads(old['profile']) if old else {}
         same = (old and old['endpoint'] == endpoint and
                 {k: v for k, v in prior.items() if k != 'cap_verified'} ==
@@ -118,8 +133,12 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
             status = "unsupported"
         elif profile["protocol"] == "unsupported":
             status = "unsupported"
+        elif profile.get('reasoning', {}).get('mode') == 'unverified':
+            status = 'configuration_error'
         else:
             status = "eligible"
+        if status == 'eligible' and same and old['status'] in {'cap_violation', 'cap_unverified'}:
+            status = old['status']
         epoch = digest({"id": model, "endpoint": endpoint,
                         "profile": {k: v for k, v in profile.items() if k != "cap_verified"}})[:16]
         db.execute("""INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET

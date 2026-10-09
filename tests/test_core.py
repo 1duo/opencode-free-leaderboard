@@ -12,8 +12,8 @@ from freeboard.discovery import excluded, parse_evidence
 from freeboard.grading import DockerGrader, GradingUnavailable, gpqa_score
 from freeboard.panels import sample, prepare
 from freeboard.publication import export, validate_site, public_source
-from freeboard.runner import Runner
-from freeboard.opencode import configuration, completion_events, profile, prompt_body
+from freeboard.runner import CAP_CALIBRATION, Runner
+from freeboard.opencode import PERMISSIONS, configuration, completion_events, profile, prompt_body, reasoning_policy
 from freeboard.scoring import bootstrap, is_complete, make_row
 
 
@@ -27,7 +27,7 @@ def context(tmp_path):
 
 
 def model(db, name="test-free"):
-    settings_profile = {**profile("chat"), "cap_verified": True}
+    settings_profile = {**profile("chat", {'mode':'provider-managed','variant':None,'options':{},'available_variants':[]}), "cap_verified": True}
     db.execute("INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?)", (name, name, "https://opencode.ai/zen/v1/chat/completions", "chat", "eligible", "epoch", 0, json.dumps(settings_profile), now(), None))
     return db.one("SELECT * FROM models WHERE id=?", (name,))
 
@@ -88,13 +88,16 @@ def test_fail_closed_prices_and_exact_join():
 
 def test_generation_endpoint_and_free_gates():
     value = {'id': 'alias', 'status': 'eligible', 'endpoint': 'https://opencode.ai/zen/v1/chat/completions',
-             'profile': json.dumps(profile('chat'))}
+             'profile': json.dumps(profile('chat', {'mode':'provider-managed','variant':None,'options':{},'available_variants':[]}))}
     messages = [{'role':'system','content':'EXACT SYSTEM'}, {'role':'user','content':'EXACT USER'}]
     body = prompt_body(value, messages)
     assert body['system']=='EXACT SYSTEM' and body['parts']==[{'type':'text','text':'EXACT USER'}]
     assert body['model']=={'providerID':'opencode','modelID':'alias'}
     cfg=configuration('alias',4096)
-    assert 'steps' not in cfg['agent']['benchmark'] and cfg['agent']['benchmark']['permission']=={'*':'deny'}
+    assert 'steps' not in cfg['agent']['benchmark'] and cfg['agent']['benchmark']['permission']==PERMISSIONS
+    assert set(PERMISSIONS.values()) == {'deny', 'ask'} and PERMISSIONS['*'] == 'deny'
+    assert PERMISSIONS['external_directory'] == 'ask'
+    assert cfg['experimental']['continue_loop_on_deny'] is False
     assert cfg['provider']['opencode']['whitelist']==['alias']
     for changed in [{'status':'paid'},{'id':'muse-spark-1.3-contributor-free'},
                     {'endpoint':'https://other.example/chat/completions'},
@@ -108,6 +111,126 @@ def test_generation_endpoint_and_free_gates():
     for changed in [{'assistant_turns':2},{'tool_parts':1}]:
         with pytest.raises(ValueError):
             completion_events({**native_result(),**changed},'test-free')
+
+
+def test_highest_reasoning_is_explicit_and_fail_closed(context):
+    from freeboard.scoring import reasoning_label
+    from freeboard.config import digest
+    definition={'api': {}, 'capabilities': {'reasoning':True}, 'options':{},
+                'variants':{k:{'reasoningEffort':k} for k in ['low','high','xhigh','max']}}
+    selected=reasoning_policy(definition)
+    assert selected['variant']=='max' and selected['options']=={'reasoningEffort':'max'}
+    settings=profile('chat',selected)
+    value={'id':'alias','status':'eligible','endpoint':'https://opencode.ai/zen/v1/chat/completions','profile':json.dumps(settings)}
+    assert prompt_body(value,[{'role':'user','content':'Q'}])['variant']=='max'
+    assert reasoning_label(settings)=='Highest exposed: max'
+    lower=reasoning_policy({**definition,'variants':{'high':{'reasoningEffort':'high'}}})
+    assert lower['variant']=='high' and digest(profile('chat',lower))!=digest(settings)
+    managed=reasoning_policy({**definition,'variants':{}})
+    assert managed['variant'] is None and 'Provider-managed' in reasoning_label(profile('chat',managed))
+    with pytest.raises(ValueError):
+        reasoning_policy({**definition,'variants':{'unknown':{'reasoningEffort':'unknown'}}})
+    with pytest.raises(ValueError):
+        prompt_body({**value,'profile':json.dumps(profile('chat'))},[{'role':'user','content':'Q'}])
+    db,_,_=context
+    m=model(db)
+    db.execute('UPDATE models SET profile=? WHERE id=?',(json.dumps(settings),m['id']))
+    row,_=make_row(db,context[1],db.one('SELECT * FROM models'),None,'screen')
+    assert row.reasoning_variant=='max' and row.reasoning_setting=='Highest exposed: max'
+
+
+def test_discovery_reasoning_epochs_and_cap_failure_persist(context, monkeypatch):
+    import httpx
+    from freeboard.discovery import discover
+    from freeboard.config import ZEN_BASE, ZEN_DOCS
+    db,settings,_=context
+    definition={'api':{'id':'alias','url':ZEN_BASE},'providerID':'opencode','cost':{'input':0,'output':0},'capabilities':{'reasoning':True},'options':{},'variants':{'high':{'reasoningEffort':'high'}}}
+    monkeypatch.setattr('freeboard.opencode.client_version',lambda _: '1.18.31')
+    monkeypatch.setattr('freeboard.opencode.inspect_models',lambda *_:{'alias':definition})
+    monkeypatch.setattr('freeboard.discovery.credential',lambda _:None)
+    html=f'<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr><tr><td>Alias</td><td>alias</td><td>{ZEN_BASE}/chat/completions</td></tr></table><table><tr><th>Model</th><th>Input</th><th>Output</th></tr><tr><td>Alias</td><td>Free</td><td>Free</td></tr></table>'
+    client=httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(200,text=html) if str(request.url)==ZEN_DOCS else httpx.Response(200,json={'data':[{'id':'alias'}]})))
+    budget=Budget(db,settings)
+    assert discover(db,budget,client)['ok']
+    original=db.one('SELECT * FROM models')
+    assert json.loads(original['profile'])['reasoning']['variant']=='high'
+    db.execute("UPDATE models SET status='cap_violation' WHERE id='alias'")
+    discover(db,budget,client)
+    assert db.one('SELECT * FROM models')['status']=='cap_violation'
+    definition['variants']['max']={'reasoningEffort':'max'}
+    discover(db,budget,client)
+    changed=db.one('SELECT * FROM models')
+    assert changed['epoch']!=original['epoch'] and changed['status']=='eligible'
+    assert not json.loads(changed['profile'])['cap_verified']
+    definition['variants']={'unknown':{'reasoningEffort':'unknown'}}
+    assert discover(db,budget,client)['ok']
+    assert db.one('SELECT * FROM models')['status']=='configuration_error'
+
+
+def test_rejected_tool_is_zero_without_repair_or_grading(context, monkeypatch):
+    runner, job, item_model, item = job_context(context)
+    result = native_result(reason='tool-calls')
+    result['parts'].append({'type':'tool','messageID':'m','tool':'bash',
+        'state':{'status':'error','error':'The user rejected permission to use this specific tool call.'}})
+    result['denied_permissions'] = ['permission-test']
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *_: result)
+    runner.generate(job, item_model, item, 4096)
+    saved = runner.db.one('SELECT * FROM jobs WHERE id=?', (job['id'],))
+    assert saved['status']=='generated'
+    runner.grade(saved, item, 'unused')
+    assert runner.db.one('SELECT score FROM jobs WHERE id=?', (job['id'],))['score']==0
+    assert len(runner.db.rows('SELECT * FROM attempts'))==1
+    for state in [{'status':'completed','output':'executed'}, {'status':'error','error':'other failure'}]:
+        result['parts'][-1]['state']=state
+        with pytest.raises(ValueError):
+            completion_events(result,'test-free')
+
+
+def test_unrequested_sdk_turn_is_charged_and_never_replayed(context, monkeypatch):
+    runner,job,item_model,item=job_context(context)
+    journal=runner.settings.state/'logs/extra-turn.json'
+    journal.write_text(json.dumps({'assistant_turns_observed':2}))
+    def fail(*_):
+        runner.opencode.failure_path=str(journal)
+        raise RuntimeError('OpenCode attempted another assistant turn; no replay')
+    monkeypatch.setattr(runner.opencode,'generate',fail)
+    runner.generate(job,item_model,item,4096)
+    attempts=runner.db.rows('SELECT * FROM attempts ORDER BY id')
+    assert len(attempts)==2 and all(a['status']=='ambiguous' for a in attempts)
+    assert runner.budget.summary()['accounted_tokens']==2*attempts[0]['reserved_tokens']
+    assert runner.budget.record_unrequested_turn(attempts[0]['id'],2,str(journal))==attempts[1]['id']
+    assert runner.drain(runner.active_season())['processed']==0
+    assert runner.db.one('SELECT * FROM jobs')['score'] is None
+
+
+@pytest.mark.parametrize('ambiguous_cap', [False, True])
+def test_cap_calibration_is_separate_and_does_not_replay_probes(context, monkeypatch, ambiguous_cap):
+    db,settings,checkout=context
+    m=model(db)
+    active=season(db)
+    settings_profile=json.loads(m['profile'])
+    settings_profile['cap_verified']=False
+    db.execute('UPDATE models SET profile=? WHERE id=?',(json.dumps(settings_profile),m['id']))
+    runner=Runner(db,settings,checkout)
+    runner.health(db.one('SELECT * FROM models'),active)
+    if ambiguous_cap:
+        job=db.one('SELECT * FROM jobs ORDER BY id LIMIT 1')
+        attempt=runner.budget.reserve('opencode_generation',1000,job['id'],m['id'])
+        runner.budget.finish(attempt,'ambiguous')
+        db.execute("UPDATE jobs SET status='ambiguous' WHERE id=?",(job['id'],))
+    def generate(_,messages,cap,on_retry):
+        if messages[-1]['content']==CAP_CALIBRATION['prompt']:
+            return native_result(tokens=cap,reason='length',text='ABCDEFGHIJKLMNOPQRSTUVWXYZ'*20)
+        return native_result(text='READY')
+    monkeypatch.setattr(runner.opencode,'generate',generate)
+    monkeypatch.setattr(runner.grader,'grade',lambda *_:0)
+    assert runner.drain(active,kind='pilot')['processed']==(6 if ambiguous_cap else 7)
+    assert json.loads(db.one('SELECT profile FROM models')['profile'])['cap_verified']
+    assert len(db.rows('SELECT * FROM attempts'))==7
+    assert db.one("SELECT COUNT(*) n FROM jobs WHERE status='ambiguous'")['n']==int(ambiguous_cap)
+    assert db.one("SELECT score FROM jobs j JOIN cycles c ON c.id=j.cycle_id WHERE c.kind='cap_calibration'")['score']==1
+    assert runner.drain(active,kind='pilot')['processed']==0
+    assert len(db.rows('SELECT * FROM attempts'))==7
 
 
 def test_usage_subsets_not_double_counted():
@@ -197,6 +320,24 @@ def test_ambiguous_request_is_not_replayed(context, monkeypatch):
     assert len(runner.db.rows("SELECT * FROM attempts")) == 1
 
 
+def test_retry_evidence_keeps_upstream_unavailability_unscored(context):
+    runner,job,m,_=job_context(context)
+    evidence=runner.settings.state/'logs'/'failed.json'
+    evidence.write_text(json.dumps({'observed_retries':[{'message':'Upstream request failed: Endpoint is unavailable.'}]}))
+    attempt=runner.budget.reserve('opencode_generation',1000,job['id'],m['id'])
+    runner.budget.finish(attempt,'ambiguous',response_path=str(evidence))
+    runner.db.execute("UPDATE jobs SET status='ambiguous' WHERE id=?",(job['id'],))
+    runner.db.execute("UPDATE models SET observed_at='2099-01-01T00:00:00+00:00'")
+    current=runner.db.one('SELECT * FROM models')
+    row,_=make_row(runner.db,runner.settings,current,None,'screen')
+    assert row.availability=='model_unavailable' and row.scores is None
+    diagnostic=runner.budget.reserve('opencode_access_diagnostic',1000,model_id=m['id'])
+    runner.budget.finish(diagnostic,'received',usage={'total_tokens':20})
+    row,_=make_row(runner.db,runner.settings,current,None,'screen')
+    assert row.availability=='eligible'
+    assert runner.db.one('SELECT status,score FROM jobs')['status']=='ambiguous'
+
+
 def test_saved_response_recovery_without_regeneration(context):
     runner, job, _, _ = job_context(context)
     attempt = runner.budget.reserve("generation", 500, job["id"])
@@ -243,6 +384,47 @@ def test_quota_is_not_a_capability_failure(context, monkeypatch):
     runner.generate(job, item_model, item, 4096)
     assert runner.db.one("SELECT status,score FROM jobs") == {"status": "deferred", "score": None}
     assert runner.db.one("SELECT status FROM models")["status"] == "quota_limited"
+
+
+def test_native_free_limit_interruption_stays_unscored_and_visible(context, monkeypatch):
+    runner, job, item_model, item = job_context(context)
+    evidence = runner.settings.state / 'logs' / 'quota-interruption.json'
+    evidence.write_text(json.dumps({'observed_retries': [{'message': 'Free usage exceeded',
+        'action': {'reason': 'free_tier_limit'}}]}))
+    def quota(*_):
+        runner.opencode.failure_path = str(evidence)
+        raise RuntimeError('Retry backoff exceeds allowance')
+    monkeypatch.setattr(runner.opencode, 'generate', quota)
+    runner.generate(job, item_model, item, 4096)
+    assert runner.db.one('SELECT status,score FROM jobs') == {'status': 'ambiguous', 'score': None}
+    assert runner.db.one('SELECT status FROM models')['status'] == 'quota_limited'
+    # Fresh pricing evidence cannot erase the last observed quota failure.
+    runner.db.execute("UPDATE models SET status='eligible'")
+    row, _ = make_row(runner.db, runner.settings, runner.db.one('SELECT * FROM models'), None, 'screen')
+    assert row.availability == 'quota_limited' and row.scores is None
+    assert len(runner.db.rows('SELECT * FROM attempts')) == 1
+
+
+def test_unavailable_catalog_id_does_not_block_three_completed_full_pilots(context, monkeypatch):
+    db, settings, checkout = context
+    active = season(db)
+    runner = Runner(db, settings, checkout)
+    model(db, 'a-unavailable')
+    for ident in ['b-free', 'c-free', 'd-free']:
+        m = model(db, ident)
+        cycle = runner.cycle(m, active, 'pilot', ident)
+        db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), cycle['id']))
+    monkeypatch.setattr('freeboard.runner.discover', lambda *_: {'ok': True})
+    monkeypatch.setattr('freeboard.runner.credential', lambda _: 'test-only')
+    monkeypatch.setattr(runner, 'schedule', lambda *_: None)
+    monkeypatch.setattr(runner, 'capacity', lambda: {})
+    monkeypatch.setattr(runner, 'drain', lambda *_, **__: {'processed': 0})
+    assert runner.run() == {'processed': 0}
+    db.execute("UPDATE cycles SET completed_at=NULL WHERE id='d-free'")
+    assert 'blocked' in runner.run()
+    # A previous epoch's successful pilot cannot validate the current settings.
+    db.execute("UPDATE cycles SET completed_at=?,epoch='old' WHERE id='d-free'", (now(),))
+    assert 'blocked' in runner.run()
 
 
 def test_malformed_success_never_retried(context, monkeypatch):
@@ -367,7 +549,8 @@ def test_grader_failure_preserves_answer_and_finishes_other_questions(context, m
     assert 'livebench' not in public.benchmark_scores and public.benchmark_scores['livecodebench'] == 100
 
 
-def test_opencode_only_runner_and_export_preserve_archived_records(context, monkeypatch):
+@pytest.mark.parametrize('archived_revision', [3, 4, 5])
+def test_opencode_only_runner_and_export_preserve_archived_records(context, monkeypatch, archived_revision):
     import shutil
     from freeboard.cli import parser
     from freeboard.scoring import PublicScreen, snapshot
@@ -388,6 +571,9 @@ def test_opencode_only_runner_and_export_preserve_archived_records(context, monk
     legacy_model = {**item_model, 'profile': json.dumps({'protocol': 'chat', 'cap_verified': True})}
     api_cycle = runner.cycle(legacy_model, active, 'public_screen', 'api-archive')
     runner.add_panel(api_cycle, 'screen')
+    previous_profile = {**json.loads(item_model['profile']), 'protocol_revision':archived_revision}
+    previous = runner.cycle({**item_model,'profile':json.dumps(previous_profile)}, active, 'public_screen', 'previous-protocol')
+    runner.add_panel(previous, 'screen')
     def forbidden(*_):
         pytest.fail('Archived OpenCode jobs must never be executed')
     monkeypatch.setattr(runner, 'generate', forbidden)
@@ -411,7 +597,7 @@ def test_opencode_only_runner_and_export_preserve_archived_records(context, monk
     for filename in ['snapshot.json', 'leaderboard.csv']:
         text = (target / 'site' / filename).read_text()
         assert 'zen-api' not in text and 'native_' not in text and 'PRIVATE_SENTINEL' not in text
-    assert len(runner.db.rows('SELECT * FROM jobs')) == 240
+    assert len(runner.db.rows('SELECT * FROM jobs')) == 300
     assert len(runner.db.rows('SELECT * FROM attempts')) == 2
 
 

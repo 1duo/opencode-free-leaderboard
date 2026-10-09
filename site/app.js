@@ -4,7 +4,7 @@ const byId = id => document.getElementById(id);
 const num = value => value == null ? "—" : value.toLocaleString();
 const pct = value => value == null ? "—" : `${value.toFixed(1)}%`;
 const fmtDate = value => value ? new Date(value).toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"}) : "—";
-const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", client_access_restricted:"Free-tier access restricted", provider_error:"Provider error", cap_violation:"Output limit exceeded", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
+const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", client_access_restricted:"Free-tier access restricted", provider_error:"Provider error", provider_overloaded:"Provider overloaded", protocol_violation:"Single-turn check failed", cap_violation:"Cap verification failed", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
 function node(tag, text, className) {
   const element = document.createElement(tag);
   if (text != null) element.textContent = text;
@@ -17,6 +17,10 @@ function dateNode(value) {
   return element;
 }
 function modelName(id) { return report.rows.find(r => r.model_id === id)?.name || id; }
+function reasoningSetting(row) {
+  const variant = row.reasoning_variant;
+  return variant ? `${variant[0].toUpperCase()}${variant.slice(1)} · highest exposed` : row.reasoning_setting;
+}
 function total(values) { return Object.values(values || {}).reduce((a, b) => a + b, 0); }
 function facts(entries) {
   const dl = node("dl", null, "facts");
@@ -66,7 +70,7 @@ function renderPublicScreens() {
       for (const run of runs) {
         const value = run.benchmark_scores[benchmark], ci = run.intervals[benchmark];
         const row = node("div", null, "chart-row"), title = node("div", null, "chart-row-title"), name = node("div");
-        name.append(node("strong", modelName(run.model_id)));
+        name.append(node("strong", modelName(run.model_id)), node("span", `Reasoning: ${reasoningSetting(run)}`, "sub"));
         title.append(name, node("strong", pct(value), "chart-score")); row.append(title);
         if (value != null) {
           row.append(intervalPlot(value, ci));
@@ -86,7 +90,7 @@ function renderPublicScreens() {
   for (const run of screens) {
     const card = node("article", null, "run-card");
     card.append(node("h3", modelName(run.model_id)));
-    card.append(facts([["Client", `OpenCode ${run.client_version}`], ["Status", statusLabel(run.status)], ["Graded", `${total(run.progress)}/${total(run.expected)} answers`], ["Output cap", run.cap_verified ? "Verified" : "Unverified"], ["Median latency", run.latency_seconds == null ? "—" : `${run.latency_seconds.toFixed(1)} s`], ["Accounted tokens", num(run.accounted_tokens)], ["Client-recorded tokens", num(run.reported_tokens)], ["Truncated", pct(run.truncation_rate == null ? null : run.truncation_rate * 100)], ["Evaluated", dateNode(run.evaluated_at)]]));
+    card.append(facts([["Client", `OpenCode ${run.client_version}`], ["Reasoning", run.reasoning_setting], ["Status", statusLabel(run.status)], ["Graded", `${total(run.progress)}/${total(run.expected)} answers`], ["Output cap", run.cap_verified ? "Verified" : "Unverified"], ["Median latency", run.latency_seconds == null ? "—" : `${run.latency_seconds.toFixed(1)} s`], ["Accounted tokens", num(run.accounted_tokens)], ["Client-recorded tokens", num(run.reported_tokens)], ["Truncated", pct(run.truncation_rate == null ? null : run.truncation_rate * 100)], ["Evaluated", dateNode(run.evaluated_at)]]));
     if (pendingText(run.pending_reasons)) card.append(node("p", pendingText(run.pending_reasons), "fine"));
     card.append(node("p", `${run.model_id} · epoch ${run.epoch}`, "identifier"), node("p", `Season ${run.season}`, "identifier"));
     details.append(card);
@@ -108,7 +112,7 @@ function renderRankings() {
   for (const row of rows) {
     if (ranked(row)) { position++; if (score(row) !== lastScore) { lastRank = position; lastScore = score(row); } }
     const tr = node("tr"), name = node("td");
-    name.append(node("strong", row.name), node("span", row.model_id, "sub"));
+    name.append(node("strong", row.name), node("span", `Reasoning: ${reasoningSetting(row)}`, "sub"), node("span", row.model_id, "sub"));
     tr.append(node("td", ranked(row) ? String(lastRank) : "—"), name, node("td", score(row) == null ? "—" : score(row).toFixed(1), "score"));
     const ci = view === "overall" && reasoningWeight !== 0.4 ? null : row.intervals?.[view];
     tr.append(node("td", ci ? `${ci[0].toFixed(1)}–${ci[1].toFixed(1)}` : row.scores && view === "overall" ? "Custom weights" : "—"));
@@ -140,7 +144,7 @@ function renderSupporting() {
   const list = byId("availability-list"); list.replaceChildren();
   for (const model of models) {
     const row = node("tr"), name = node("td");
-    name.append(node("strong", model.name), node("span", model.model_id, "sub"));
+    name.append(node("strong", model.name), node("span", `Reasoning: ${reasoningSetting(model)}`, "sub"), node("span", model.model_id, "sub"));
     const state = model.availability === "eligible" && !model.cap_verified ? "cap_unverified" : model.availability;
     row.append(name, node("td", statusLabel(state))); list.append(row);
   }
@@ -154,7 +158,7 @@ function renderSupporting() {
   for (const pilot of pilots) {
     const card = node("article", null, "run-card");
     card.append(node("h3", modelName(pilot.model_id)));
-    card.append(facts([["Health graded", `${pilot.health_graded}/6`], ["Benchmark graded", `${total(pilot.progress)}/${total(pilot.expected)}`], ["Cap probe", pilot.cap_probe_verified ? "Verified" : "Unverified"], ["Evaluated", dateNode(pilot.evaluated_at)]]));
+    card.append(facts([["Reasoning", pilot.reasoning_setting], ["Health graded", `${pilot.health_graded}/6`], ["Benchmark graded", `${total(pilot.progress)}/${total(pilot.expected)}`], ["Cap probe", pilot.cap_probe_verified ? "Verified" : "Unverified"], ["Evaluated", dateNode(pilot.evaluated_at)]]));
     for (const [b, s] of Object.entries(pilot.benchmark_scores)) card.append(node("p", `${b === "livebench" ? "LiveBench" : "LiveCodeBench"}: ${pct(s)} · ${pilot.expected[b]} questions`, "fine"));
     pilotList.append(card);
   }

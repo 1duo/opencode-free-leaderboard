@@ -14,7 +14,7 @@ from .config import Settings, credential, digest, now, week
 from .db import DB
 from .discovery import discover
 from .grading import DockerGrader, GradingUnavailable, gpqa_score
-from .opencode import OpenCode, REVISION, completion_events, failure_status, prompt_body
+from .opencode import OpenCode, REVISION, completion_events, failure_status, interruption_status, prompt_body
 
 PROBES = [
     {"stratum": "format", "prompt": "Return a JSON array of all integers from 1 to 10000, without omitting any. No prose.", "check": "cap"},
@@ -24,6 +24,9 @@ PROBES = [
     {"stratum": "code", "prompt": "Write Python that reads an integer from stdin and prints twice it. Return a fenced python code block.", "tests": [["2\n", "4\n"], ["-3\n", "-6\n"]]},
     {"stratum": "code", "prompt": "Write Python that reads a line from stdin and prints its reversal. Return a fenced python code block.", "tests": [["abc\n", "cba\n"], ["a\n", "a\n"]]},
 ]
+CAP_CALIBRATION = {'stratum': 'format', 'check': 'cap', 'prompt':
+    'This is a text streaming check. Repeat the exact text ABCDEFGHIJKLMNOPQRSTUVWXYZ '
+    '10000 times directly in your answer. Start immediately. No tools, programs, explanation, or abbreviation.'}
 
 
 class Runner:
@@ -67,6 +70,17 @@ class Runner:
                             (item_id, None, "health", probe["stratum"], digest(item), json.dumps(item)))
             self.db.execute("INSERT OR IGNORE INTO jobs(cycle_id,item_id) VALUES(?,?)", (ident, item_id))
         return cycle
+
+    def calibrate_cap(self, model: dict, season_id: str) -> None:
+        season = self.db.one('SELECT * FROM seasons WHERE id=?', (season_id,))
+        ident = 'cap_calibration:' + digest([model['id'], model['epoch'], season_id])[:24]
+        self.cycle(model, season, 'cap_calibration', ident)
+        item = {'benchmark': 'health', **CAP_CALIBRATION,
+                'messages': [{'role':'user', 'content':CAP_CALIBRATION['prompt']}]}
+        item_id = 'health:' + digest(CAP_CALIBRATION)
+        self.db.execute('INSERT OR IGNORE INTO items VALUES(?,?,?,?,?,?)',
+                        (item_id,None,'health','format',digest(item),json.dumps(item)))
+        self.db.execute('INSERT OR IGNORE INTO jobs(cycle_id,item_id) VALUES(?,?)', (ident,item_id))
 
     def schedule(self, season: dict) -> None:
         dt = datetime.now(timezone.utc)
@@ -123,15 +137,26 @@ class Runner:
         started = time.monotonic()
         def on_retry(status):
             # OpenCode emits this before its backoff and next provider dispatch.
-            self.budget.finish(attempts[-1], 'retryable')
+            evidence = self.settings.state / 'responses' / f'{attempts[-1]}-retry.json'
+            evidence.write_text(json.dumps({'protocol': 'opencode-retry', 'client_status': status}))
+            self.budget.finish(attempts[-1], 'retryable', response_path=str(evidence))
             if len(previous) + len(attempts) >= 3 or status['next'] / 1000 - time.time() > 60:
                 raise RuntimeError('OpenCode retry allowance exhausted; no automatic replay')
             attempts.append(self.budget.reserve('opencode_generation', amount, job['id'], model['id']))
         try:
             result = self.opencode.generate(model, item['messages'], cap, on_retry)
         except (RuntimeError, httpx.HTTPError, ValueError, KeyError):
-            self.budget.finish(attempts[-1], 'ambiguous')
-            self.db.execute("UPDATE models SET status='provider_error' WHERE id=?", (model['id'],))
+            evidence = self.db.one('SELECT response_path FROM attempts WHERE id=?', (attempts[-1],))['response_path']
+            self.budget.finish(attempts[-1], 'ambiguous', response_path=self.opencode.failure_path or evidence)
+            status = 'provider_error'
+            if self.opencode.failure_path:
+                journal = json.loads(Path(self.opencode.failure_path).read_text())
+                observed_status = interruption_status(journal)
+                if observed_status in {'quota_limited', 'model_unavailable'}:
+                    status = observed_status
+                for turn in range(2, journal.get('assistant_turns_observed', 1) + 1):
+                    self.budget.record_unrequested_turn(attempts[-1], turn, self.opencode.failure_path)
+            self.db.execute('UPDATE models SET status=? WHERE id=?', (status, model['id']))
             self.db.execute("UPDATE jobs SET status='ambiguous',error='OpenCode outcome unknown; no automatic replay' WHERE id=?", (job['id'],))
             self.opencode.close()
             return
@@ -141,6 +166,9 @@ class Runner:
                   'client_result': result, 'protocol_revision': REVISION}
         try:
             record['body'] = json.dumps({'events': completion_events(result, model['id'])})
+            if any(p['type'] == 'tool' for p in result['parts']):
+                record['tool_request_rejected'] = True
+                record['body'] = json.dumps({**json.loads(record['body']), 'tool_request_rejected': True})
             completion = parse('opencode', json.loads(record['body']))
         except (ValueError, KeyError, TypeError):
             completion = None
@@ -175,7 +203,9 @@ class Runner:
     def grade(self, job: dict, item: dict, image: str) -> None:
         record = json.loads(Path(job["response_path"]).read_text())
         completion = parse(record["protocol"], json.loads(record["body"]))
-        if item["benchmark"] == "gpqa":
+        if record.get('tool_request_rejected'):
+            score = 0.0
+        elif item["benchmark"] == "gpqa":
             score = gpqa_score(item["answer"], completion.text)
         elif item["benchmark"] == "health":
             if item.get("check") == "cap":
@@ -200,6 +230,8 @@ class Runner:
         elif cycle["kind"] in {"pilot", "public_screen"}:
             tier = 'pilot' if cycle['kind'] == 'pilot' else 'screen'
             expected = self.db.one('SELECT COUNT(*) AS n FROM panels WHERE season=? AND tier=?', (cycle['season'], tier))['n']
+        elif cycle['kind'] == 'cap_calibration':
+            tier, expected = None, 1
         else:
             tier, expected = None, 6
         clause = "" if tier is None else " AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)"
@@ -207,8 +239,28 @@ class Runner:
         counts = self.db.one("SELECT COUNT(*) AS n,SUM(j.status='graded') AS done FROM jobs j WHERE cycle_id=?" + clause, args)
         if counts["n"] == expected and counts["done"] == expected:
             self.db.execute("UPDATE cycles SET completed_at=COALESCE(completed_at,?) WHERE id=?", (now(), cycle_id))
-        if cycle["kind"] == "health" and counts["done"] == 6:
+        if cycle['kind'] == 'health' and counts['done'] == 5 and counts['n'] == 6:
+            outstanding = self.db.one("""SELECT j.status,i.content FROM jobs j JOIN items i ON i.id=j.item_id
+                WHERE j.cycle_id=? AND j.status!='graded'""", (cycle_id,))
+            model = self.db.one('SELECT * FROM models WHERE id=?', (cycle['model_id'],))
+            if (outstanding['status'] == 'ambiguous' and json.loads(outstanding['content']).get('check') == 'cap'
+                    and model and model['epoch'] == cycle['epoch']):
+                # A different calibration can establish the limit. The unknown
+                # original request stays ambiguous and is never replayed.
+                self.calibrate_cap(model, cycle['season'])
+        if cycle['kind'] in {'health','cap_calibration'} and counts['done'] == expected:
             jobs = self.db.rows("SELECT * FROM jobs WHERE cycle_id=?", (cycle_id,))
+            if cycle['kind'] == 'cap_calibration':
+                health = self.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
+                    AND kind='health' ORDER BY started_at DESC LIMIT 1""",
+                    (cycle['model_id'],cycle['epoch'],cycle['season']))
+                health_jobs = self.db.rows('SELECT * FROM jobs WHERE cycle_id=?', ((health or {}).get('id'),))
+                missing = [j for j in health_jobs if j['status'] != 'graded']
+                ambiguous_cap = (len(missing) == 1 and missing[0]['status'] == 'ambiguous'
+                    and json.loads(self.db.one('SELECT content FROM items WHERE id=?', (missing[0]['item_id'],))['content']).get('check') == 'cap')
+                if len(health_jobs)!=6 or (missing and not ambiguous_cap):
+                    return
+                jobs += [j for j in health_jobs if j['status'] == 'graded']
             records = [json.loads(Path(j["response_path"]).read_text()) for j in jobs]
             completions = [parse(r["protocol"], json.loads(r["body"])) for r in records]
             bounded = all(c.bounded(r['cap']) for c, r in zip(completions, records))
@@ -219,27 +271,34 @@ class Runner:
                 profile = json.loads(model["profile"])
                 profile["cap_verified"] = True
                 self.db.execute("UPDATE models SET profile=? WHERE id=?", (json.dumps(profile), model["id"]))
+                self.db.execute("UPDATE jobs SET next_after=NULL WHERE cycle_id IN (SELECT id FROM cycles WHERE model_id=? AND epoch=?) AND error='Output cap not verified'",
+                                (model['id'],model['epoch']))
+            elif cycle['kind']=='health' and model and model['epoch']==cycle['epoch']:
+                # One different, fixed synthetic check when the model ends the
+                # initial probe before its cap. No benchmark answer is repeated.
+                if all(c.bounded(r['cap']) for c,r in zip(completions,records)):
+                    self.calibrate_cap(model,cycle['season'])
 
     def drain(self, season: dict, kind: str | None = None, limit: int | None = None, model_ids: set[str] | None = None) -> dict:
         manifest = json.loads(season["manifest"])
         image = manifest["grader_image"]
         processed = 0
         while limit is None or processed < limit:
-            jobs = self.db.rows("""SELECT j.*,c.model_id,c.epoch,c.kind,c.profile AS cycle_profile,i.content
+            jobs = self.db.rows(f"""SELECT j.*,c.model_id,c.epoch,c.kind,c.profile AS cycle_profile,i.content
                 FROM jobs j JOIN cycles c ON c.id=j.cycle_id JOIN items i ON i.id=j.item_id
                 JOIN models m ON m.id=c.model_id WHERE c.season=?
-                AND c.kind IN ('health','pilot','screen','public_screen')
+                AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen')
                 AND json_extract(c.profile,'$.transport')='local-opencode'
-                AND json_extract(c.profile,'$.protocol_revision')=3
+                AND json_extract(c.profile,'$.protocol_revision')={REVISION}
                 AND (j.status='generated' OR (c.epoch=m.epoch AND m.status='eligible'
                     AND j.status IN ('pending','deferred') AND (c.kind!='health' OR c.started_at>=?)))
                 AND (j.next_after IS NULL OR j.next_after<=?)
-                ORDER BY CASE WHEN c.kind='health' AND json_extract(m.profile,'$.cap_verified')!=1 THEN 0
+                ORDER BY CASE WHEN c.kind IN ('health','cap_calibration') AND json_extract(m.profile,'$.cap_verified')!=1 THEN 0
                     WHEN c.kind='screen' AND EXISTS(SELECT 1 FROM panels p WHERE p.season=c.season AND p.tier='screen' AND p.item_id=j.item_id) THEN 1
                     WHEN c.kind='health' THEN 2 ELSE 3 END,
                 c.due_at,j.id""", (season["id"], week(), now()))
             if kind:
-                jobs = [j for j in jobs if j["kind"] == kind or (kind == "pilot" and j["kind"] == "health")]
+                jobs = [j for j in jobs if j["kind"] == kind or (kind == "pilot" and j["kind"] in {'health','cap_calibration'})]
             if model_ids is not None:
                 jobs = [j for j in jobs if j['model_id'] in model_ids]
             if not jobs:
@@ -248,13 +307,13 @@ class Runner:
             job_kind = job['kind']
             item = json.loads(job["content"])
             model = self.db.one("SELECT * FROM models WHERE id=?", (job["model_id"],))
-            if job["status"] != 'generated' and job["kind"] != "health" and not json.loads(model["profile"]).get("cap_verified"):
+            if job["status"] != 'generated' and job["kind"] not in {'health','cap_calibration'} and not json.loads(model["profile"]).get("cap_verified"):
                 self.db.execute("UPDATE jobs SET status='deferred',next_after=?,error='Output cap not verified' WHERE id=?",
                                 ((datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), job["id"]))
                 continue
             try:
                 if job["status"] != "generated":
-                    self.generate(job, model, item, 256 if job["kind"] == "health" else 4096)
+                    self.generate(job, model, item, 256 if job["kind"] in {'health','cap_calibration'} else 4096)
                     job = self.db.one("SELECT * FROM jobs WHERE id=?", (job["id"],))
                 if job["status"] == "generated":
                     self.grade(job, item, image)
@@ -274,7 +333,7 @@ class Runner:
             processed += 1
         return {"processed": processed, "budget": self.budget.summary()}
 
-    def run(self, pilot=False, limit=None, pilot_models=None) -> dict:
+    def run(self, pilot=False, limit=None, pilot_models=None, all_models=False) -> dict:
         self.db.recover()
         result = discover(self.db, self.budget, self.client)
         if not result["ok"]:
@@ -286,19 +345,37 @@ class Runner:
             return {'blocked': 'Public compatibility pilots cannot enter headline evaluations; authenticated GPQA is required'}
         if pilot:
             available = {m['id']: m for m in self.models()}
-            selected = sorted(pilot_models) if pilot_models else sorted(available)[:3]
+            if all_models and pilot_models:
+                raise ValueError('Select all models or explicit IDs, not both')
+            selected = sorted(available) if all_models else sorted(pilot_models) if pilot_models else sorted(available)[:3]
             if any(m not in available for m in selected):
                 raise ValueError('Pilot model lacks current free eligibility')
             for model in [available[m] for m in selected]:
-                self.health(model, season)
+                health = self.health(model, season)
+                self.finish_cycle(health['id'])
                 ident = "pilot:" + digest([model["id"], model["epoch"], season["id"]])[:24]
                 self.add_panel(self.cycle(model, season, "pilot", ident), "pilot")
-            self.budget.plan([20000] * 18, 18)
+            pending = self.db.rows("""SELECT i.content,i.benchmark,c.model_id FROM jobs j
+                JOIN items i ON i.id=j.item_id JOIN cycles c ON c.id=j.cycle_id
+                JOIN models m ON m.id=c.model_id AND m.epoch=c.epoch
+                WHERE c.season=? AND c.kind IN ('health','cap_calibration','pilot')
+                AND j.status IN ('pending','deferred')""", (season['id'],))
+            amounts = [estimate(json.loads(j['content'])['messages'], 256 if j['benchmark']=='health' else 4096)
+                       for j in pending if j['model_id'] in selected]
+            used = self.budget.summary()
+            planned = self.budget.plan(amounts, 0)
+            self.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?) WHERE week=?',
+                            (used['attempts_used']+planned['planned_attempts'],
+                             used['accounted_tokens']+planned['planned_tokens'],week()))
             return self.drain(season, "pilot", limit, set(selected))
-        # Headline execution requires successful pilot for the three selected endpoints.
-        targets = self.models()[:3]
-        if any(not json.loads(m['profile']).get('cap_verified') or not self.db.one("SELECT id FROM cycles WHERE kind='pilot' AND model_id=? AND epoch=? AND season=? AND completed_at IS NOT NULL",
-                               (m["id"], m["epoch"], season["id"])) for m in targets):
+        # Fresh zero pricing alone cannot prove that a catalog endpoint runs.
+        # Use completed matching pilots, so an unavailable earlier ID cannot
+        # block three other successfully validated endpoints.
+        eligible = self.models()
+        targets = [m for m in eligible if json.loads(m['profile']).get('cap_verified') and self.db.one(
+            "SELECT id FROM cycles WHERE kind='pilot' AND model_id=? AND epoch=? AND season=? AND completed_at IS NOT NULL",
+            (m['id'], m['epoch'], season['id']))]
+        if not targets or len(targets) < min(3, len(eligible)):
             return {"blocked": "Complete the three-model compatibility pilot before headline screens"}
         self.schedule(season)
         self.capacity()

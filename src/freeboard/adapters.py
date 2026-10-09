@@ -92,7 +92,10 @@ def parse(protocol: str, data: dict) -> Completion:
                  'completion_tokens': output, 'total_tokens': tokens.get('total', sum(values)),
                  'source': 'opencode-normalized'}
         truncated = finish['reason'] == 'length'
-        if finish['reason'] not in {'stop', 'length', 'content-filter'}:
+        if data.get('tool_request_rejected'):
+            text = ''
+        if finish['reason'] not in {'stop', 'length', 'content-filter'} and not (
+                finish['reason'] == 'tool-calls' and data.get('tool_request_rejected')):
             raise ValueError('Unexpected native completion reason')
     else:
         raise ValueError("Unsupported protocol")
