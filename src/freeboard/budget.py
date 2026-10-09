@@ -13,7 +13,7 @@ class BudgetExhausted(RuntimeError):
 
 def estimate(messages: list[dict], cap: int) -> int:
     # Byte-based bound deliberately exceeds common tokenizer estimates. Not billed dollars.
-    return len(json.dumps(messages, ensure_ascii=False).encode()) + 256 + cap
+    return len(json.dumps(messages, ensure_ascii=False).encode()) + 8192 + cap
 
 
 def usage_total(usage: dict | None) -> int | None:
@@ -42,7 +42,7 @@ class Budget:
     def plan(self, generation_tokens: list[int], probes: int, metadata: int = 2) -> dict:
         key = week()
         planned_attempts = math.ceil((len(generation_tokens) + probes + metadata) * 1.25)
-        planned_tokens = math.ceil((sum(generation_tokens) + probes * 1536) * 1.25)
+        planned_tokens = math.ceil((sum(generation_tokens) + probes * 10000) * 1.25)
         self.db.execute("""INSERT INTO budgets VALUES(?,?,?,?,?) ON CONFLICT(week) DO UPDATE SET
             attempts_limit=MAX(attempts_limit,excluded.attempts_limit),
             tokens_limit=MAX(tokens_limit,excluded.tokens_limit),
@@ -62,13 +62,14 @@ class Budget:
             COALESCE(SUM(accounted_tokens),0) AS accounted_tokens,
             COALESCE(SUM(reported_tokens),0) AS reported_tokens,
             COALESCE(SUM(reported_tokens IS NULL AND reserved_tokens>0),0) AS estimated_attempts,
-            COALESCE(SUM(kind='generation'),0) AS zen_attempts,
-            COALESCE(SUM(CASE WHEN kind='generation' THEN accounted_tokens ELSE 0 END),0) AS zen_accounted_tokens,
-            COALESCE(SUM(CASE WHEN kind='generation' THEN reported_tokens ELSE 0 END),0) AS zen_reported_tokens,
-            COALESCE(SUM(kind='generation' AND reported_tokens IS NULL AND reserved_tokens>0),0) AS zen_estimated_attempts,
+            COALESCE(SUM(kind='opencode_generation'),0) AS opencode_attempts,
+            COUNT(DISTINCT CASE WHEN kind='opencode_generation' THEN job_id END) AS opencode_invocations,
+            COALESCE(SUM(CASE WHEN kind='opencode_generation' THEN accounted_tokens ELSE 0 END),0) AS opencode_accounted_tokens,
+            COALESCE(SUM(CASE WHEN kind='opencode_generation' THEN reported_tokens ELSE 0 END),0) AS opencode_reported_tokens,
+            COALESCE(SUM(kind='opencode_generation' AND reported_tokens IS NULL AND reserved_tokens>0),0) AS opencode_estimated_attempts,
             COALESCE(SUM(kind='discovery'),0) AS discovery_attempts,
-            COALESCE(SUM(kind NOT IN ('generation','discovery')),0) AS prior_attempts,
-            COALESCE(SUM(CASE WHEN kind NOT IN ('generation','discovery') THEN accounted_tokens ELSE 0 END),0) AS prior_accounted_tokens
+            COALESCE(SUM(kind NOT IN ('opencode_generation','discovery')),0) AS prior_attempts,
+            COALESCE(SUM(CASE WHEN kind NOT IN ('opencode_generation','discovery') THEN accounted_tokens ELSE 0 END),0) AS prior_accounted_tokens
             FROM attempts WHERE week=?""", (key,))
         return {**limits, **used}
 

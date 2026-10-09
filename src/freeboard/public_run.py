@@ -21,7 +21,9 @@ def validate_public_screen(runner, season: dict) -> None:
 
 def plan_public_screen(runner, cycle: dict) -> dict:
     items = runner.db.rows("""SELECT i.content FROM jobs j JOIN items i ON i.id=j.item_id JOIN cycles c ON c.id=j.cycle_id
-        WHERE c.season=? AND c.kind='public_screen' AND j.status IN ('pending','deferred')""",
+        WHERE c.season=? AND c.kind='public_screen' AND j.status IN ('pending','deferred')
+        AND json_extract(c.profile,'$.transport')='local-opencode'
+        AND json_extract(c.profile,'$.protocol_revision')=3""",
                            (cycle['season'],))
     estimates = [estimate(json.loads(i['content'])['messages'], 4096) for i in items]
     used = runner.budget.summary()

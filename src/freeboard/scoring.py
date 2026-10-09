@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict
 from .budget import Budget
 from .config import COUNTS, Settings, credential, digest, now
 from .db import DB
+from .opencode import REVISION, VERSION
 
 
 class Strict(BaseModel):
@@ -20,6 +21,7 @@ class Strict(BaseModel):
 
 class PublicRow(Strict):
     model_id: str
+    transport: Literal['local-opencode'] = 'local-opencode'
     name: str
     epoch: str
     tier: str
@@ -59,7 +61,7 @@ class Comparison(Strict):
 
 class PublicPilot(Strict):
     model_id: str
-    transport: Literal['zen-api'] = 'zen-api'
+    transport: Literal['local-opencode'] = 'local-opencode'
     season: str
     unranked: bool = True
     status: str
@@ -75,7 +77,10 @@ class PublicPilot(Strict):
 class PublicScreen(Strict):
     model_id: str
     epoch: str
-    transport: Literal['zen-api'] = 'zen-api'
+    transport: Literal['local-opencode'] = 'local-opencode'
+    client_version: str = VERSION
+    protocol_revision: int = REVISION
+    extra_system_context: bool = True
     season: str
     tier: str = 'public-screen'
     unranked: bool = True
@@ -112,7 +117,7 @@ class PublicManifest(Strict):
 
 
 class Snapshot(Strict):
-    schema_version: int = 1
+    schema_version: int = 2
     snapshot_id: str
     generated_at: str
     published_at: str | None = None
@@ -202,19 +207,20 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
     profile = json.loads(cycle['profile'] if cycle else model["profile"])
     availability = model['status']
     if availability == 'eligible':
-        last = db.one("""SELECT a.http_status FROM attempts a JOIN jobs j ON j.id=a.job_id
-            JOIN cycles c ON c.id=j.cycle_id WHERE c.model_id=? AND c.epoch=? AND a.kind='generation'
-            AND a.http_status IS NOT NULL ORDER BY a.id DESC LIMIT 1""", (model['id'], model['epoch']))
-        if last and last['http_status'] >= 400:
-            code = last['http_status']
-            availability = ('authentication_failed' if code in {401, 403} else 'quota_limited' if code == 429
-                            else 'model_unavailable' if code in {400, 404, 410} else 'provider_error')
+        last = db.one("""SELECT a.status FROM attempts a JOIN jobs j ON j.id=a.job_id
+            JOIN cycles c ON c.id=j.cycle_id WHERE c.model_id=? AND c.epoch=? AND a.kind='opencode_generation'
+            ORDER BY a.id DESC LIMIT 1""", (model['id'], model['epoch']))
+        if last and last['status'] in {'authentication_failed', 'quota_limited', 'model_unavailable',
+                                      'client_access_restricted', 'configuration_error'}:
+            availability = last['status']
+        elif last and last['status'] == 'ambiguous':
+            availability = 'provider_error'
     if not cycle:
         status = "cap_unverified" if model["status"] == "eligible" and not profile.get("cap_verified") else "pending"
     return PublicRow(model_id=model["id"], name=model["name"], epoch=cycle["epoch"] if cycle else model["epoch"],
                      tier=tier, season=cycle["season"] if cycle else None, status=status,
                      availability=availability, free_eligible=model['status'] in {'eligible','authentication_failed','quota_limited',
-                         'model_unavailable','configuration_error','cap_violation','cap_unverified'},
+                         'model_unavailable','configuration_error','cap_violation','cap_unverified','client_access_restricted','provider_error'},
                      protocol=profile['protocol'], endpoint=profile.get('endpoint', model['endpoint']),
                      cap_verified=profile.get("cap_verified", False), observed_at=model["observed_at"],
                      evaluated_at=stamp if complete else None,
@@ -234,7 +240,9 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
     active = db.one("SELECT id FROM seasons WHERE active=1")
     season_id = active["id"] if active else ""
     for model in db.rows("SELECT * FROM models ORDER BY id"):
-        cycles = db.rows("SELECT * FROM cycles WHERE model_id=? AND kind='screen' ORDER BY started_at DESC", (model["id"],))
+        cycles = db.rows("""SELECT * FROM cycles WHERE model_id=? AND kind='screen'
+            AND json_extract(profile,'$.transport')='local-opencode'
+            AND json_extract(profile,'$.protocol_revision')=3 ORDER BY started_at DESC""", (model["id"],))
         proofs = db.rows("SELECT evidence FROM observations WHERE model_id=?", (model["id"],))
         ever_free = any(json.loads(p["evidence"]).get("free") for p in proofs)
         if not ever_free and not cycles and model["status"] != "eligible":
@@ -288,9 +296,16 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
     if discovery and not discovery["ok"]:
         blockers.append(discovery["error"])
     queue = db.one("""SELECT COUNT(*) AS n FROM jobs j JOIN cycles c ON c.id=j.cycle_id
-        WHERE j.status!='graded' AND c.kind IN ('health','pilot','screen','public_screen')""")["n"]
+        JOIN models m ON m.id=c.model_id AND m.epoch=c.epoch
+        WHERE j.status!='graded' AND c.kind IN ('health','pilot','screen','public_screen')
+        AND json_extract(c.profile,'$.transport')='local-opencode'
+        AND json_extract(c.profile,'$.protocol_revision')=3""")["n"]
     pilots = []
-    for cycle in db.rows("SELECT * FROM cycles WHERE kind='pilot' ORDER BY started_at,model_id"):
+    for cycle in db.rows("""SELECT * FROM cycles WHERE kind='pilot'
+        AND json_extract(profile,'$.transport')='local-opencode'
+        AND json_extract(profile,'$.protocol_revision')=3
+        AND (completed_at IS NOT NULL OR epoch=(SELECT epoch FROM models WHERE id=cycles.model_id))
+        ORDER BY started_at,model_id"""):
         items = records(db, cycle, 'pilot')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='pilot'", (cycle['season'],))
         expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['pilot']}
@@ -314,7 +329,9 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
                               for b in expected if expected[b] and progress[b] == expected[b]},
             evaluated_at=cycle['completed_at'] if complete else None))
     public_screens = []
-    for cycle in db.rows("SELECT * FROM cycles WHERE kind='public_screen' ORDER BY started_at,model_id"):
+    for cycle in db.rows("""SELECT * FROM cycles WHERE kind='public_screen'
+        AND json_extract(profile,'$.transport')='local-opencode'
+        AND json_extract(profile,'$.protocol_revision')=3 ORDER BY started_at,model_id"""):
         items = records(db, cycle, 'screen')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='screen'", (cycle['season'],))
         expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['screen']}

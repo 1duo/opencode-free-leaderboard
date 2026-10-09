@@ -4,7 +4,7 @@ const byId = id => document.getElementById(id);
 const num = value => value == null ? "—" : value.toLocaleString();
 const pct = value => value == null ? "—" : `${value.toFixed(1)}%`;
 const fmtDate = value => value ? new Date(value).toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"}) : "—";
-const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", provider_error:"Provider error", cap_violation:"Output limit exceeded", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
+const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", client_access_restricted:"Free-tier access restricted", provider_error:"Provider error", cap_violation:"Output limit exceeded", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
 function node(tag, text, className) {
   const element = document.createElement(tag);
   if (text != null) element.textContent = text;
@@ -86,7 +86,7 @@ function renderPublicScreens() {
   for (const run of screens) {
     const card = node("article", null, "run-card");
     card.append(node("h3", modelName(run.model_id)));
-    card.append(facts([["Status", statusLabel(run.status)], ["Graded", `${total(run.progress)}/${total(run.expected)} answers`], ["Output cap", run.cap_verified ? "Verified" : "Unverified"], ["Median latency", run.latency_seconds == null ? "—" : `${run.latency_seconds.toFixed(1)} s`], ["Accounted tokens", num(run.accounted_tokens)], ["Provider-reported tokens", num(run.reported_tokens)], ["Truncated", pct(run.truncation_rate == null ? null : run.truncation_rate * 100)], ["Evaluated", dateNode(run.evaluated_at)]]));
+    card.append(facts([["Client", `OpenCode ${run.client_version}`], ["Status", statusLabel(run.status)], ["Graded", `${total(run.progress)}/${total(run.expected)} answers`], ["Output cap", run.cap_verified ? "Verified" : "Unverified"], ["Median latency", run.latency_seconds == null ? "—" : `${run.latency_seconds.toFixed(1)} s`], ["Accounted tokens", num(run.accounted_tokens)], ["Client-recorded tokens", num(run.reported_tokens)], ["Truncated", pct(run.truncation_rate == null ? null : run.truncation_rate * 100)], ["Evaluated", dateNode(run.evaluated_at)]]));
     if (pendingText(run.pending_reasons)) card.append(node("p", pendingText(run.pending_reasons), "fine"));
     card.append(node("p", `${run.model_id} · epoch ${run.epoch}`, "identifier"), node("p", `Season ${run.season}`, "identifier"));
     details.append(card);
@@ -134,7 +134,7 @@ function renderSupporting() {
   byId("supporting").hidden = false;
   const models = report.rows.filter(r => r.tier === "screen");
   const runnable = models.filter(r => r.availability === "eligible" && r.cap_verified).length;
-  const restricted = models.filter(r => r.free_eligible && ["chat", "responses"].includes(r.protocol) && !(r.availability === "eligible" && r.cap_verified)).length;
+  const restricted = models.filter(r => r.free_eligible && r.protocol === "opencode" && !(r.availability === "eligible" && r.cap_verified)).length;
   byId("availability-summary").textContent = `Model availability · ${runnable} runnable${restricted ? `, ${restricted} awaiting access or verification` : ""}`;
   byId("discovery-date").textContent = `Catalog checked ${fmtDate(report.discovery_at)}${report.discovery_ok ? "" : " · verification failed"}. Free pricing does not guarantee access.`;
   const list = byId("availability-list"); list.replaceChildren();
@@ -145,9 +145,9 @@ function renderSupporting() {
     row.append(name, node("td", statusLabel(state))); list.append(row);
   }
   byId("execution-summary").textContent = `Execution details · week of ${fmtDate(`${report.budget.week}T12:00:00`)}`;
-  byId("budget").replaceChildren(...facts([["Zen generation attempts", num(report.budget.zen_attempts)], ["Discovery requests", num(report.budget.discovery_attempts)], ["Zen accounted / reported tokens", `${num(report.budget.zen_accounted_tokens)} / ${num(report.budget.zen_reported_tokens)}`], ["Zen attempts with estimated usage", num(report.budget.zen_estimated_attempts)], ["Total attempts / limit", `${num(report.budget.attempts_used)} / ${num(report.budget.attempts_limit)}`], ["Total accounted tokens / limit", `${num(report.budget.accounted_tokens)} / ${num(report.budget.tokens_limit)}`], ["Planned requests / tokens", `${num(report.budget.planned_attempts)} / ${num(report.budget.planned_tokens)}`], ["Queued Zen jobs (includes blocked)", num(report.queue_size)], ["Missed refresh deadlines", num(report.missed_deadlines)]]).childNodes);
+  byId("budget").replaceChildren(...facts([["Recorded client attempts", num(report.budget.opencode_attempts)], ["Discovery requests", num(report.budget.discovery_attempts)], ["Client accounted / recorded tokens", `${num(report.budget.opencode_accounted_tokens)} / ${num(report.budget.opencode_reported_tokens)}`], ["Dispatches with estimated usage", num(report.budget.opencode_estimated_attempts)], ["Total attempts / limit", `${num(report.budget.attempts_used)} / ${num(report.budget.attempts_limit)}`], ["Total accounted tokens / limit", `${num(report.budget.accounted_tokens)} / ${num(report.budget.tokens_limit)}`], ["Planned requests / tokens", `${num(report.budget.planned_attempts)} / ${num(report.budget.planned_tokens)}`], ["Queued OpenCode jobs (includes blocked)", num(report.queue_size)], ["Missed refresh deadlines", num(report.missed_deadlines)]]).childNodes);
   byId("prior-budget").hidden = !report.budget.prior_attempts;
-  byId("prior-budget").textContent = `Budget totals retain ${num(report.budget.prior_attempts)} prior experiment attempts and ${num(report.budget.prior_accounted_tokens)} accounted tokens. These are excluded from Zen results.`;
+  byId("prior-budget").textContent = `Budget totals retain ${num(report.budget.prior_attempts)} prior experiment attempts and ${num(report.budget.prior_accounted_tokens)} accounted tokens. These are excluded from current results.`;
   const pilots = (report.pilots || []).filter(p => p.status === "complete" || total(p.progress) > 0 || p.health_graded > 0);
   byId("pilots").hidden = !pilots.length;
   const pilotList = byId("pilot-list"); pilotList.replaceChildren();

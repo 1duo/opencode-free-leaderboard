@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .config import ZEN_BASE
-from .discovery import excluded
 
 
 class Completion(BaseModel):
@@ -17,21 +15,6 @@ class Completion(BaseModel):
     def bounded(self, cap: int) -> bool:
         return (self.output_tokens is not None and self.output_tokens <= cap and
                 (self.reasoning_tokens is None or self.reasoning_tokens <= self.output_tokens))
-
-
-def payload(model: dict, messages: list[dict], cap: int) -> dict:
-    if model["status"] != "eligible" or excluded(model["id"]):
-        raise ValueError("Model lacks current free eligibility")
-    endpoint = model["endpoint"]
-    profile = model["effective_profile"]
-    expected = {"chat": f"{ZEN_BASE}/chat/completions", "responses": f"{ZEN_BASE}/responses"}
-    if endpoint != expected.get(profile["protocol"]):
-        raise ValueError("Unsupported or untrusted generation endpoint")
-    body = {"model": model["id"], "stream": False, profile["cap_parameter"]: cap}
-    if profile.get("temperature") is not None:
-        body["temperature"] = profile["temperature"]
-    body["messages" if profile["protocol"] == "chat" else "input"] = messages
-    return body
 
 
 def parse(protocol: str, data: dict) -> Completion:
@@ -74,7 +57,7 @@ def parse(protocol: str, data: dict) -> Completion:
         if data.get("status") not in {"completed", "incomplete"}:
             raise ValueError("Unexpected Responses status")
     elif protocol == 'opencode':
-        # Read-only recovery of archived responses; no OpenCode generation path exists.
+        # OpenCode normalizes cached input and reasoning into separate counts.
         events = data['events']
         if not isinstance(events, list) or any(not isinstance(e, dict) for e in events):
             raise ValueError('Malformed native event stream')
@@ -92,6 +75,9 @@ def parse(protocol: str, data: dict) -> Completion:
         text = ''.join(e['part']['text'] for e in events if e.get('type') == 'text'
                        and e['part'].get('messageID') == finish.get('messageID'))
         tokens = finish['tokens']
+        if tokens is None:
+            return Completion(text=text, usage=None, truncated=finish['reason'] == 'length',
+                              output_tokens=None, reasoning_tokens=None)
         if not isinstance(tokens, dict) or not isinstance(tokens.get('cache', {}), dict):
             raise ValueError('Malformed native token accounting')
         values = [tokens.get(k) for k in ['input', 'output', 'reasoning']]
@@ -106,7 +92,7 @@ def parse(protocol: str, data: dict) -> Completion:
                  'completion_tokens': output, 'total_tokens': tokens.get('total', sum(values)),
                  'source': 'opencode-normalized'}
         truncated = finish['reason'] == 'length'
-        if finish['reason'] not in {'stop', 'length'}:
+        if finish['reason'] not in {'stop', 'length', 'content-filter'}:
             raise ValueError('Unexpected native completion reason')
     else:
         raise ValueError("Unsupported protocol")

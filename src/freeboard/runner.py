@@ -4,17 +4,17 @@ import json
 import os
 import time
 from datetime import datetime, timedelta, timezone
-from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 import httpx
 
-from .adapters import parse, payload
+from .adapters import parse
 from .budget import Budget, BudgetExhausted, estimate
 from .config import Settings, credential, digest, now, week
 from .db import DB
 from .discovery import discover
 from .grading import DockerGrader, GradingUnavailable, gpqa_score
+from .opencode import OpenCode, REVISION, completion_events, failure_status, prompt_body
 
 PROBES = [
     {"stratum": "format", "prompt": "Return a JSON array of all integers from 1 to 10000, without omitting any. No prose.", "check": "cap"},
@@ -26,22 +26,13 @@ PROBES = [
 ]
 
 
-def retry_delay(value: str | None) -> float:
-    try:
-        return max(0, float(value))
-    except (TypeError, ValueError):
-        try:
-            return max(0, (parsedate_to_datetime(value) - datetime.now(timezone.utc)).total_seconds())
-        except (TypeError, ValueError):
-            return 30
-
-
 class Runner:
     def __init__(self, db: DB, settings: Settings, checkout: Path, client=None):
         self.db, self.settings, self.checkout = db, settings, checkout
         self.budget = Budget(db, settings)
         self.grader = DockerGrader(settings)
         self.client = client or httpx.Client(timeout=settings.request_timeout, follow_redirects=False)
+        self.opencode = OpenCode(settings)
 
     def active_season(self) -> dict:
         season = self.db.one("SELECT * FROM seasons WHERE active=1 AND validated=1")
@@ -121,78 +112,65 @@ class Runner:
 
     def generate(self, job: dict, model: dict, item: dict, cap: int) -> None:
         if job.get('response_path'):
-            raise RuntimeError('A durable response already exists; this job must not be regenerated')
-        key = credential("zen")
-        if not key:
-            raise RuntimeError("OpenCode Zen key missing; run auth zen")
-        effective = json.loads(model["profile"])
-        body = payload({**model, "effective_profile": effective}, item["messages"], cap)
-        previous = self.db.rows("SELECT * FROM attempts WHERE job_id=? AND kind='generation'", (job["id"],))
+            raise RuntimeError('A durable answer exists; this job must not be regenerated')
+        prompt_body(model, item['messages'])
+        previous = self.db.rows("SELECT * FROM attempts WHERE job_id=? AND kind='opencode_generation'", (job['id'],))
         if len(previous) >= 3:
-            self.db.execute("UPDATE jobs SET status='failed',error='Retry allowance exhausted' WHERE id=?", (job["id"],))
+            self.db.execute("UPDATE jobs SET status='failed',error='Retry allowance exhausted' WHERE id=?", (job['id'],))
             return
-        for attempt_index in range(len(previous), 3):
-            attempt = self.budget.reserve("generation", estimate(item["messages"], cap), job["id"], model["id"])
-            started = time.monotonic()
-            try:
-                response = self.client.post(model["endpoint"], json=body, headers={"Authorization": f"Bearer {key}"})
-            except httpx.HTTPError:
-                self.budget.finish(attempt, "ambiguous")
-                self.db.execute("UPDATE jobs SET status='ambiguous',error='Request outcome unknown' WHERE id=?", (job["id"],))
-                return
-            if response.is_success:
-                path = self.settings.state / "responses" / f"{attempt}.json"
-                # Preserve even malformed responses. A successful HTTP request is never replayed.
-                temp = path.with_suffix(".partial")
-                temp.write_text(json.dumps({"body": response.text, "protocol": effective["protocol"], "cap": cap,
-                                            "latency": time.monotonic() - started}))
-                with temp.open('rb') as handle:
-                    os.fsync(handle.fileno())
-                temp.replace(path)
-                directory = os.open(path.parent, os.O_RDONLY)
-                try:
-                    os.fsync(directory)
-                finally:
-                    os.close(directory)
-                try:
-                    completion = parse(effective["protocol"], response.json())
-                except (ValueError, KeyError, TypeError):
-                    self.budget.finish(attempt, "malformed", response.status_code, response_path=str(path))
-                    self.db.execute("UPDATE jobs SET status='ambiguous',response_path=?,error='Successful response cannot be parsed' WHERE id=?",
-                                    (str(path), job["id"]))
-                    return
-                self.budget.finish(attempt, "received", response.status_code, completion.usage, str(path))
-                self.db.execute("UPDATE jobs SET status='generated',response_path=?,latency=?,truncated=?,error=NULL WHERE id=?",
-                                (str(path), time.monotonic() - started, int(completion.truncated), job["id"]))
-                if not completion.bounded(cap):
-                    self.db.invalidate_cap(job['id'], 'Combined output cap unverified or exceeded; response retained, no replay',
-                                           'cap_unverified' if completion.output_tokens is None else 'failed')
-                return
-            path = self.settings.state / 'responses' / f'{attempt}.rejection.json'
-            path.write_text(json.dumps({'http_status': response.status_code, 'body': response.text}))
-            self.budget.finish(attempt, "rejected", response.status_code, response_path=str(path))
-            status = response.status_code
-            if status in {401, 403}:
-                self.db.execute("UPDATE models SET status='authentication_failed' WHERE id=?", (model["id"],))
-                next_status, message = "deferred", "Provider authentication/access rejected"
-            elif status == 429:
-                self.db.execute("UPDATE models SET status='quota_limited' WHERE id=?", (model["id"],))
-                next_status, message = "deferred", "Provider quota limited"
-            elif status in {408, 500, 502, 503, 504}:
-                delay = max(2 ** (attempt_index + 1), retry_delay(response.headers.get("Retry-After")))
-                if attempt_index < 2 and delay <= 60:
-                    time.sleep(delay)
-                    continue
-                next_status, message = "deferred" if attempt_index < 2 else "failed", "Retryable provider error"
-            else:
-                unavailable = 'model is unavailable' in response.text.lower() or 'model not found' in response.text.lower()
-                self.db.execute('UPDATE models SET status=? WHERE id=?',
-                                ('model_unavailable' if unavailable else 'configuration_error', model['id']))
-                next_status, message = 'deferred', f'Provider unavailable (HTTP {status})' if unavailable else f'Unsupported request (HTTP {status}); profile needs review'
-            delay = retry_delay(response.headers.get("Retry-After")) if status == 429 else 86400
-            next_at = (datetime.now(timezone.utc) + timedelta(seconds=max(60, delay))).isoformat()
-            self.db.execute("UPDATE jobs SET status=?,next_after=?,error=? WHERE id=?", (next_status, next_at, message, job["id"]))
+        amount = estimate(item['messages'], cap)
+        attempts = [self.budget.reserve('opencode_generation', amount, job['id'], model['id'])]
+        started = time.monotonic()
+        def on_retry(status):
+            # OpenCode emits this before its backoff and next provider dispatch.
+            self.budget.finish(attempts[-1], 'retryable')
+            if len(previous) + len(attempts) >= 3 or status['next'] / 1000 - time.time() > 60:
+                raise RuntimeError('OpenCode retry allowance exhausted; no automatic replay')
+            attempts.append(self.budget.reserve('opencode_generation', amount, job['id'], model['id']))
+        try:
+            result = self.opencode.generate(model, item['messages'], cap, on_retry)
+        except (RuntimeError, httpx.HTTPError, ValueError, KeyError):
+            self.budget.finish(attempts[-1], 'ambiguous')
+            self.db.execute("UPDATE models SET status='provider_error' WHERE id=?", (model['id'],))
+            self.db.execute("UPDATE jobs SET status='ambiguous',error='OpenCode outcome unknown; no automatic replay' WHERE id=?", (job['id'],))
+            self.opencode.close()
             return
+        attempt = attempts[-1]
+        path = self.settings.state / 'responses' / f'{attempt}.json'
+        record = {'protocol': 'opencode', 'body': '{}', 'cap': cap, 'latency': time.monotonic() - started,
+                  'client_result': result, 'protocol_revision': REVISION}
+        try:
+            record['body'] = json.dumps({'events': completion_events(result, model['id'])})
+            completion = parse('opencode', json.loads(record['body']))
+        except (ValueError, KeyError, TypeError):
+            completion = None
+        temp = path.with_suffix('.partial')
+        temp.write_text(json.dumps(record))
+        with temp.open('rb') as handle:
+            os.fsync(handle.fileno())
+        temp.replace(path)
+        directory = os.open(path.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+        if completion is None:
+            status, message = failure_status(result)
+            error = result.get('info', {}).get('error') or result.get('error') or {}
+            code = (error.get('data') or {}).get('statusCode')
+            self.budget.finish(attempt, status, code if type(code) is int else None, response_path=str(path))
+            self.db.execute('UPDATE models SET status=? WHERE id=?', (status, model['id']))
+            known_rejection = bool(result.get('info', {}).get('error') or result.get('error'))
+            self.db.execute("UPDATE jobs SET status=?,response_path=?,next_after=?,error=? WHERE id=?",
+                            ('deferred' if known_rejection else 'ambiguous', None if known_rejection else str(path),
+                             (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), message, job['id']))
+            return
+        self.budget.finish(attempt, 'received', usage=completion.usage, response_path=str(path))
+        self.db.execute("UPDATE jobs SET status='generated',response_path=?,latency=?,truncated=? WHERE id=?",
+                        (str(path), record['latency'], int(completion.truncated), job['id']))
+        if not completion.bounded(cap):
+            self.db.invalidate_cap(job['id'], 'Combined output cap not verified; no replay',
+                                   'cap_unverified' if completion.output_tokens is None else 'failed')
 
     def grade(self, job: dict, item: dict, image: str) -> None:
         record = json.loads(Path(job["response_path"]).read_text())
@@ -251,6 +229,8 @@ class Runner:
                 FROM jobs j JOIN cycles c ON c.id=j.cycle_id JOIN items i ON i.id=j.item_id
                 JOIN models m ON m.id=c.model_id WHERE c.season=?
                 AND c.kind IN ('health','pilot','screen','public_screen')
+                AND json_extract(c.profile,'$.transport')='local-opencode'
+                AND json_extract(c.profile,'$.protocol_revision')=3
                 AND (j.status='generated' OR (c.epoch=m.epoch AND m.status='eligible'
                     AND j.status IN ('pending','deferred') AND (c.kind!='health' OR c.started_at>=?)))
                 AND (j.next_after IS NULL OR j.next_after<=?)

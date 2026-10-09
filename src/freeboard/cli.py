@@ -18,7 +18,7 @@ from .scoring import snapshot
 
 
 def parser() -> argparse.ArgumentParser:
-    root = argparse.ArgumentParser(description="Resumable evaluations of verified free Zen endpoints")
+    root = argparse.ArgumentParser(description="Resumable benchmarks through the installed OpenCode client")
     root.add_argument("--state", type=Path, default=Settings().state)
     source_checkout = Path(__file__).resolve().parents[2]
     root.add_argument("--checkout", type=Path, default=source_checkout if (source_checkout / "web").is_dir() else Path.cwd())
@@ -44,10 +44,6 @@ def parser() -> argparse.ArgumentParser:
     auth.add_argument("provider", choices=["zen", "hf"])
     schedule = commands.add_parser("schedule")
     schedule.add_argument("action", choices=["install"])
-    profile = commands.add_parser("profile")
-    profile.add_argument("model")
-    profile.add_argument("--cap-parameter", choices=["max_completion_tokens", "max_tokens", "max_output_tokens"])
-    profile.add_argument("--omit-temperature", action="store_true")
     return root
 
 
@@ -136,21 +132,6 @@ def main() -> None:
                 result = export(db, settings, checkout)
             elif args.command == "publish":
                 result = publish(db, settings, checkout, args.create_repository)
-            elif args.command == "profile":
-                model = db.one("SELECT * FROM models WHERE id=?", (args.model,))
-                if not model:
-                    raise ValueError("Discover the model first")
-                profile = json.loads(model["profile"])
-                if args.cap_parameter:
-                    valid = {"chat": {"max_completion_tokens", "max_tokens"}, "responses": {"max_output_tokens"}}
-                    if args.cap_parameter not in valid.get(profile["protocol"], set()):
-                        raise ValueError("Cap parameter does not match protocol")
-                    profile["cap_parameter"] = args.cap_parameter
-                if args.omit_temperature:
-                    profile["temperature"] = None
-                profile["cap_verified"] = False
-                db.execute("UPDATE models SET profile=? WHERE id=?", (json.dumps(profile), args.model))
-                result = {"profile": profile, "next": "Rediscover and rerun pilot; effective-setting changes create a new epoch"}
             else:  # daily
                 refresh_publications(db, settings, checkout)
                 try:

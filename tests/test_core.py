@@ -1,11 +1,10 @@
 import json
 from pathlib import Path
 
-import httpx
 import numpy as np
 import pytest
 
-from freeboard.adapters import parse, payload
+from freeboard.adapters import parse
 from freeboard.budget import Budget, BudgetExhausted, usage_total
 from freeboard.config import COUNTS, Settings, now
 from freeboard.db import DB
@@ -14,6 +13,7 @@ from freeboard.grading import DockerGrader, GradingUnavailable, gpqa_score
 from freeboard.panels import sample, prepare
 from freeboard.publication import export, validate_site, public_source
 from freeboard.runner import Runner
+from freeboard.opencode import configuration, completion_events, profile, prompt_body
 from freeboard.scoring import bootstrap, is_complete, make_row
 
 
@@ -27,8 +27,8 @@ def context(tmp_path):
 
 
 def model(db, name="test-free"):
-    profile = {"protocol": "chat", "cap_parameter": "max_completion_tokens", "temperature": 0, "cap_verified": True}
-    db.execute("INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?)", (name, name, "https://opencode.ai/zen/v1/chat/completions", "chat", "eligible", "epoch", 0, json.dumps(profile), now(), None))
+    settings_profile = {**profile("chat"), "cap_verified": True}
+    db.execute("INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?)", (name, name, "https://opencode.ai/zen/v1/chat/completions", "chat", "eligible", "epoch", 0, json.dumps(settings_profile), now(), None))
     return db.one("SELECT * FROM models WHERE id=?", (name,))
 
 
@@ -63,6 +63,19 @@ def response_body(tokens=10):
                       "completion_tokens_details": {"reasoning_tokens": 3}}}
 
 
+
+def native_result(tokens=10, text='FINAL: A', reason='stop', missing_usage=False):
+    parts = [{'type': 'text', 'messageID': 'm', 'text': text},
+             {'type': 'step-finish', 'messageID': 'm', 'reason': reason, 'cost': 0,
+              'tokens': None if missing_usage else {'input': 20, 'output': max(0,tokens-3),
+                        'reasoning': min(3,tokens), 'total': 20+tokens, 'cache': {'read': 0, 'write': 0}}}]
+    return {'info': {'id': 'm', 'role': 'assistant', 'agent': 'benchmark', 'providerID': 'opencode',
+                     'modelID': 'test-free', 'cost': 0}, 'parts': parts}
+
+
+def native_error(code, message):
+    return {'info': {'error': {'name': 'APIError', 'data': {'statusCode': code, 'message': message}}}}
+
 def test_fail_closed_prices_and_exact_join():
     html = '<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr><tr><td>Alias</td><td>alias</td><td>https://opencode.ai/zen/v1/chat/completions</td></tr></table>'
     prices = '<table><tr><th>Model</th><th>Input</th><th>Output</th><th>Cached Read</th></tr><tr><td>Alias</td><td>Free</td><td>Free</td><td>-</td></tr>{}</table>'
@@ -74,15 +87,27 @@ def test_fail_closed_prices_and_exact_join():
 
 
 def test_generation_endpoint_and_free_gates():
-    value = {"id": "alias", "status": "eligible", "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-             "effective_profile": {"protocol": "chat", "cap_parameter": "max_completion_tokens", "temperature": 0}}
-    assert payload(value, [], 256)["max_completion_tokens"] == 256
+    value = {'id': 'alias', 'status': 'eligible', 'endpoint': 'https://opencode.ai/zen/v1/chat/completions',
+             'profile': json.dumps(profile('chat'))}
+    messages = [{'role':'system','content':'EXACT SYSTEM'}, {'role':'user','content':'EXACT USER'}]
+    body = prompt_body(value, messages)
+    assert body['system']=='EXACT SYSTEM' and body['parts']==[{'type':'text','text':'EXACT USER'}]
+    assert body['model']=={'providerID':'opencode','modelID':'alias'}
+    cfg=configuration('alias',4096)
+    assert 'steps' not in cfg['agent']['benchmark'] and cfg['agent']['benchmark']['permission']=={'*':'deny'}
+    assert cfg['provider']['opencode']['whitelist']==['alias']
+    for changed in [{'status':'paid'},{'id':'muse-spark-1.3-contributor-free'},
+                    {'endpoint':'https://other.example/chat/completions'},
+                    {'profile':json.dumps({'protocol':'chat'})}]:
+        with pytest.raises(ValueError):
+            prompt_body({**value,**changed},messages)
     with pytest.raises(ValueError):
-        payload({**value, "status": "paid"}, [], 256)
+        prompt_body(value,[{'role':'assistant','content':'repair'}])
     with pytest.raises(ValueError):
-        payload({**value, "id": "muse-spark-1.3-contributor-free"}, [], 256)
-    with pytest.raises(ValueError):
-        payload({**value, "endpoint": "https://other.example/chat/completions"}, [], 256)
+        completion_events({**native_result(),'info':{**native_result()['info'],'modelID':'paid'}},'test-free')
+    for changed in [{'assistant_turns':2},{'tool_parts':1}]:
+        with pytest.raises(ValueError):
+            completion_events({**native_result(),**changed},'test-free')
 
 
 def test_usage_subsets_not_double_counted():
@@ -109,9 +134,7 @@ def test_cap_revoked_during_crash_recovery(context):
 def test_missing_cap_usage_retained_without_rank_or_replay(context, monkeypatch):
     runner, job, item_model, item = job_context(context)
     monkeypatch.setattr('freeboard.runner.credential', lambda _: 'public')
-    body = response_body()
-    body.pop('usage')
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(200, json=body)))
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *_: native_result(missing_usage=True))
     runner.generate(job, item_model, item, 4096)
     saved = runner.db.one('SELECT * FROM jobs')
     assert saved['status'] == 'cap_unverified' and saved['score'] is None
@@ -123,7 +146,7 @@ def test_missing_cap_usage_retained_without_rank_or_replay(context, monkeypatch)
 def test_saved_answer_graded_after_removal(context, monkeypatch):
     runner, job, item_model, item = job_context(context)
     monkeypatch.setattr('freeboard.runner.credential', lambda _: 'public')
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(200, json=response_body())))
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *_: native_result())
     runner.generate(job, item_model, item, 4096)
     runner.db.execute("UPDATE models SET status='removed',epoch='new' ")
     assert runner.drain(runner.active_season(), limit=1)['processed'] == 1
@@ -138,7 +161,7 @@ def test_historical_profile_is_immutable(context):
                       (json.dumps({'protocol': 'responses', 'cap_verified': False}),))
     current = runner.db.one('SELECT * FROM models')
     row, _ = make_row(runner.db, runner.settings, current, cycle, 'screen')
-    assert row.protocol == 'chat' and row.endpoint.endswith('/chat/completions') and row.cap_verified
+    assert row.protocol == 'opencode' and row.endpoint.endswith('/chat/completions') and row.cap_verified
 
 
 def test_public_source_rejects_private_artifact_paths():
@@ -166,7 +189,7 @@ def test_reservation_reconciliation_and_week_rollover(context, monkeypatch):
 def test_ambiguous_request_is_not_replayed(context, monkeypatch):
     runner, job, item_model, item = job_context(context)
     monkeypatch.setattr("freeboard.runner.credential", lambda _: "test-only")
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: (_ for _ in ()).throw(httpx.ReadTimeout("unknown"))))
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *_: (_ for _ in ()).throw(RuntimeError('unknown')))
     runner.generate(job, item_model, item, 4096)
     assert runner.db.one("SELECT status FROM jobs")["status"] == "ambiguous"
     assert runner.budget.summary()["accounted_tokens"] > 4096
@@ -202,17 +225,21 @@ def test_recovery_after_attempt_commit_before_job_commit(context):
 def test_explicit_retries_are_bounded(context, monkeypatch):
     runner, job, item_model, item = job_context(context)
     monkeypatch.setattr("freeboard.runner.credential", lambda _: "test-only")
-    monkeypatch.setattr("freeboard.runner.time.sleep", lambda _: None)
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(503)))
+    def retry(*args):
+        import time
+        for _ in range(3):
+            args[-1]({'next':time.time()*1000+1000})
+        pytest.fail('Retry limit must abort the client')
+    monkeypatch.setattr(runner.opencode,'generate',retry)
     runner.generate(job, item_model, item, 4096)
     assert len(runner.db.rows("SELECT * FROM attempts")) == 3
-    assert runner.db.one("SELECT status FROM jobs")["status"] == "failed"
+    assert runner.db.one("SELECT status FROM jobs")["status"] == "ambiguous"
 
 
 def test_quota_is_not_a_capability_failure(context, monkeypatch):
     runner, job, item_model, item = job_context(context)
     monkeypatch.setattr("freeboard.runner.credential", lambda _: "test-only")
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(429, headers={"Retry-After": "3600"})))
+    monkeypatch.setattr(runner.opencode,'generate',lambda *_:native_error(429,'Quota limited'))
     runner.generate(job, item_model, item, 4096)
     assert runner.db.one("SELECT status,score FROM jobs") == {"status": "deferred", "score": None}
     assert runner.db.one("SELECT status FROM models")["status"] == "quota_limited"
@@ -221,7 +248,7 @@ def test_quota_is_not_a_capability_failure(context, monkeypatch):
 def test_malformed_success_never_retried(context, monkeypatch):
     runner, job, item_model, item = job_context(context)
     monkeypatch.setattr("freeboard.runner.credential", lambda _: "test-only")
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(200, text="invalid")))
+    monkeypatch.setattr(runner.opencode,'generate',lambda *_:{})
     runner.generate(job, item_model, item, 4096)
     assert runner.db.one("SELECT status FROM jobs")["status"] == "ambiguous"
     assert len(runner.db.rows("SELECT * FROM attempts")) == 1
@@ -268,10 +295,10 @@ def test_public_screen_gate_resume_and_no_headline_rank(context, monkeypatch):
     monkeypatch.setattr('freeboard.runner.credential', lambda _: 'test-only')
     monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
     calls = []
-    def response(req):
-        calls.append(req)
-        return httpx.Response(200, json=response_body())
-    runner.client = httpx.Client(transport=httpx.MockTransport(response))
+    def response(*args):
+        calls.append(args)
+        return native_result()
+    monkeypatch.setattr(runner.opencode,'generate',response)
     monkeypatch.setattr(runner.grader, 'grade', lambda *_: 1)
     with pytest.raises(ValueError):
         run_public(runner, active, [item_model['id']])
@@ -301,7 +328,7 @@ def test_public_screen_gate_resume_and_no_headline_rank(context, monkeypatch):
         assert 'PRIVATE_SENTINEL' not in path.read_text()
     rows = list(csv.DictReader((target / 'site/leaderboard.csv').open()))
     subset = next(r for r in rows if r['tier'] == 'public-screen')
-    assert subset['transport'] == 'zen-api' and subset['reasoning'] == '' and subset['overall'] == ''
+    assert subset['transport'] == 'local-opencode' and subset['reasoning'] == '' and subset['overall'] == ''
     assert subset['livebench_n'] == '20' and subset['livecodebench_n'] == '40'
     assert subset['livebench_evaluated_at'] == public.benchmark_evaluated_at['livebench']
     cycle = runner.db.one("SELECT id FROM cycles WHERE kind='public_screen'")
@@ -318,7 +345,7 @@ def test_grader_failure_preserves_answer_and_finishes_other_questions(context, m
     monkeypatch.setattr('freeboard.public_run.discover', lambda *_: {'ok': True})
     monkeypatch.setattr('freeboard.runner.credential', lambda _: 'test-only')
     monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda _: httpx.Response(200, json=response_body())))
+    monkeypatch.setattr(runner.opencode,'generate',lambda *_:native_result())
     pilot = runner.cycle(item_model, active, 'pilot', 'pilot-fixture')
     runner.db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), pilot['id']))
     calls = 0
@@ -340,7 +367,7 @@ def test_grader_failure_preserves_answer_and_finishes_other_questions(context, m
     assert 'livebench' not in public.benchmark_scores and public.benchmark_scores['livecodebench'] == 100
 
 
-def test_zen_only_runner_and_export_preserve_archived_records(context, monkeypatch):
+def test_opencode_only_runner_and_export_preserve_archived_records(context, monkeypatch):
     import shutil
     from freeboard.cli import parser
     from freeboard.scoring import PublicScreen, snapshot
@@ -358,6 +385,9 @@ def test_zen_only_runner_and_export_preserve_archived_records(context, monkeypat
         ids = runner.db.rows('SELECT id FROM jobs WHERE cycle_id=? ORDER BY id', (cycle['id'],))
         runner.db.execute("UPDATE jobs SET status='generated' WHERE id=?", (ids[0]['id'],))
         runner.db.execute("UPDATE jobs SET status='graded',score=1 WHERE id=?", (ids[1]['id'],))
+    legacy_model = {**item_model, 'profile': json.dumps({'protocol': 'chat', 'cap_verified': True})}
+    api_cycle = runner.cycle(legacy_model, active, 'public_screen', 'api-archive')
+    runner.add_panel(api_cycle, 'screen')
     def forbidden(*_):
         pytest.fail('Archived OpenCode jobs must never be executed')
     monkeypatch.setattr(runner, 'generate', forbidden)
@@ -365,23 +395,23 @@ def test_zen_only_runner_and_export_preserve_archived_records(context, monkeypat
     assert runner.drain(active)['processed'] == 0
     legacy = runner.budget.reserve('native_generation', 500)
     runner.budget.finish(legacy, 'received', usage={'total_tokens': 100, 'source': 'opencode-normalized'})
-    direct = runner.budget.reserve('generation', 500)
+    direct = runner.budget.reserve('opencode_generation', 500)
     runner.budget.finish(direct, 'received', usage={'total_tokens': 80})
     report = snapshot(runner.db, runner.settings)
     assert not report.pilots and not report.public_screens and report.queue_size == 0
     assert report.budget['attempts_used'] == 2 and report.budget['accounted_tokens'] == 180
-    assert report.budget['zen_attempts'] == 1 and report.budget['zen_reported_tokens'] == 80
+    assert report.budget['opencode_attempts'] == 1 and report.budget['opencode_reported_tokens'] == 80
     assert report.budget['prior_attempts'] == 1 and report.budget['prior_accounted_tokens'] == 100
     with pytest.raises(ValueError):
-        PublicScreen.model_validate({'transport': 'local-opencode'})
+        PublicScreen.model_validate({'transport': 'zen-api'})
     target = runner.settings.state.parent / 'archive-export'
     shutil.copytree(runner.checkout / 'web', target / 'web')
     export(runner.db, runner.settings, target)
     assert not validate_site(target / 'site').public_screens
     for filename in ['snapshot.json', 'leaderboard.csv']:
         text = (target / 'site' / filename).read_text()
-        assert 'local-opencode' not in text and 'native_' not in text and 'PRIVATE_SENTINEL' not in text
-    assert len(runner.db.rows('SELECT * FROM jobs')) == 180
+        assert 'zen-api' not in text and 'native_' not in text and 'PRIVATE_SENTINEL' not in text
+    assert len(runner.db.rows('SELECT * FROM jobs')) == 240
     assert len(runner.db.rows('SELECT * FROM attempts')) == 2
 
 
@@ -439,7 +469,7 @@ def test_archived_native_response_accounting_and_validation():
 def test_unavailable_provider_stops_model_without_capability_score(context, monkeypatch):
     runner, job, item_model, item = job_context(context)
     monkeypatch.setattr('freeboard.runner.credential', lambda _: 'public')
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(400, json={'error': {'message': 'Model is unavailable.'}})))
+    monkeypatch.setattr(runner.opencode,'generate',lambda *_:native_error(400,'Model is unavailable.'))
     runner.generate(job, item_model, item, 4096)
     assert runner.db.one('SELECT status FROM models')['status'] == 'model_unavailable'
     assert runner.db.one('SELECT status,score FROM jobs') == {'status': 'deferred', 'score': None}
@@ -586,7 +616,7 @@ def test_prepared_manifest_and_panels(context, monkeypatch):
 def test_reported_cap_overrun_blocks_future_generation(context, monkeypatch):
     runner, job, item_model, item = job_context(context)
     monkeypatch.setattr("freeboard.runner.credential", lambda _: "test-only")
-    runner.client = httpx.Client(transport=httpx.MockTransport(lambda req: httpx.Response(200, json=response_body(5000))))
+    monkeypatch.setattr(runner.opencode,'generate',lambda *_:native_result(tokens=5000))
     runner.generate(job, item_model, item, 4096)
     assert runner.db.one("SELECT status FROM models")["status"] == "cap_violation"
     assert runner.budget.summary()["reported_tokens"] == 5020

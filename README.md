@@ -1,6 +1,6 @@
 # OpenCode Free Model Leaderboard
 
-A local, persistent runner for verified free OpenCode Zen endpoints, with a static GitHub Pages leaderboard. Raw datasets, answers, responses, state and credentials stay outside this repository.
+A local, persistent benchmark runner using the installed OpenCode client with verified free Zen models, with a static GitHub Pages leaderboard. Raw datasets, answers, responses, state and credentials stay outside this repository.
 
 ## Install
 
@@ -42,18 +42,15 @@ uv run --no-editable leaderboard schedule install
 
 Discovery must succeed against both the official catalog and pricing page. Pricing parsing is fail-closed: missing or contradictory evidence blocks generation. The pilot selects the first three eligible endpoints lexicographically, with six health probes and six held-out benchmark questions each. Pilot answers never enter rankings.
 
-The cap probe deliberately requests a long JSON array. A model is cap-verified only after all six responses report bounded output usage and at least one reports truncation at the 256-token probe cap. Cached input and hidden reasoning subfields are never added twice. This checks observed gateway behavior, not an assurance about every future response. A cap violation removes verification and prevents further headline requests. Unsupported parameter errors require an explicit profile change and a new pilot:
+Generation requires the validated OpenCode version 1.18.31. Each question uses a fresh session through a dedicated loopback server with a fixed benchmark agent. Tools, plugins, sharing, parallel tasks, title/summary agents, and compaction are disabled. No step limit is set, avoiding the client's maximum-step summary instruction on the first response. The original benchmark system instruction is sent in the system field and its question in user parts; they are never flattened. OpenCode adds its own environment context, so these results measure this client configuration.
 
-```sh
-uv run --no-editable leaderboard profile MODEL_ID --cap-parameter max_tokens --omit-temperature
-uv run --no-editable leaderboard pilot
-```
-
-Profile changes create an evaluation epoch on the next discovery. There is no automatic parameter fallback, model substitution, or paid provider fallback. Muse Spark Contributor endpoints are excluded.
+The cap probe deliberately requests a long JSON array. A model is cap-verified only after all six responses report bounded output usage and at least one reports truncation at the 256-token probe cap. Cached input and hidden reasoning subfields are never added twice. This checks observed gateway behavior, not an assurance about every future response. A cap violation removes verification and prevents further headline requests. A client, configuration, or endpoint change creates a new evaluation epoch and requires a new pilot. There is no model substitution or paid provider fallback. Muse Spark Contributor endpoints are excluded.
 
 While GPQA access is pending, `prepare-panels --public-only` freezes a separate compatibility panel. Run `pilot --season PUBLIC_PILOT_ID` to evaluate six synthetic probes and two held-out questions each from LiveBench and LiveCodeBench per selected model. This pilot cannot be promoted or used for headline rankings. `prepare-panels --season SEASON_ID` validates an already frozen panel without downloading or resampling it. Download caches can be discarded after the selected questions and manifest are stored and backed up; preserve the private SQLite state.
 
-All evaluations use direct Zen Chat Completions or Responses APIs. The local OpenCode execution path has been removed. Earlier experiments remain in private storage and count against their original budgets, but are excluded from public scores, pilots, and queues. Zen usage is shown separately from those prior experiments. Provider rejection is a blocker; there is no client-identity spoofing or paid fallback.
+All generation goes through the real OpenCode client; the runner does not post completions directly to Zen. Discovery still reads the official catalog and pricing page. Only an exact, currently verified zero-price Zen ID is selectable. Provider free-tier restrictions can still reject the client configuration and are shown explicitly.
+
+Earlier direct API and confounded native experiments remain in private storage and count against their original budgets, but are excluded from current public scores, pilots, and queues. New answers use protocol revision 3 and separate epochs; no earlier answers are reused.
 
 Once a model's public pilot completes, finish the frozen 20 LiveBench and 40 LiveCodeBench questions independently of GPQA setup:
 
@@ -61,7 +58,7 @@ Once a model's public pilot completes, finish the frozen 20 LiveBench and 40 Liv
 uv run --no-editable leaderboard run --public-only --season PUBLIC_PILOT_ID --model MODEL_ID
 ```
 
-These 60-question public screens have separate persistent cycles, component scores and stratified intervals; they never receive headline ranks, reasoning/overall scores, or automatic confirmation extensions. Screens require a verified cap and a matching completed Zen API pilot. Saved answers resume by grading, and pilot answers are never reused. Adding GPQA creates a new full season with fresh answers rather than silently turning these partial results into headline scores.
+These 60-question public screens have separate persistent cycles, component scores and stratified intervals; they never receive headline ranks, reasoning/overall scores, or automatic confirmation extensions. Screens require a verified cap and a matching completed OpenCode pilot. Saved answers resume by grading, and pilot answers are never reused. Adding GPQA creates a new full season with fresh answers rather than silently turning these partial results into headline scores.
 
 ## Routine operation
 
@@ -69,9 +66,9 @@ The `launchd` agent runs at 09:15 local time and at login. Keep the private runt
 
 `run --limit 10` processes at most ten jobs. `confirm MODEL_ID` queues 160 extra questions on the model's completed, current screen cycle. The next run processes headline obligations before confirmation extensions; confirmations do not automatically expand the weekly budget.
 
-Private state defaults to `~/Library/Application Support/OpenCodeFreeLeaderboard/`, with SQLite WAL, response files, pinned datasets and upstream source archives, logs, and seven daily backups. All commands share a nonblocking process lock. Use `--state /absolute/private/path` before the command to override storage; placing it inside the checkout is rejected.
+Private state defaults to `~/Library/Application Support/OpenCodeFreeLeaderboard/`, with SQLite WAL, response files, isolated OpenCode session/config/cache directories, pinned datasets and upstream source archives, logs, and seven daily backups. All commands share a nonblocking process lock. Use `--state /absolute/private/path` before the command to override storage; placing it inside the checkout is rejected.
 
-Responses are written atomically before grading. If the runner crashes with a saved response, recovery grades it without regeneration. Requests with no durable response are marked ambiguous; no automatic replay occurs. Authentication errors, quotas, and infrastructure errors do not count as failed benchmark answers. Explicit retryable HTTP failures have at most two retries. Failed/ambiguous jobs remain visible and prevent a complete-panel rank; do not erase them to obtain a better sample.
+Responses are written atomically before grading. If the runner crashes with a saved response, recovery grades it without regeneration. Requests with no durable response are marked ambiguous; no automatic replay occurs. Authentication errors, quotas, and infrastructure errors do not count as failed benchmark answers. Observed client retries have at most two retries; no repair completions are allowed. Failed/ambiguous jobs remain visible and prevent a complete-panel rank; do not erase them to obtain a better sample.
 
 Missing output usage or inconsistent reasoning accounting also blocks headline eligibility, retaining the response without replay. Recovery applies the same cap checks as normal execution. Historical rows retain the configuration used by their evaluation cycle.
 
@@ -91,7 +88,7 @@ Reasoning equally averages GPQA and LiveBench. Coding is pass@1. Optional overal
 
 These small, older public subsets may have appeared in model training. The intervals do not measure contamination, hidden alias changes, provider reporting errors, or repeated-generation variability. Exact point-score ties share a displayed position; unresolved comparisons do not establish a winner. No code review can establish absolute fairness or trustworthiness.
 
-Weekly minimums are 300 provider HTTP attempts and one million accounted tokens. Capacity scales to outstanding headline questions, six probes per eligible model and 25% retry headroom. Accounted tokens conservatively use UTF-8 prompt bytes plus overhead and the generation cap until actual totals are reported. These estimates are not provider invoices. Metadata calls and failed attempts count toward the HTTP budget. Provider-reported token overruns are recorded even if they exceed a reserved estimate; subsequent requests stop at the budget boundary.
+Weekly minimums are 300 recorded client attempts and one million accounted tokens. The initial request is reserved before dispatch; retry events are reserved during client backoff. At most two retries are allowed, and long backoffs abort the session. Counts describe reserved client attempts and observed retries, not a provider HTTP audit. Tokens are client-normalized; cache and reasoning are added once. Unknown outcomes retain their conservative reservation and block further requests to that model in the session. Capacity scales to outstanding headline questions, six probes per eligible model and 25% retry headroom. Accounted tokens conservatively use UTF-8 prompt bytes plus 8,192 tokens of client/environment overhead and the generation cap until actual totals are reported. These estimates are not provider invoices. Explicit discovery calls and failed attempts count toward the dispatch budget. Client-reported token overruns are recorded even if they exceed a reserved estimate; subsequent requests stop at the budget boundary.
 
 ## Publication and seasons
 

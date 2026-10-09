@@ -46,13 +46,12 @@ def parse_evidence(html: str) -> dict[str, dict]:
 
 
 def profile_for(endpoint: str | None) -> dict:
+    from .opencode import profile
     path = urlparse(endpoint or "").path
     if path.endswith("/chat/completions"):
-        return {"protocol": "chat", "cap_parameter": "max_completion_tokens",
-                "temperature": 0, "cap_verified": False}
+        return profile('chat')
     if path.endswith("/responses"):
-        return {"protocol": "responses", "cap_parameter": "max_output_tokens",
-                "temperature": 0, "cap_verified": False}
+        return profile('responses')
     return {"protocol": "unsupported", "cap_verified": False}
 
 
@@ -61,6 +60,8 @@ def excluded(ident: str) -> bool:
 
 
 def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict:
+    from .opencode import client_version
+    client_version(db.state)
     client = client or httpx.Client(timeout=30, follow_redirects=False)
     content = {}
     error = None
@@ -98,7 +99,11 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
         old, proof = previous.get(model), evidence.get(model)
         endpoint = proof["endpoint"] if proof else (old or {}).get("endpoint")
         default = profile_for(endpoint)
-        profile = json.loads(old["profile"]) if old and old["endpoint"] == endpoint else default
+        prior = json.loads(old['profile']) if old else {}
+        same = (old and old['endpoint'] == endpoint and
+                {k: v for k, v in prior.items() if k != 'cap_verified'} ==
+                {k: v for k, v in default.items() if k != 'cap_verified'})
+        profile = prior if same else default
         if excluded(model):
             status = "excluded"
         elif not ok:
@@ -128,4 +133,3 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
                    (ident, model, epoch, status, json.dumps(proof or {})))
     return {"ok": ok, "observed_at": stamp, "error": error,
             "eligible": len(db.rows("SELECT id FROM models WHERE status='eligible'"))}
-
