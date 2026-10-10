@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Benchmark subsets for free OpenCode Zen models, with scores, uncertainty, and evaluation dates.">
-<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css?v=c324e34a346dbee80e3b"><script src="app.js?v=c324e34a346dbee80e3b" defer></script>
+<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css?v=577664162f2f0765d825"><script src="app.js?v=577664162f2f0765d825" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to content</a>
@@ -21,11 +21,15 @@
 <p class="fine">Ranks follow point estimates. A paired difference interval containing zero is unresolved.</p>
 <details id="comparisons" hidden><summary>Pairwise comparisons</summary><div id="comparison-list"></div></details>
 </section>
-<section id="results" class="section" hidden>
-<div class="section-heading"><h2 id="results-heading">Benchmark results</h2><span class="badge">60-question subsets · unranked</span></div><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>
+<section id="benchmark-results" class="section" hidden>
+<div class="section-heading"><h2>Benchmarks</h2><span id="benchmark-panel" class="badge">Screen sections · unranked</span></div><p class="section-note">Complete sections only. Dot: score · line: 95% interval · scale: 0–100%.</p>
+<div id="benchmark-list" class="chart-grid benchmark-grid"></div>
+</section>
+<details id="results" class="section" hidden>
+<summary id="results-heading">Earlier public screens · 60-question subsets · unranked</summary><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>
 <div id="public-screen-list"></div>
 <details id="run-details"><summary>Run details</summary><div id="run-detail-list" class="detail-grid"></div></details>
-</section>
+</details>
 <section id="supporting" class="section supporting" hidden>
 <details id="availability"><summary id="availability-summary">Model availability</summary><p id="discovery-date" class="fine"></p><div class="table-scroll"><table><caption class="sr-only">Discovered model availability</caption><thead><tr><th scope="col">Model</th><th scope="col">Status</th></tr></thead><tbody id="availability-list"></tbody></table></div></details>
 <details id="execution"><summary id="execution-summary">Execution details</summary><dl id="budget" class="facts"></dl><p id="prior-budget" class="fine" hidden></p><p class="fine">Tokens are reported by OpenCode. Attempts include reservations and retries observed in its event stream; they are not a provider HTTP audit. Missing usage is conservatively accounted.</p><p class="fine">Full panels target a 28-day refresh. Completion depends on provider access and the local machine.</p></details>

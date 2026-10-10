@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "snapshot_id": "c324e34a346dbee80e3b",
-  "generated_at": "2026-10-09T22:55:50+00:00",
+  "snapshot_id": "577664162f2f0765d825",
+  "generated_at": "2026-10-10T16:45:05+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-09T22:12:30+00:00",
+  "discovery_at": "2026-10-10T16:41:33+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -15,25 +15,26 @@
       "tier": "screen",
       "season": "s1-eb8afe28e8eafc97",
       "status": "pending",
-      "availability": "provider_error",
+      "availability": "cap_violation",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": true,
+      "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
-      "evaluated_at": "2026-10-09T22:15:19+00:00",
+      "evaluated_at": "2026-10-10T00:26:47+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
       "progress": {
         "gpqa": 0,
-        "livebench": 20,
-        "livecodebench": 24
+        "livebench": 19,
+        "livecodebench": 37
       },
       "pending_reasons": {
         "ambiguous": 2,
-        "pending": 34
+        "failed": 2,
+        "pending": 20
       },
       "expected": {
         "gpqa": 20,
@@ -42,11 +43,14 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": 17.289935125038028,
-      "accounted_tokens": 312901,
-      "reported_tokens": 270229,
-      "truncation_rate": 0.3181818181818182,
+      "accounted_tokens": 394068,
+      "reported_tokens": 351396,
+      "truncation_rate": 0.27586206896551724,
       "deadline_missed": false
     },
     {
@@ -57,14 +61,14 @@
       "tier": "confirmation",
       "season": null,
       "status": "pending",
-      "availability": "provider_error",
+      "availability": "cap_violation",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
-      "cap_verified": true,
+      "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -81,6 +85,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -103,7 +110,7 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -120,6 +127,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -142,7 +152,7 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -159,6 +169,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -181,7 +194,7 @@
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -198,6 +211,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -220,7 +236,7 @@
       "cap_verified": false,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -237,6 +253,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -250,25 +269,27 @@
       "name": "LongCat 2.5 Preview Free",
       "epoch": "e66042f250e9e706",
       "tier": "screen",
-      "season": null,
+      "season": "s1-eb8afe28e8eafc97",
       "status": "pending",
-      "availability": "quota_limited",
+      "availability": "eligible",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T22:12:30+00:00",
-      "next_retry_at": "2026-10-10T00:00:00.228000+00:00",
-      "evaluated_at": null,
-      "cycle_started_at": null,
+      "observed_at": "2026-10-10T16:41:33+00:00",
+      "next_retry_at": null,
+      "evaluated_at": "2026-10-10T16:40:52+00:00",
+      "cycle_started_at": "2026-10-10T00:20:52+00:00",
       "progress": {
-        "gpqa": 0,
-        "livebench": 0,
-        "livecodebench": 0
+        "gpqa": 19,
+        "livebench": 19,
+        "livecodebench": 39
       },
-      "pending_reasons": {},
+      "pending_reasons": {
+        "ambiguous": 3
+      },
       "expected": {
         "gpqa": 20,
         "livebench": 20,
@@ -276,11 +297,14 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
-      "latency_seconds": null,
-      "accounted_tokens": 0,
-      "reported_tokens": 0,
-      "truncation_rate": null,
+      "latency_seconds": 66.02505333395675,
+      "accounted_tokens": 561326,
+      "reported_tokens": 463915,
+      "truncation_rate": 0.42857142857142855,
       "deadline_missed": false
     },
     {
@@ -291,15 +315,15 @@
       "tier": "confirmation",
       "season": null,
       "status": "pending",
-      "availability": "quota_limited",
+      "availability": "eligible",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T22:12:30+00:00",
-      "next_retry_at": "2026-10-10T00:00:00.228000+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
+      "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
       "progress": {
@@ -315,6 +339,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -337,7 +364,7 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -354,6 +381,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -376,7 +406,7 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -393,6 +423,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -415,7 +448,7 @@
       "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -432,6 +465,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -454,7 +490,7 @@
       "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -471,6 +507,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -493,7 +532,7 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -510,6 +549,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -532,7 +574,7 @@
       "cap_verified": false,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -549,6 +591,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -571,7 +616,7 @@
       "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -588,6 +633,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -610,7 +658,7 @@
       "cap_verified": false,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -627,6 +675,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -649,7 +700,7 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-09T22:28:08+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
@@ -668,6 +719,24 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {
+        "livebench": 70.0,
+        "livecodebench": 67.5
+      },
+      "benchmark_intervals": {
+        "livebench": [
+          50.0,
+          90.0
+        ],
+        "livecodebench": [
+          52.5,
+          80.0
+        ]
+      },
+      "benchmark_evaluated_at": {
+        "livebench": "2026-10-09T20:38:39+00:00",
+        "livecodebench": "2026-10-09T20:46:02+00:00"
+      },
       "sample_counts": null,
       "latency_seconds": 7.494839875027537,
       "accounted_tokens": 462854,
@@ -690,7 +759,7 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -707,6 +776,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -729,7 +801,7 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-09T22:47:31+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
@@ -748,6 +820,24 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {
+        "livebench": 35.0,
+        "livecodebench": 65.0
+      },
+      "benchmark_intervals": {
+        "livebench": [
+          15.0,
+          55.00000000000001
+        ],
+        "livecodebench": [
+          52.5,
+          77.5
+        ]
+      },
+      "benchmark_evaluated_at": {
+        "livebench": "2026-10-09T21:13:00+00:00",
+        "livecodebench": "2026-10-09T21:54:30+00:00"
+      },
       "sample_counts": null,
       "latency_seconds": 81.95466458424926,
       "accounted_tokens": 507815,
@@ -770,7 +860,7 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-09T22:12:30+00:00",
+      "observed_at": "2026-10-10T16:41:33+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -787,6 +877,9 @@
       },
       "scores": null,
       "intervals": null,
+      "benchmark_scores": {},
+      "benchmark_intervals": {},
+      "benchmark_evaluated_at": {},
       "sample_counts": null,
       "latency_seconds": null,
       "accounted_tokens": 0,
@@ -1018,26 +1111,28 @@
       "transport": "local-opencode",
       "season": "s1-eb8afe28e8eafc97",
       "unranked": true,
-      "status": "pending",
-      "health_graded": 0,
-      "cap_probe_verified": false,
+      "status": "complete",
+      "health_graded": 6,
+      "cap_probe_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
       "progress": {
-        "gpqa": 0,
-        "livebench": 0,
-        "livecodebench": 0
+        "gpqa": 2,
+        "livebench": 2,
+        "livecodebench": 2
       },
       "expected": {
         "gpqa": 2,
         "livebench": 2,
         "livecodebench": 2
       },
-      "pending_reasons": {
-        "pending": 6
+      "pending_reasons": {},
+      "benchmark_scores": {
+        "gpqa": 50.0,
+        "livebench": 50.0,
+        "livecodebench": 0.0
       },
-      "benchmark_scores": {},
-      "evaluated_at": null
+      "evaluated_at": "2026-10-10T00:20:31+00:00"
     },
     {
       "model_id": "space-bunny-free",
@@ -1114,7 +1209,7 @@
       "progress": {
         "gpqa": 0,
         "livebench": 19,
-        "livecodebench": 40
+        "livecodebench": 39
       },
       "expected": {
         "gpqa": 0,
@@ -1122,20 +1217,12 @@
         "livecodebench": 40
       },
       "pending_reasons": {
-        "ambiguous": 1
+        "ambiguous": 1,
+        "failed": 1
       },
-      "benchmark_scores": {
-        "livecodebench": 65.0
-      },
-      "intervals": {
-        "livecodebench": [
-          52.5,
-          77.5
-        ]
-      },
-      "benchmark_evaluated_at": {
-        "livecodebench": "2026-10-09T05:26:02+00:00"
-      },
+      "benchmark_scores": {},
+      "intervals": {},
+      "benchmark_evaluated_at": {},
       "evaluated_at": null,
       "latency_seconds": 22.394189750077203,
       "accounted_tokens": 401033,
@@ -1155,37 +1242,41 @@
       "cap_verified": true,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "status": "pending",
+      "status": "complete",
       "progress": {
         "gpqa": 0,
         "livebench": 20,
-        "livecodebench": 39
+        "livecodebench": 40
       },
       "expected": {
         "gpqa": 0,
         "livebench": 20,
         "livecodebench": 40
       },
-      "pending_reasons": {
-        "deferred": 1
-      },
+      "pending_reasons": {},
       "benchmark_scores": {
-        "livebench": 45.0
+        "livebench": 45.0,
+        "livecodebench": 55.00000000000001
       },
       "intervals": {
         "livebench": [
           25.0,
           65.0
+        ],
+        "livecodebench": [
+          45.0,
+          65.0
         ]
       },
       "benchmark_evaluated_at": {
-        "livebench": "2026-10-09T03:45:56+00:00"
+        "livebench": "2026-10-09T03:45:56+00:00",
+        "livecodebench": "2026-10-10T16:43:34+00:00"
       },
-      "evaluated_at": null,
-      "latency_seconds": 84.34164274996147,
-      "accounted_tokens": 382168,
-      "reported_tokens": 368805,
-      "truncation_rate": 0.4576271186440678
+      "evaluated_at": "2026-10-10T16:43:34+00:00",
+      "latency_seconds": 86.03125404193997,
+      "accounted_tokens": 389671,
+      "reported_tokens": 376308,
+      "truncation_rate": 0.4666666666666667
     },
     {
       "model_id": "nemotron-3.5-lightning-free",
@@ -6324,24 +6415,24 @@
   ],
   "budget": {
     "week": "2026-10-05",
-    "attempts_limit": 1197,
+    "attempts_limit": 1291,
     "tokens_limit": 8412805,
-    "planned_attempts": 12,
-    "planned_tokens": 87500,
-    "attempts_used": 1094,
-    "accounted_tokens": 5461367,
-    "reported_tokens": 4103558,
-    "estimated_attempts": 152,
-    "opencode_attempts": 826,
-    "opencode_invocations": 747,
-    "opencode_accounted_tokens": 4884244,
-    "opencode_reported_tokens": 3732019,
-    "opencode_estimated_attempts": 120,
-    "discovery_attempts": 94,
+    "planned_attempts": 73,
+    "planned_tokens": 988840,
+    "attempts_used": 1219,
+    "accounted_tokens": 6171903,
+    "reported_tokens": 4716683,
+    "estimated_attempts": 159,
+    "opencode_attempts": 937,
+    "opencode_invocations": 853,
+    "opencode_accounted_tokens": 5594780,
+    "opencode_reported_tokens": 4345144,
+    "opencode_estimated_attempts": 127,
+    "discovery_attempts": 108,
     "prior_attempts": 174,
     "prior_accounted_tokens": 577123
   },
-  "queue_size": 126,
+  "queue_size": 105,
   "missed_deadlines": 0,
   "blockers": []
 }

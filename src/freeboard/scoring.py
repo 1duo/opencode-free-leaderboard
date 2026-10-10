@@ -53,6 +53,9 @@ class PublicRow(Strict):
     expected: dict[str, int]
     scores: dict[str, float] | None = None
     intervals: dict[str, list[float]] | None = None
+    benchmark_scores: dict[str, float] = {}
+    benchmark_intervals: dict[str, list[float]] = {}
+    benchmark_evaluated_at: dict[str, str | None] = {}
     sample_counts: dict[str, int] | None = None
     latency_seconds: float | None = None
     accounted_tokens: int = 0
@@ -203,6 +206,24 @@ def is_complete(items: list[dict], tier: str) -> bool:
 def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: str) -> tuple[PublicRow, dict | None]:
     items = records(db, cycle, tier) if cycle else []
     complete = is_complete(items, tier)
+    completed_sections = []
+    for benchmark, count in COUNTS[tier].items():
+        section = [r for r in items if r['benchmark'] == benchmark]
+        if len(section) == count and all(r['status'] == 'graded' for r in section):
+            completed_sections.extend(section)
+    section_draws = component_bootstrap(completed_sections, settings.bootstrap_samples)
+    benchmark_scores = {b: float(np.mean([r['score'] for r in completed_sections if r['benchmark'] == b])) * 100
+                        for b in section_draws}
+    benchmark_intervals = {b: np.quantile(v, [.025, .975]).tolist() for b, v in section_draws.items()}
+    benchmark_dates = {}
+    if cycle and completed_sections:
+        dates = db.rows("""SELECT i.benchmark,a.finished_at FROM attempts a JOIN jobs j ON j.id=a.job_id
+            JOIN items i ON i.id=j.item_id WHERE j.cycle_id=? AND j.status='graded'
+            AND a.status IN ('received','recovered') AND a.finished_at IS NOT NULL
+            AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)""",
+                        (cycle['id'], cycle['season'], tier))
+        benchmark_dates = {b: max((r['finished_at'] for r in dates if r['benchmark'] == b), default=None)
+                           for b in benchmark_scores}
     scores, intervals, draws = None, None, None
     if complete:
         scores = point_scores(items)
@@ -250,7 +271,8 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                      availability=availability, free_eligible=model['status'] in {'eligible','authentication_failed','quota_limited',
                          'model_unavailable','configuration_error','cap_violation','cap_unverified','client_access_restricted','provider_error'},
                      protocol=profile['protocol'], endpoint=profile.get('endpoint', model['endpoint']),
-                     cap_verified=profile.get("cap_verified", False), observed_at=model["observed_at"],
+                     cap_verified=profile.get("cap_verified", False) and not (cycle and cycle['epoch'] == model['epoch']
+                         and availability in {'cap_violation', 'cap_unverified'}), observed_at=model["observed_at"],
                      next_retry_at=retry['at'] if availability == 'quota_limited' else None,
                      reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
                      evaluated_at=stamp,
@@ -258,6 +280,8 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                      progress=progress, pending_reasons={s: sum(r['status'] == s for r in items) for s in
                          sorted({r['status'] for r in items if r['status'] != 'graded'})},
                      expected=COUNTS[tier], scores=scores, intervals=intervals,
+                     benchmark_scores=benchmark_scores, benchmark_intervals=benchmark_intervals,
+                     benchmark_evaluated_at=benchmark_dates,
                      sample_counts=progress if complete else None,
                      latency_seconds=float(np.median([r["latency"] for r in generated])) if generated else None,
                      accounted_tokens=attempts["accounted"], reported_tokens=attempts["reported"],

@@ -66,7 +66,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
             shutil.copy(checkout / "web" / name, stage / name)
         (stage / ".nojekyll").write_text("")
         fields = ["model_id", "tier", "transport", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench",
-                  "gpqa_n", "livebench_n", "livecodebench_n", "livebench_evaluated_at", "livecodebench_evaluated_at",
+                  "gpqa_n", "livebench_n", "livecodebench_n", "gpqa_evaluated_at", "livebench_evaluated_at", "livecodebench_evaluated_at",
                   "accounted_tokens", "reported_tokens", "truncation_rate"]
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields, lineterminator='\n')
@@ -75,6 +75,8 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
                 data = {k: getattr(row, k) for k in fields if hasattr(row, k)}
                 data['transport'] = 'local-opencode'
                 data.update({k: (row.scores or {}).get(k) for k in ["reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench"]})
+                data.update(row.benchmark_scores)
+                data.update({f'{k}_evaluated_at': v for k, v in row.benchmark_evaluated_at.items()})
                 data.update({f"{k}_n": row.progress.get(k, 0) for k in ["gpqa", "livebench", "livecodebench"]})
                 # Keep spreadsheet programs from executing formula-like model names.
                 writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})

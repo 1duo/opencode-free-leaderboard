@@ -13,7 +13,7 @@ from freeboard.grading import DockerGrader, GradingUnavailable, gpqa_score
 from freeboard.panels import sample, prepare
 from freeboard.publication import export, validate_site, public_source
 from freeboard.runner import CAP_CALIBRATION, Runner
-from freeboard.opencode import PERMISSIONS, configuration, completion_events, profile, prompt_body, reasoning_policy
+from freeboard.opencode import PERMISSIONS, configuration, completion_events, profile, prompt_body, reasoning_policy, retry_is_safe
 from freeboard.scoring import bootstrap, is_complete, make_row
 
 
@@ -76,7 +76,7 @@ def native_result(tokens=10, text='FINAL: A', reason='stop', missing_usage=False
 def native_error(code, message):
     return {'info': {'error': {'name': 'APIError', 'data': {'statusCode': code, 'message': message}}}}
 
-@pytest.mark.parametrize('mode', ['complete', 'deadline', 'closed_stream'])
+@pytest.mark.parametrize('mode', ['complete', 'unicode_prompt', 'deadline', 'closed_stream', 'partial_retry', 'unowned_retry', 'pre_response_retry'])
 def test_native_listener_allows_slow_completion_but_deadline_never_replays(context, monkeypatch, mode):
     import threading
     import httpx
@@ -88,9 +88,36 @@ def test_native_listener_allows_slow_completion_but_deadline_never_replays(conte
     class Events(httpx.SyncByteStream):
         def __iter__(self):
             yield b'data: {"type":"server.connected"}\n\n'
+            if mode == 'unicode_prompt':
+                event = {'type': 'message.part.updated', 'properties': {'part':
+                    {'sessionID': 'session', 'messageID': 'user', 'type': 'text',
+                     'text': 'Question\u2028continuation\u0085end'}}}
+                payload = ('data: ' + json.dumps(event, ensure_ascii=False) + '\r\n\r\n').encode()
+                # Network chunks can divide a multibyte character.
+                cut = payload.index('\u2028'.encode()) + 1
+                yield payload[:cut]
+                yield payload[cut:]
             if mode == 'closed_stream':
                 assert dispatched.wait(1)
                 return
+            if mode in {'partial_retry', 'unowned_retry', 'pre_response_retry'}:
+                assert dispatched.wait(1)
+                initial = [
+                    {'type': 'message.updated', 'properties': {'info':
+                        {'sessionID': 'session', 'id': 'user', 'role': 'user'}}},
+                    {'type': 'message.part.updated', 'properties': {'part':
+                        {'sessionID': 'session', 'messageID': 'user', 'type': 'text', 'text': 'original question'}}},
+                    {'type': 'message.updated', 'properties': {'info':
+                        {'sessionID': 'session', 'id': 'assistant', 'role': 'assistant'}}},
+                ]
+                if mode in {'partial_retry', 'unowned_retry'}:
+                    initial.append({'type': 'message.part.delta', 'properties':
+                        {'sessionID': 'session', 'messageID': 'unowned' if mode == 'unowned_retry' else 'assistant', 'delta': 'partial response'}})
+                for event in [*initial,
+                    {'type': 'session.status', 'properties': {'sessionID': 'session', 'status':
+                        {'type': 'retry', 'attempt': 1, 'message': 'HTTP 503', 'next': 0}}},
+                ]:
+                    yield ('data:' + json.dumps(event) + '\n\n').encode()
             release.wait(2)
     def handle(request):
         if request.url.path == '/event':
@@ -101,7 +128,7 @@ def test_native_listener_allows_slow_completion_but_deadline_never_replays(conte
         if request.method == 'POST':
             calls.append(request)
             dispatched.set()
-            if mode != 'complete':
+            if mode not in {'complete', 'unicode_prompt'}:
                 release.wait(2)
             return httpx.Response(200, json=native_result())
         return httpx.Response(200, json=[
@@ -133,10 +160,44 @@ def test_native_listener_allows_slow_completion_but_deadline_never_replays(conte
         with pytest.raises(RuntimeError, match='event stream interrupted; outcome unknown'):
             native.generate(m, [{'role': 'user', 'content': 'fixture'}], 4096, lambda _: None)
         assert json.loads(Path(native.failure_path).read_text())['listener_error_types'] == ['RuntimeError']
+    elif mode in {'partial_retry', 'unowned_retry', 'pre_response_retry'}:
+        def reject(status):
+            assert status['response_observed'] == (mode != 'pre_response_retry')
+            assert retry_is_safe(status) == (mode == 'pre_response_retry')
+            raise RuntimeError('Retry classification verified')
+        with pytest.raises(RuntimeError, match='Retry classification verified'):
+            native.generate(m, [{'role': 'user', 'content': 'fixture'}], 4096, reject)
+        assert json.loads(Path(native.failure_path).read_text())['observed_retries'][0]['response_observed'] == (mode != 'pre_response_retry')
     else:
         assert native.generate(m, [{'role': 'user', 'content': 'fixture'}], 4096, lambda _: None)['assistant_turns'] == 1
     assert len(calls) == 1
     assert calls[0].extensions['timeout']['read'] == 600
+
+
+@pytest.mark.parametrize('status,safe', [
+    ({'message': 'Provider response headers timed out after 300000ms'}, False),
+    ({'message': 'Cannot connect to API: The socket connection was closed unexpectedly'}, False),
+    ({'message': 'SSE read timed out'}, False),
+    ({'message': 'HTTP 503', 'response_observed': True}, False),
+    ({'message': '{"message":"Streaming response failed: [503] Upstream overloaded"}'}, True),
+    ({'message': 'Upstream request failed: Endpoint is unavailable.'}, True),
+    ({'message': 'Free usage exceeded', 'action': {'reason': 'free_tier_limit'}}, True),
+])
+def test_retry_gate_reserves_only_explicit_rejections(context, monkeypatch, status, safe):
+    import time
+    runner, job, item_model, item = job_context(context)
+    def generate(_model, _messages, _cap, on_retry):
+        on_retry({**status, 'type': 'retry', 'attempt': 1, 'next': (time.time() + 2) * 1000})
+        return native_result()
+    monkeypatch.setattr(runner.opencode, 'generate', generate)
+    runner.generate(job, item_model, item, 4096)
+    attempts = runner.db.rows("SELECT * FROM attempts WHERE kind='opencode_generation' ORDER BY id")
+    assert len(attempts) == (2 if safe else 1)
+    assert runner.db.one('SELECT status FROM jobs')['status'] == ('generated' if safe else 'ambiguous')
+    assert attempts[0]['status'] == ('retryable' if safe else 'ambiguous')
+    if not safe:
+        assert attempts[0]['accounted_tokens'] == attempts[0]['reserved_tokens']
+        assert attempts[0]['reported_tokens'] is None
 
 
 def test_fail_closed_prices_and_exact_join():
@@ -450,6 +511,46 @@ def test_reservation_reconciliation_and_week_rollover(context, monkeypatch):
         budget.reserve("generation", 1)
     monkeypatch.setattr("freeboard.budget.week", lambda: "2099-01-05")
     assert budget.summary()["attempts_used"] == 0
+
+
+def test_completed_sections_export_without_partial_headline_scores(context, monkeypatch, tmp_path):
+    import csv
+    import shutil
+    db, settings, checkout = context
+    item_model, active = model(db), season(db)
+    runner = Runner(db, settings, checkout)
+    cycle = runner.cycle(item_model, active, 'screen', 'section-fixture')
+    for benchmark, count in COUNTS['screen'].items():
+        for i in range(count):
+            add_item(db, f'{benchmark}:{i}', benchmark=benchmark)
+    runner.add_panel(cycle, 'screen')
+    for job in db.rows('SELECT j.id,i.benchmark FROM jobs j JOIN items i ON i.id=j.item_id'):
+        if job['benchmark'] != 'livecodebench':
+            db.execute("UPDATE jobs SET status='graded',score=? WHERE id=?", (job['id'] % 2, job['id']))
+    gpqa = db.one("SELECT j.id FROM jobs j JOIN items i ON i.id=j.item_id WHERE i.benchmark='gpqa' ORDER BY j.id DESC LIMIT 1")
+    db.execute("UPDATE jobs SET status='ambiguous',score=NULL WHERE id=?", (gpqa['id'],))
+    livebench = db.one("SELECT j.id FROM jobs j JOIN items i ON i.id=j.item_id WHERE i.benchmark='livebench' LIMIT 1")
+    attempt = runner.budget.reserve('opencode_generation', 100, livebench['id'])
+    runner.budget.finish(attempt, 'received', usage={'total_tokens': 20})
+    db.execute("UPDATE jobs SET status='graded' WHERE id=?", (livebench['id'],))
+    stamp = db.one('SELECT finished_at FROM attempts WHERE id=?', (attempt,))['finished_at']
+    row, draws = make_row(db, settings, item_model, cycle, 'screen')
+    assert row.scores is None and row.intervals is None and draws is None and row.status == 'pending'
+    assert row.benchmark_scores == {'livebench': 50}
+    assert row.benchmark_intervals['livebench'][0] <= 50 <= row.benchmark_intervals['livebench'][1]
+    assert row.benchmark_evaluated_at == {'livebench': stamp}
+    assert row.progress == {'gpqa': 19, 'livebench': 20, 'livecodebench': 0}
+    target = tmp_path / 'section-export'
+    shutil.copytree(checkout / 'web', target / 'web')
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    export(db, settings, target)
+    with (target / 'site/leaderboard.csv').open() as handle:
+        exported = next(r for r in csv.DictReader(handle) if r['tier'] == 'screen')
+    assert exported['livebench'] == '50.0' and exported['livebench_evaluated_at'] == stamp
+    assert all(exported[k] == '' for k in ['reasoning', 'coding', 'overall', 'gpqa', 'livecodebench', 'gpqa_evaluated_at'])
+    db.execute("UPDATE jobs SET status='ambiguous',score=NULL WHERE id=?", (livebench['id'],))
+    incomplete, _ = make_row(db, settings, item_model, cycle, 'screen')
+    assert not incomplete.benchmark_scores and not incomplete.benchmark_intervals and not incomplete.benchmark_evaluated_at
 
 
 def test_ambiguous_request_is_not_replayed(context, monkeypatch):

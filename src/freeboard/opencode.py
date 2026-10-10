@@ -25,6 +25,23 @@ PERMISSIONS = {'*': 'deny', **{name: 'ask' for name in TOOLS}, 'external_directo
 EFFORTS = ('none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max')
 
 
+def sse_events(stream):
+    """Split SSE on wire newlines, preserving Unicode separators inside JSON."""
+    buffer, data = b'', []
+    for chunk in stream.iter_bytes():
+        buffer += chunk
+        while b'\n' in buffer:
+            line, buffer = buffer.split(b'\n', 1)
+            line = line.removesuffix(b'\r')
+            if not line:
+                if data:
+                    yield json.loads(b'\n'.join(data))
+                    data = []
+            elif line.startswith(b'data:'):
+                value = line[5:]
+                data.append(value[1:] if value.startswith(b' ') else value)
+
+
 def reasoning_policy(model: dict | None) -> dict:
     """Select only controls advertised by the installed client; never infer alias identity."""
     if model is None:
@@ -155,6 +172,18 @@ def interruption_status(evidence: dict) -> str:
     if 'another assistant turn' in evidence.get('error', '').lower():
         return 'protocol_violation'
     return 'provider_error'
+
+
+def retry_is_safe(status: dict) -> bool:
+    """Only an explicit rejection before response content can be retried."""
+    if status.get('response_observed'):
+        return False
+    if (status.get('action') or {}).get('reason') == 'free_tier_limit':
+        return True
+    message = str(status.get('message', '')).strip()
+    if re.search(r'\[(429|500|502|503|504)\]|\bHTTP\s+(429|500|502|503|504)\b|"statusCode"\s*:\s*(429|500|502|503|504)\b', message, re.I):
+        return True
+    return message == 'Upstream request failed: Endpoint is unavailable.'
 
 
 class OpenCode:
@@ -294,11 +323,10 @@ class OpenCode:
                         timeout=httpx.Timeout(5, read=None)) as stream:
                     stream.raise_for_status()
                     ready.set()
-                    for line in stream.iter_lines():
+                    for event in sse_events(stream):
                         if stop.is_set():
                             break
-                        if line.startswith('data:'):
-                            events.put(json.loads(line[5:]))
+                        events.put(event)
                     if not stop.is_set() and not done.is_set():
                         raise RuntimeError('Event stream closed before completion')
             except Exception as error:
@@ -328,6 +356,9 @@ class OpenCode:
         deadline = time.monotonic() + request_timeout
         threading.Thread(target=request, daemon=True).start()
         observed, retry_attempt, end_polls, assistant_ids, denied = [], 0, 0, set(), []
+        user_ids = set()
+        content_message_ids = set()
+        response_observed = False
         try:
             while True:
                 if time.monotonic() >= deadline:
@@ -347,6 +378,11 @@ class OpenCode:
                 belongs = props.get('sessionID') or part.get('sessionID') or info.get('sessionID')
                 if belongs != session_id:
                     continue
+                if event['type'] == 'message.part.delta' and props.get('delta'):
+                    content_message_ids.add(props.get('messageID'))
+                if event['type'] == 'message.part.updated' and (part.get('type') in {'tool', 'step-finish'}
+                        or part.get('type') in {'text', 'reasoning'} and part.get('text')):
+                    content_message_ids.add(part.get('messageID'))
                 if event['type'] == 'permission.asked':
                     rejected = self.client.post(f"/permission/{props['id']}/reply", json={'reply': 'reject'})
                     rejected.raise_for_status()
@@ -358,8 +394,13 @@ class OpenCode:
                     assistant_ids.add(info['id'])
                     if len(assistant_ids) > 1:
                         raise RuntimeError('OpenCode attempted another assistant turn; no replay')
+                if event['type'] == 'message.updated' and info.get('role') == 'user':
+                    user_ids.add(info['id'])
+                # The original user prompt also produces part events. Only
+                # assistant content, or content with no verifiable owner, gates retries.
                 if event['type'] == 'session.status' and props['status']['type'] == 'retry':
-                    status = props['status']
+                    response_observed = response_observed or bool(content_message_ids - user_ids)
+                    status = {**props['status'], 'response_observed': response_observed}
                     if status['attempt'] > retry_attempt:
                         retry_attempt = status['attempt']
                         observed.append(status)

@@ -14,7 +14,7 @@ from .config import Settings, credential, digest, now, week
 from .db import DB
 from .discovery import discover, excluded
 from .grading import DockerGrader, GradingUnavailable, gpqa_score
-from .opencode import OpenCode, REVISION, completion_events, failure_status, interruption_status, prompt_body
+from .opencode import OpenCode, REVISION, completion_events, failure_status, interruption_status, prompt_body, retry_is_safe
 from .recovery import recover_quota_rejections
 
 PROBES = [
@@ -145,6 +145,9 @@ class Runner:
             # OpenCode emits this before its backoff and next provider dispatch.
             evidence = self.settings.state / 'responses' / f'{attempts[-1]}-retry.json'
             evidence.write_text(json.dumps({'protocol': 'opencode-retry', 'client_status': status}))
+            if not retry_is_safe(status):
+                self.budget.finish(attempts[-1], 'ambiguous', response_path=str(evidence))
+                raise RuntimeError('OpenCode retry would replay an unknown outcome; no replay')
             self.budget.finish(attempts[-1], 'retryable', response_path=str(evidence))
             if len(previous) + len(attempts) >= 3 or status['next'] / 1000 - time.time() > 60:
                 raise RuntimeError('OpenCode retry allowance exhausted; no automatic replay')

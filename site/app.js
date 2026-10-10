@@ -34,6 +34,7 @@ function facts(entries) {
 function pendingText(reasons) {
   return Object.entries(reasons || {}).map(([s, n]) => s === "ambiguous"
     ? `${n} unknown outcome${n === 1 ? "" : "s"}`
+    : s === "failed" ? `${n} unscored request${n === 1 ? "" : "s"}`
     : s === "grading_blocked" ? `${n} saved answer${n === 1 ? "" : "s"} awaiting grading`
       : `${n} ${statusLabel(s).toLowerCase()}`).join(" · ");
 }
@@ -52,11 +53,46 @@ function intervalPlot(value, interval) {
   plot.append(point);
   return plot;
 }
+function benchmarkChart(runs, benchmark, label, release) {
+  const card = node("article", null, "chart-card"), heading = node("div", null, "chart-heading");
+  heading.append(node("h3", label), node("span", release || "Panel date unavailable", "fine"));
+  card.append(heading);
+  for (const run of runs) {
+    const value = run.benchmark_scores?.[benchmark];
+    const ci = run.benchmark_intervals?.[benchmark] || run.intervals?.[benchmark];
+    const row = node("div", null, "chart-row"), title = node("div", null, "chart-row-title"), name = node("div");
+    name.append(node("strong", modelName(run.model_id)));
+    if (run.tier === "public-screen") name.append(node("span", `Reasoning: ${reasoningSetting(run)}`, "sub"));
+    if (run.availability && run.availability !== "eligible") name.append(node("span", statusLabel(run.availability), "sub"));
+    title.append(name, node("strong", pct(value), "chart-score")); row.append(title);
+    if (value != null) {
+      row.append(intervalPlot(value, ci));
+      const info = node("p", null, "chart-meta");
+      info.append(node("span", `${run.expected[benchmark]} questions · ${ci ? `95% interval ${ci[0].toFixed(1)}–${ci[1].toFixed(1)}%` : "Interval unavailable"}`), dateNode(run.benchmark_evaluated_at?.[benchmark]));
+      row.append(info);
+    } else row.append(node("p", `${run.progress[benchmark] || 0}/${run.expected[benchmark]} graded · score pending`, "chart-pending"));
+    card.append(row);
+  }
+  const axis = node("div", null, "chart-axis"); axis.setAttribute("aria-hidden", "true");
+  for (const value of [0, 25, 50, 75, 100]) axis.append(node("span", String(value)));
+  card.append(axis);
+  return card;
+}
+function renderBenchmarkResults(rows, season) {
+  byId("benchmark-results").hidden = !rows.length;
+  byId("benchmark-panel").textContent = `${tier === "screen" ? "Screen" : "Confirmation"} sections · unranked`;
+  const charts = byId("benchmark-list"); charts.replaceChildren();
+  if (!rows.length) return;
+  charts.append(benchmarkChart(rows, "gpqa", "GPQA Diamond", `${rows[0].expected.gpqa} questions`),
+    benchmarkChart(rows, "livebench", "LiveBench reasoning", season?.livebench_release),
+    benchmarkChart(rows, "livecodebench", "LiveCodeBench coding", season?.livecodebench_release));
+}
 function renderPublicScreens() {
   const screens = report.public_screens || [];
   byId("results").hidden = !screens.length;
-  byId("results-heading").textContent = report.seasons.some(s => s.active && !s.partial)
-    ? "Earlier public screens" : "Benchmark results";
+  const hasFullSeason = report.seasons.some(s => s.active && !s.partial);
+  byId("results").open = !hasFullSeason;
+  byId("results-heading").textContent = `${hasFullSeason ? "Earlier public screens" : "Benchmark results"} · 60-question subsets · unranked`;
   const groups = new Map();
   for (const run of screens) {
     if (!groups.has(run.season)) groups.set(run.season, []);
@@ -69,25 +105,7 @@ function renderPublicScreens() {
     if (groups.size > 1) group.append(node("h3", season, "season-label"));
     const charts = node("div", null, "chart-grid");
     for (const [benchmark, label, release] of [["livebench", "LiveBench reasoning", manifest?.livebench_release], ["livecodebench", "LiveCodeBench coding", manifest?.livecodebench_release]]) {
-      const card = node("article", null, "chart-card"), heading = node("div", null, "chart-heading");
-      heading.append(node("h3", label), node("span", release || "Panel date unavailable", "fine"));
-      card.append(heading);
-      for (const run of runs) {
-        const value = run.benchmark_scores[benchmark], ci = run.intervals[benchmark];
-        const row = node("div", null, "chart-row"), title = node("div", null, "chart-row-title"), name = node("div");
-        name.append(node("strong", modelName(run.model_id)), node("span", `Reasoning: ${reasoningSetting(run)}`, "sub"));
-        title.append(name, node("strong", pct(value), "chart-score")); row.append(title);
-        if (value != null) {
-          row.append(intervalPlot(value, ci));
-          const info = node("p", null, "chart-meta");
-          info.append(node("span", `${run.expected[benchmark]} questions · ${ci ? `95% interval ${ci[0].toFixed(1)}–${ci[1].toFixed(1)}%` : "Interval unavailable"}`), dateNode(run.benchmark_evaluated_at?.[benchmark] || run.evaluated_at));
-          row.append(info);
-        } else row.append(node("p", `${run.progress[benchmark] || 0}/${run.expected[benchmark]} graded · score pending`, "chart-pending"));
-        card.append(row);
-      }
-      const axis = node("div", null, "chart-axis"); axis.setAttribute("aria-hidden", "true");
-      for (const value of [0, 25, 50, 75, 100]) axis.append(node("span", String(value)));
-      card.append(axis); charts.append(card);
+      charts.append(benchmarkChart(runs, benchmark, label, release));
     }
     group.append(charts); list.append(group);
   }
@@ -138,6 +156,7 @@ function renderRankings() {
   byId("comparisons").hidden = !relevant.length;
   if (view === "overall" && reasoningWeight !== 0.4) comparisons.append(node("p", "Paired intervals use the default weights. Select a component or reset to 40% / 60%."));
   else for (const c of relevant) comparisons.append(node("p", `${modelName(c.a)} / ${modelName(c.b)}: ${c.difference.toFixed(1)} points · 95% difference interval ${c.interval[0].toFixed(1)}–${c.interval[1].toFixed(1)} · ${c.unresolved ? "Unresolved" : "Interval excludes zero"}`));
+  renderBenchmarkResults(rows, report.seasons.find(s => s.id === activeSeason));
 }
 function renderSupporting() {
   byId("supporting").hidden = false;
