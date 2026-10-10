@@ -40,6 +40,9 @@ def parser() -> argparse.ArgumentParser:
     prepare_parser.add_argument('--season', help='Validate a previously frozen panel without downloading or resampling datasets')
     confirmation = commands.add_parser("confirm")
     confirmation.add_argument("model")
+    recovery = commands.add_parser('retry-missing', help='Authorize one logged extra attempt for unanswered unknown screen requests')
+    recovery.add_argument('--season')
+    recovery.add_argument('--model', action='append')
     publisher = commands.add_parser("publish")
     publisher.add_argument("--create-repository", action="store_true")
     auth = commands.add_parser("auth")
@@ -133,7 +136,7 @@ def main() -> None:
                         db.conn.execute("UPDATE seasons SET active=0")
                         db.conn.execute("UPDATE seasons SET active=1 WHERE id=?", (season["id"],))
                 result["validated"] = True
-            elif args.command in {"pilot", "run"}:
+            elif args.command in {"pilot", "run", "retry-missing"}:
                 if args.season:
                     candidate = db.one("SELECT * FROM seasons WHERE id=? AND validated=1", (args.season,))
                     if not candidate:
@@ -144,7 +147,9 @@ def main() -> None:
                     raise ValueError('Explicit model screen selection requires --public-only')
                 if public and not args.season:
                     raise ValueError('Select a validated public season with --season')
-                if public:
+                if args.command == 'retry-missing':
+                    result = runner.retry_missing(args.model)
+                elif public:
                     from .public_run import run_public
                     result = run_public(runner, runner.active_season(), args.model, args.limit)
                 else:

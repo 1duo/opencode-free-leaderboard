@@ -51,7 +51,13 @@ CREATE TABLE IF NOT EXISTS attempts (
 CREATE TABLE IF NOT EXISTS publications (
  id INTEGER PRIMARY KEY, snapshot_id TEXT NOT NULL, created_at TEXT NOT NULL,
  commit_sha TEXT, deployment_status TEXT NOT NULL);
-PRAGMA user_version=1;
+"""
+
+MANUAL_RETRIES_SCHEMA = """
+CREATE TABLE IF NOT EXISTS manual_retries (
+ job_id INTEGER PRIMARY KEY REFERENCES jobs(id), authorized_at TEXT NOT NULL,
+ prior_attempt_id INTEGER NOT NULL REFERENCES attempts(id),
+ attempt_id INTEGER NOT NULL UNIQUE REFERENCES attempts(id), original_state TEXT NOT NULL);
 """
 
 
@@ -64,8 +70,10 @@ class DB:
         self.conn.execute('PRAGMA foreign_keys=ON')
         version = self.conn.execute('PRAGMA user_version').fetchone()[0]
         if version == 0:
-            self.conn.executescript(SCHEMA)
-        elif version != 1:
+            self.conn.executescript(SCHEMA + MANUAL_RETRIES_SCHEMA + 'PRAGMA user_version=2;')
+        elif version == 1:
+            self.conn.executescript('BEGIN IMMEDIATE;' + MANUAL_RETRIES_SCHEMA + 'PRAGMA user_version=2; COMMIT;')
+        elif version != 2:
             raise RuntimeError('Unsupported state schema version')
         self.path.chmod(0o600)
 

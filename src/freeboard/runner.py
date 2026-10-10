@@ -15,7 +15,7 @@ from .db import DB
 from .discovery import discover, excluded
 from .grading import DockerGrader, GradingUnavailable, gpqa_score
 from .opencode import OpenCode, REVISION, completion_events, failure_status, interruption_status, prompt_body, retry_is_safe
-from .recovery import recover_quota_rejections
+from .recovery import manual_retry_reason, recover_quota_rejections
 
 PROBES = [
     {"stratum": "format", "prompt": "Return a JSON array of all integers from 1 to 10000, without omitting any. No prose.", "check": "cap"},
@@ -130,21 +130,30 @@ class Runner:
                          used["accounted_tokens"] + planned["planned_tokens"], week()))
         return self.budget.summary()
 
-    def generate(self, job: dict, model: dict, item: dict, cap: int) -> None:
+    def generate(self, job: dict, model: dict, item: dict, cap: int, manual_retry: bool = False) -> None:
         if job.get('response_path'):
             raise RuntimeError('A durable answer exists; this job must not be regenerated')
         prompt_body(model, item['messages'])
+        if manual_retry:
+            reason = manual_retry_reason(self.db, job, model)
+            if reason:
+                raise ValueError(reason)
+        elif self.db.one('SELECT job_id FROM manual_retries WHERE job_id=?', (job['id'],)):
+            raise ValueError('Manual retry allowance consumed; no further generation')
         previous = self.db.rows("SELECT * FROM attempts WHERE job_id=? AND kind='opencode_generation'", (job['id'],))
-        if len(previous) >= 3:
+        if len(previous) >= 3 and not manual_retry:
             self.db.execute("UPDATE jobs SET status='failed',error='Retry allowance exhausted' WHERE id=?", (job['id'],))
             return
         amount = estimate(item['messages'], cap)
-        attempts = [self.budget.reserve('opencode_generation', amount, job['id'], model['id'])]
+        attempts = [self.budget.reserve('opencode_generation', amount, job['id'], model['id'], manual_retry=manual_retry)]
         started = time.monotonic()
         def on_retry(status):
             # OpenCode emits this before its backoff and next provider dispatch.
             evidence = self.settings.state / 'responses' / f'{attempts[-1]}-retry.json'
             evidence.write_text(json.dumps({'protocol': 'opencode-retry', 'client_status': status}))
+            if manual_retry:
+                self.budget.finish(attempts[-1], 'ambiguous', response_path=str(evidence))
+                raise RuntimeError('One-time manual retry cannot dispatch another request')
             if not retry_is_safe(status):
                 self.budget.finish(attempts[-1], 'ambiguous', response_path=str(evidence))
                 raise RuntimeError('OpenCode retry would replay an unknown outcome; no replay')
@@ -173,6 +182,8 @@ class Runner:
         path = self.settings.state / 'responses' / f'{attempt}.json'
         record = {'protocol': 'opencode', 'body': '{}', 'cap': cap, 'latency': time.monotonic() - started,
                   'client_result': result, 'protocol_revision': REVISION}
+        if manual_retry:
+            record['manual_retry'] = True
         try:
             record['body'] = json.dumps({'events': completion_events(result, model['id'])})
             if any(p['type'] == 'tool' for p in result['parts']):
@@ -199,7 +210,7 @@ class Runner:
             self.db.execute('UPDATE models SET status=? WHERE id=?', (status, model['id']))
             known_rejection = bool(result.get('info', {}).get('error') or result.get('error'))
             self.db.execute("UPDATE jobs SET status=?,response_path=?,next_after=?,error=? WHERE id=?",
-                            ('deferred' if known_rejection else 'ambiguous', None if known_rejection else str(path),
+                            ('deferred' if known_rejection and not manual_retry else 'ambiguous', None if known_rejection and not manual_retry else str(path),
                              (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), message, job['id']))
             return
         self.budget.finish(attempt, 'received', usage=completion.usage, response_path=str(path))
@@ -367,6 +378,62 @@ class Runner:
                 continue
             processed += 1
         return {"processed": processed, "budget": self.budget.summary()}
+
+    def retry_missing(self, selected: list[str] | None = None) -> dict:
+        """Explicit human-invoked recovery; daily work never grants this exception."""
+        self.db.recover()
+        evidence = discover(self.db, self.budget, self.client)
+        if not evidence['ok']:
+            return {'blocked': evidence['error']}
+        if not credential('zen'):
+            return {'blocked': 'OpenCode Zen credential missing'}
+        season = self.active_season()
+        if json.loads(season['manifest']).get('partial'):
+            raise ValueError('Manual recovery requires a validated full season')
+        jobs = self.db.rows("""SELECT j.*,c.model_id,i.content FROM jobs j
+            JOIN cycles c ON c.id=j.cycle_id JOIN items i ON i.id=j.item_id
+            JOIN models m ON m.id=c.model_id AND m.epoch=c.epoch
+            WHERE c.season=? AND c.kind='screen' AND j.status='ambiguous'
+            AND c.id=(SELECT id FROM cycles WHERE model_id=c.model_id AND epoch=c.epoch
+                AND season=c.season AND kind='screen' ORDER BY started_at DESC LIMIT 1)
+            ORDER BY c.due_at,c.model_id,j.id""", (season['id'],))
+        jobs = [j for j in jobs if not excluded(j['model_id']) and (not selected or j['model_id'] in selected)]
+        candidates, blocked = [], []
+        for job in jobs:
+            model = self.db.one('SELECT * FROM models WHERE id=?', (job['model_id'],))
+            reason = manual_retry_reason(self.db, job, model)
+            pilot = self.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
+                AND kind='pilot' AND completed_at IS NOT NULL""", (model['id'], model['epoch'], season['id']))
+            reason = reason or (None if pilot else 'Matching full-season pilot is required')
+            if reason:
+                blocked.append({'model': model['id'], 'job': job['id'], 'reason': reason})
+            else:
+                candidates.append(job)
+        used = self.budget.summary()
+        planned = self.budget.plan([estimate(json.loads(j['content'])['messages'], 4096) for j in candidates], 0)
+        self.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?) WHERE week=?',
+                        (used['attempts_used'] + planned['planned_attempts'], used['accounted_tokens'] + planned['planned_tokens'], week()))
+        processed = 0
+        for job in candidates:
+            model = self.db.one('SELECT * FROM models WHERE id=?', (job['model_id'],))
+            reason = manual_retry_reason(self.db, job, model)
+            if reason:
+                blocked.append({'model': model['id'], 'job': job['id'], 'reason': reason})
+                continue
+            item = json.loads(job['content'])
+            try:
+                self.generate(job, model, item, 4096, manual_retry=True)
+                current = self.db.one('SELECT * FROM jobs WHERE id=?', (job['id'],))
+                if current['status'] == 'generated':
+                    self.grade(current, item, json.loads(season['manifest'])['grader_image'])
+                self.finish_cycle(job['cycle_id'])
+            except BudgetExhausted:
+                break
+            except GradingUnavailable as exc:
+                self.db.execute('UPDATE jobs SET error=?,next_after=? WHERE id=?',
+                                (str(exc), (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), job['id']))
+            processed += 1
+        return {'manual_retries': processed, 'blocked': blocked, 'budget': self.budget.summary()}
 
     def run(self, pilot=False, limit=None, pilot_models=None, all_models=False) -> dict:
         self.db.recover()

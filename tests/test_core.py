@@ -76,6 +76,104 @@ def native_result(tokens=10, text='FINAL: A', reason='stop', missing_usage=False
 def native_error(code, message):
     return {'info': {'error': {'name': 'APIError', 'data': {'statusCode': code, 'message': message}}}}
 
+
+def unanswered_fixture(context, monkeypatch, prior_count=3):
+    runner, job, item_model, item = job_context(context)
+    journal = runner.settings.state / 'logs' / 'unknown.json'
+    journal.write_text(json.dumps({'session_id': 'unknown-session', 'model_id': item_model['id']}))
+    for _ in range(prior_count):
+        attempt = runner.budget.reserve('opencode_generation', 100, job['id'], item_model['id'])
+        runner.budget.finish(attempt, 'ambiguous', response_path=str(journal))
+    runner.db.execute("UPDATE jobs SET status='ambiguous',error='Original unknown outcome' WHERE id=?", (job['id'],))
+    transcript = [
+        {'info': {'role': 'user', 'agent': 'benchmark', 'model': {'providerID': 'opencode', 'modelID': item_model['id']}},
+         'parts': [{'type': 'text', 'text': item['messages'][-1]['content']}]},
+        {'info': {'role': 'assistant'}, 'parts': []},
+    ]
+    monkeypatch.setattr('freeboard.recovery.native_transcript', lambda *_: transcript)
+    return runner, runner.db.one('SELECT * FROM jobs'), item_model, item, transcript
+
+
+def test_manual_retry_preserves_unknowns_and_labels_recovered_answer(context, monkeypatch):
+    runner, job, item_model, item, _ = unanswered_fixture(context, monkeypatch)
+    before = runner.db.rows('SELECT * FROM attempts ORDER BY id')
+    calls = []
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *args: calls.append(args) or native_result())
+    runner.generate(job, item_model, item, 4096, manual_retry=True)
+    saved = runner.db.one('SELECT * FROM jobs')
+    runner.grade(saved, item, 'unused')
+    assert len(calls) == 1 and runner.db.rows('SELECT * FROM attempts ORDER BY id')[:3] == before
+    audit = runner.db.one('SELECT * FROM manual_retries')
+    assert audit['prior_attempt_id'] == before[-1]['id'] and audit['attempt_id'] not in {a['id'] for a in before}
+    assert json.loads(audit['original_state'])['job']['error'] == 'Original unknown outcome'
+    assert json.loads(Path(saved['response_path']).read_text())['manual_retry']
+    row, _ = make_row(runner.db, runner.settings, item_model, runner.db.one('SELECT * FROM cycles'), 'screen')
+    assert row.manual_retry_count == row.manual_recovered_questions == 1
+    with pytest.raises(RuntimeError, match='durable answer'):
+        runner.generate(runner.db.one('SELECT * FROM jobs'), item_model, item, 4096, manual_retry=True)
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize('failure', ['paid', 'cap', 'epoch', 'finished', 'saved', 'withheld'])
+def test_manual_retry_rejects_ineligible_or_answered_work(context, monkeypatch, failure):
+    from freeboard.recovery import manual_retry_reason
+    runner, job, item_model, _, transcript = unanswered_fixture(context, monkeypatch, prior_count=1)
+    if failure == 'paid':
+        item_model['status'] = 'paid'
+    elif failure == 'cap':
+        item_model['profile'] = json.dumps({**json.loads(item_model['profile']), 'cap_verified': False})
+    elif failure == 'epoch':
+        item_model['epoch'] = 'different'
+    elif failure == 'finished':
+        transcript[1]['info']['finish'] = 'stop'
+    elif failure == 'saved':
+        job['response_path'] = 'existing-answer.json'
+    else:
+        job['status'] = 'failed'
+    assert manual_retry_reason(runner.db, job, item_model)
+    assert not runner.db.one('SELECT * FROM manual_retries')
+
+
+def test_manual_retry_crash_consumes_allowance_atomically(context, monkeypatch):
+    from freeboard.recovery import manual_retry_reason
+    runner, job, item_model, _, _ = unanswered_fixture(context, monkeypatch, prior_count=1)
+    old = runner.db.one('SELECT * FROM attempts')
+    attempt = runner.budget.reserve('opencode_generation', 100, job['id'], item_model['id'], manual_retry=True)
+    assert runner.db.one('SELECT * FROM manual_retries')['attempt_id'] == attempt
+    runner.db.recover()
+    unknown = runner.db.one('SELECT * FROM jobs')
+    assert unknown['status'] == 'ambiguous'
+    assert 'consumed' in manual_retry_reason(runner.db, unknown, item_model)
+    with pytest.raises(ValueError, match='unused allowance'):
+        runner.budget.reserve('opencode_generation', 100, job['id'], item_model['id'], manual_retry=True)
+    assert runner.db.one('SELECT * FROM attempts WHERE id=?', (old['id'],)) == old
+    assert runner.db.one('SELECT COUNT(*) n FROM attempts')['n'] == 2
+
+
+def test_manual_retry_blocks_native_retry_and_normal_replay(context, monkeypatch):
+    runner, job, item_model, item, _ = unanswered_fixture(context, monkeypatch, prior_count=1)
+    def response(_model, _messages, _cap, on_retry):
+        on_retry({'type': 'retry', 'attempt': 1, 'message': 'HTTP 503', 'next': 0})
+        raise AssertionError('A second dispatch is forbidden')
+    monkeypatch.setattr(runner.opencode, 'generate', response)
+    runner.generate(job, item_model, item, 4096, manual_retry=True)
+    current = runner.db.one('SELECT * FROM jobs')
+    assert current['status'] == 'ambiguous'
+    assert runner.db.one('SELECT COUNT(*) n FROM attempts')['n'] == 2
+    with pytest.raises(ValueError, match='no further generation'):
+        runner.generate(current, item_model, item, 4096)
+
+
+def test_manual_retry_schema_upgrade_preserves_existing_state(context):
+    db, settings, _ = context
+    model(db)
+    db.conn.executescript('DROP TABLE manual_retries; PRAGMA user_version=1;')
+    db.conn.close()
+    upgraded = DB(settings.state)
+    assert upgraded.conn.execute('PRAGMA user_version').fetchone()[0] == 2
+    assert upgraded.one('SELECT id FROM models')['id'] == 'test-free'
+    assert upgraded.rows('SELECT * FROM manual_retries') == []
+
 @pytest.mark.parametrize('mode', ['complete', 'unicode_prompt', 'deadline', 'closed_stream', 'partial_retry', 'unowned_retry', 'pre_response_retry'])
 def test_native_listener_allows_slow_completion_but_deadline_never_replays(context, monkeypatch, mode):
     import threading

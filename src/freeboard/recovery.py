@@ -6,6 +6,45 @@ import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .discovery import excluded
+
+
+def manual_retry_reason(db, job: dict, model: dict) -> str | None:
+    """Inspect unanswered evidence only; never select a retry by answer quality."""
+    if job['status'] != 'ambiguous' or job['response_path']:
+        return 'Request is not an unanswered unknown outcome'
+    if db.one('SELECT job_id FROM manual_retries WHERE job_id=?', (job['id'],)):
+        return 'One-time manual retry already consumed'
+    cycle = db.one('SELECT * FROM cycles WHERE id=?', (job['cycle_id'],))
+    if excluded(model['id']) or model['status'] != 'eligible' or not json.loads(model['profile']).get('cap_verified'):
+        return 'Current free eligibility and output cap are required'
+    if cycle['epoch'] != model['epoch']:
+        return 'Evaluation configuration changed'
+    attempts = db.rows("SELECT * FROM attempts WHERE job_id=? AND kind='opencode_generation' ORDER BY id", (job['id'],))
+    if (not attempts or attempts[-1]['status'] != 'ambiguous'
+            or any(a['status'] in {'received', 'recovered'} for a in attempts)):
+        return 'An accepted response or non-unknown attempt exists'
+    try:
+        journal = json.loads(Path(attempts[-1]['response_path']).read_text())
+        transcript = native_transcript(db.state, journal['session_id'])
+        user = next(m for m in transcript if m['info'].get('role') == 'user')
+        answer = next(m for m in transcript if m['info'].get('role') == 'assistant')
+        item = json.loads(db.one('SELECT content FROM items WHERE id=?', (job['item_id'],))['content'])
+        variant = json.loads(model['profile'])['reasoning']['variant']
+        if (len(transcript) != 2 or journal.get('model_id') != model['id']
+                or user['info'].get('agent') != 'benchmark'
+                or user['info'].get('model') != {'providerID': 'opencode', 'modelID': model['id'],
+                    **({'variant': variant} if variant else {})}
+                or user['info'].get('system', '') != '\n\n'.join(m['content'] for m in item['messages'][:-1])
+                or [p.get('text') for p in user['parts'] if p.get('type') == 'text' and not p.get('synthetic')]
+                    != [item['messages'][-1]['content']]
+                or answer['info'].get('finish') is not None
+                or any(p.get('type') in {'step-finish', 'tool'} for p in answer['parts'])):
+            return 'Native evidence does not establish an unanswered matching request'
+    except (OSError, ValueError, KeyError, TypeError, StopIteration, sqlite3.Error):
+        return 'Native interruption evidence could not be verified'
+    return None
+
 
 def quota_retry_at(journal: dict, transcript: list[dict], model: dict, item: dict) -> str | None:
     retries = journal.get('observed_retries') or []

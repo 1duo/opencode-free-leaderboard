@@ -9,7 +9,7 @@
 <a class="skip-link" href="#main-content">Skip to content</a>
 <header><a class="brand" href="./"><span class="mark">o/f</span> OPEN / FREE</a><nav aria-label="Page navigation"><a href="#methodology">Method</a><a href="leaderboard.csv">CSV ↗</a><a href="snapshot.json">JSON ↗</a></nav></header>
 <main id="main-content" tabindex="-1">
-<section class="hero"><div class="eyebrow">OPENCODE CLIENT</div><h1>Free model benchmarks.</h1><p>Fixed questions. One answer per question.</p></section>
+<section class="hero"><div class="eyebrow">OPENCODE CLIENT</div><h1>Free model benchmarks.</h1><p>Fixed questions. One accepted answer per question.</p></section>
 <section class="metrics" aria-label="Evaluation overview"><div><span>Models screened</span><strong id="evaluated-models">—</strong></div><div><span>Completed screens</span><strong id="completed-runs">—</strong></div><div><span>Graded screen answers</span><strong id="graded-answers">—</strong></div><div><span>Published</span><strong class="date" id="published">—</strong></div></section>
 <div id="notice" class="notice" role="status">Loading results…</div>
 <noscript><p>Enable JavaScript to view results, or download the <a href="snapshot.json">JSON</a> and <a href="leaderboard.csv">CSV</a>.</p></noscript>
@@ -38,6 +38,7 @@
 </section>
 <section id="methodology" class="section method">
 <h2>Method</h2><p>Custom subsets, not official benchmark leaderboard scores. Intervals use 10,000 stratified bootstrap resamples and reflect question sampling, not repeated-generation variability.</p>
+<p>Unknown requests stay pending unless explicitly retried once. Manual recoveries are labeled; original attempts and token charges are retained.</p>
 <div class="method-grid"><div><h3>Panels</h3><p>LiveBench spatial / zebra: 20 questions, dated 2024-11-25. LiveCodeBench Python: 40 problems, release_v6. Full screens also require 20 GPQA Diamond questions.</p></div><div><h3>Protocol</h3><p>OpenCode 1.18.31 with a fixed benchmark agent and its environment context. Native tool schemas are present; every permission request is rejected, and tool attempts score zero. No plugins or repair turns. Original benchmark roles; temperature zero where supported; 4,096-token combined cap. Frozen graders; isolated grading.</p></div></div>
 <details><summary>Full rankings & confirmations</summary><p>Full screens contain 80 questions. Reasoning equally averages GPQA and LiveBench; coding uses LiveCodeBench pass@1. Overall defaults to 40% reasoning / 60% coding. Manual 240-question confirmations reuse the screen's 80 answers and stay in a separate ranking. Only complete panels receive ranks.</p></details>
 <p class="fine">“Highest exposed” is the maximum selectable reasoning level in OpenCode. “Provider-managed” has no selectable level. The combined token cap applies; provider internals are unverified.</p>

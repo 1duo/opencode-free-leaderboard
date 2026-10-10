@@ -67,7 +67,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
         (stage / ".nojekyll").write_text("")
         fields = ["model_id", "tier", "transport", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench",
                   "gpqa_n", "livebench_n", "livecodebench_n", "gpqa_evaluated_at", "livebench_evaluated_at", "livecodebench_evaluated_at",
-                  "accounted_tokens", "reported_tokens", "truncation_rate"]
+                  "accounted_tokens", "reported_tokens", "truncation_rate", "manual_retry_count", "manual_recovered_questions"]
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields, lineterminator='\n')
             writer.writeheader()

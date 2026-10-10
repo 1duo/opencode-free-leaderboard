@@ -143,6 +143,7 @@ function renderRankings() {
     const status = node("td");
     status.append(node("span", statusLabel(row.availability === "eligible" ? row.status : row.availability), "badge"), node("span", `${total(row.progress)}/${total(row.expected)} graded`, "sub"));
     if (pendingText(row.pending_reasons)) status.append(node("span", pendingText(row.pending_reasons), "sub"));
+    if (row.manual_retry_count) status.append(node("span", `${row.manual_retry_count} manual ${row.manual_retry_count === 1 ? 'retry' : 'retries'} · ${row.manual_recovered_questions} recovered`, "sub"));
     if (row.deadline_missed) status.append(node("span", "Refresh deadline missed", "sub"));
     if (row.latency_seconds != null) status.append(node("span", `${row.latency_seconds.toFixed(1)} s · ${num(row.accounted_tokens)} tokens · ${pct(row.truncation_rate == null ? null : row.truncation_rate * 100)} truncated`, "sub"));
     tr.append(status); body.append(tr);

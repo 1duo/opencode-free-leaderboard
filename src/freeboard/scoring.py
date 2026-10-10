@@ -62,6 +62,8 @@ class PublicRow(Strict):
     reported_tokens: int = 0
     truncation_rate: float | None = None
     deadline_missed: bool = False
+    manual_retry_count: int = 0
+    manual_recovered_questions: int = 0
 
 
 class Comparison(Strict):
@@ -235,6 +237,10 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
         WHERE j.cycle_id=? AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)""",
                      (cycle["id"], cycle["season"], tier)) if cycle else {"accounted": 0, "reported": 0}
     generated = [r for r in items if r["latency"] is not None]
+    manual = db.one("""SELECT COUNT(*) AS attempted,COALESCE(SUM(j.status='graded'),0) AS recovered
+        FROM manual_retries r JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?
+        AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)""",
+                    (cycle['id'], cycle['season'], tier)) if cycle else {'attempted': 0, 'recovered': 0}
     stamp = max((r["finished_at"] for r in db.rows("""SELECT a.finished_at FROM attempts a
         JOIN jobs j ON j.id=a.job_id WHERE j.cycle_id=? AND a.status IN ('received','recovered')
         AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)""", (cycle["id"], cycle["season"], tier))
@@ -286,7 +292,8 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                      latency_seconds=float(np.median([r["latency"] for r in generated])) if generated else None,
                      accounted_tokens=attempts["accounted"], reported_tokens=attempts["reported"],
                      truncation_rate=sum(r["truncated"] for r in generated) / len(generated) if generated else None,
-                     deadline_missed=missed or bool(complete and stale)), draws
+                     deadline_missed=missed or bool(complete and stale),
+                     manual_retry_count=manual['attempted'], manual_recovered_questions=manual['recovered']), draws
 
 
 def snapshot(db: DB, settings: Settings) -> Snapshot:

@@ -74,7 +74,7 @@ class Budget:
         return {**limits, **used}
 
     def reserve(self, kind: str, tokens: int = 0, job_id: int | None = None,
-                model_id: str | None = None) -> int:
+                model_id: str | None = None, manual_retry: bool = False) -> int:
         self.summary()
         conn = self.db.conn
         try:
@@ -84,9 +84,23 @@ class Budget:
             used = conn.execute("SELECT COUNT(*),COALESCE(SUM(accounted_tokens),0) FROM attempts WHERE week=?", (key,)).fetchone()
             if used[0] >= limits["attempts_limit"] or used[1] + tokens > limits["tokens_limit"]:
                 raise BudgetExhausted("Weekly accounted budget exhausted; work remains resumable")
+            if manual_retry:
+                job = conn.execute('SELECT * FROM jobs WHERE id=?', (job_id,)).fetchone()
+                previous = conn.execute("SELECT * FROM attempts WHERE job_id=? AND kind='opencode_generation' ORDER BY id", (job_id,)).fetchall()
+                if (kind != 'opencode_generation' or not job or job['status'] != 'ambiguous'
+                        or job['response_path'] or not previous or previous[-1]['status'] != 'ambiguous'
+                        or any(a['status'] in {'received', 'recovered'} for a in previous)
+                        or conn.execute('SELECT 1 FROM manual_retries WHERE job_id=?', (job_id,)).fetchone()):
+                    raise ValueError('Manual retry requires an unanswered unknown request and an unused allowance')
             result = conn.execute("""INSERT INTO attempts
                 (job_id,model_id,week,kind,started_at,reserved_tokens,accounted_tokens)
                 VALUES(?,?,?,?,?,?,?)""", (job_id, model_id, key, kind, now(), tokens, tokens))
+            if manual_retry:
+                # Reservation and consumption are one commit, before dispatch.
+                # Even a crash immediately afterward cannot grant a second retry.
+                original = {'job': dict(job), 'attempt_ids': [a['id'] for a in previous]}
+                conn.execute('INSERT INTO manual_retries VALUES(?,?,?,?,?)',
+                             (job_id, now(), previous[-1]['id'], result.lastrowid, json.dumps(original)))
             if job_id:
                 conn.execute("UPDATE jobs SET status='dispatching' WHERE id=?", (job_id,))
             conn.commit()

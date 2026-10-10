@@ -80,6 +80,8 @@ Responses are written atomically before grading. If the runner crashes with a sa
 
 Missing output usage or inconsistent reasoning accounting also blocks headline eligibility, retaining the response without replay. Recovery applies the same cap checks as normal execution. Historical rows retain the configuration used by their evaluation cycle.
 
+For explicitly authorized recovery of unanswered unknown requests, use `leaderboard retry-missing --season SEASON` (optionally `--model MODEL_ID`). This grants one extra request per missing question in the latest full screen, including questions whose normal retry allowance was exhausted. It never replaces a saved, graded, withheld or cap-invalid answer. Fresh free eligibility, a verified cap, a matching pilot and native interruption evidence are required. The original attempts, charges and job state remain in the private audit; retry consumption and reservation commit atomically before dispatch. Native retries are disabled for this exception. A failed or interrupted manual attempt cannot be retried again. Daily scheduling never grants this authorization. The page and JSON/CSV report manual retry and recovered-question counts.
+
 ## Protocol and statistics
 
 | Benchmark | Screen | Confirmation |
@@ -90,7 +92,7 @@ Missing output usage or inconsistent reasoning accounting also blocks headline e
 
 Panels are nested and deterministic (seed 20261008). GPQA is stratified by subject; answer ordering is frozen. LiveBench uses the verified 2024-11-25 spatial and zebra-puzzle panel with equal allocation. LiveCodeBench uses code_generation_lite release_v6 with proportional difficulty strata, its pinned generic OpenAI-style prompt and fenced-code extraction, and its official harness in Docker. The grader uses six-second test timeouts, one CPU, 1 GiB memory and a 180-second outer infrastructure timeout. Its resolved image ID is recorded in each validated season.
 
-One completion, no granted tools, no self-repair, temperature zero where supported, 4,096 maximum generated tokens including reasoning where supported. Invalid formats, rejected tool requests, refusals, wrong answers and truncations are graded objectively. LiveBench zebra grading preserves upstream fractional credit.
+One accepted answer, no granted tools, no self-repair, temperature zero where supported, 4,096 maximum generated tokens including reasoning where supported. Explicit manual recoveries of unanswered requests are labeled; they do not select among scored answers. Invalid formats, rejected tool requests, refusals, wrong answers and truncations are graded objectively. LiveBench zebra grading preserves upstream fractional credit.
 
 Reasoning equally averages GPQA and LiveBench. Coding is pass@1. Optional overall weights are 40% reasoning and 60% coding. Complete panels alone receive scores; screens and confirmations never share a ranking. Ten thousand deterministic stratified bootstrap resamples estimate question-sampling uncertainty. Identical question IDs use identical draws for paired comparisons. An interval containing zero is unresolved; comparisons are exploratory and not corrected for multiple comparisons.
 
