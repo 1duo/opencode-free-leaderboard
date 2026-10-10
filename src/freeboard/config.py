@@ -12,6 +12,16 @@ from pydantic import BaseModel, ConfigDict
 ZEN_BASE = "https://opencode.ai/zen/v1"
 ZEN_DOCS = "https://docs.opencode.ai/docs/zen/"
 SEED = 20261008
+CONTRIBUTOR_MODEL = 'muse-spark-1.3-contributor-free'
+CONTRIBUTOR_REASON = 'Prompts and responses may train future Meta models; GPQA is withheld.'
+
+
+def contributor_authorization() -> str | None:
+    """An explicit invocation may authorize this exact public-only route today."""
+    today = datetime.now().astimezone().date().isoformat()
+    return today if os.environ.get('FREEBOARD_CONTRIBUTOR_DATE') == today else None
+
+
 OMITTED_MODELS = frozenset({'exo-free', 'ling-3.0-flash-fin-free', 'nemotron-3-ultra-free'})
 COUNTS = {"screen": {"gpqa": 20, "livebench": 20, "livecodebench": 40},
           "confirmation": {"gpqa": 60, "livebench": 60, "livecodebench": 120},

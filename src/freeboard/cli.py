@@ -3,7 +3,9 @@ from __future__ import annotations
 import argparse
 import getpass
 import json
+import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from .config import Settings, save_credential, week
@@ -20,6 +22,8 @@ from .scoring import snapshot
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Resumable benchmarks through the installed OpenCode client")
     root.add_argument("--state", type=Path, default=Settings().state)
+    root.add_argument('--allow-contributor-today', action='store_true',
+                      help='Authorize Muse Spark 1.3 Contributor Free for public-only evaluation today')
     source_checkout = Path(__file__).resolve().parents[2]
     root.add_argument("--checkout", type=Path, default=source_checkout if (source_checkout / "web").is_dir() else Path.cwd())
     commands = root.add_subparsers(dest="command", required=True)
@@ -78,6 +82,10 @@ def main() -> None:
     checkout = args.checkout.resolve()
     settings.initialize(checkout)
     try:
+        if args.allow_contributor_today:
+            if args.command not in {'discover', 'pilot', 'run'} or (args.command == 'run' and not args.public_only):
+                raise ValueError('Contributor authorization supports discovery and public-only pilots/screens')
+            os.environ['FREEBOARD_CONTRIBUTOR_DATE'] = datetime.now().astimezone().date().isoformat()
         if args.command == "auth":
             save_credential(args.provider, getpass.getpass(f"{args.provider} credential (stored in Keychain): "))
             print("Credential saved in macOS Keychain")

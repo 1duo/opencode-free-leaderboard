@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Benchmark subsets for free OpenCode Zen models, with scores, uncertainty, and evaluation dates.">
-<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css?v=64dd046154bbbddf0fc0"><script src="app.js?v=64dd046154bbbddf0fc0" defer></script>
+<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css?v=5e6a6bd99a2d4e36b722"><script src="app.js?v=5e6a6bd99a2d4e36b722" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to content</a>
 <header><a class="brand" href="./"><span class="mark">o/f</span> OPEN / FREE</a><nav aria-label="Page navigation"><a href="#methodology">Method</a><a href="leaderboard.csv">CSV ↗</a><a href="snapshot.json">JSON ↗</a></nav></header>
 <main id="main-content" tabindex="-1">
 <section class="hero"><div class="eyebrow">OPENCODE CLIENT</div><h1>Free model benchmarks.</h1><p>Fixed questions. One accepted answer per question.</p></section>
-<section class="metrics" aria-label="Evaluation overview"><div><span>Models screened</span><strong id="evaluated-models">—</strong></div><div><span>Completed screens</span><strong id="completed-runs">—</strong></div><div><span>Graded screen answers</span><strong id="graded-answers">—</strong></div><div><span>Published</span><strong class="date" id="published">—</strong></div></section>
+<section class="metrics" aria-label="Evaluation overview"><div><span id="started-label">Full screens started</span><strong id="evaluated-models">—</strong></div><div><span id="completed-label">Full screens complete</span><strong id="completed-runs">—</strong></div><div><span id="graded-label">Graded full-screen answers</span><strong id="graded-answers">—</strong></div><div><span>Published</span><strong class="date" id="published">—</strong></div></section>
 <div id="notice" class="notice" role="status">Loading results…</div>
 <noscript><p>Enable JavaScript to view results, or download the <a href="snapshot.json">JSON</a> and <a href="leaderboard.csv">CSV</a>.</p></noscript>
 <section id="headline" class="section" hidden>
@@ -24,6 +24,11 @@
 <section id="benchmark-results" class="section" hidden>
 <div class="section-heading"><h2>Benchmarks</h2><span id="benchmark-panel" class="badge">Screen sections · unranked</span></div><p class="section-note">Complete sections only. Dot: score · line: 95% interval · scale: 0–100%.</p>
 <div id="benchmark-list" class="chart-grid benchmark-grid"></div>
+</section>
+<section id="contributor-results" class="section" hidden>
+<div class="section-heading"><h2>Public-only evaluation</h2><span class="badge">60-question subset · unranked</span></div>
+<p id="contributor-policy" class="section-note"></p><p id="contributor-progress" class="fine"></p>
+<div id="contributor-list" class="chart-grid"></div>
 </section>
 <details id="results" class="section" hidden>
 <summary id="results-heading">Earlier public screens · 60-question subsets · unranked</summary><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>

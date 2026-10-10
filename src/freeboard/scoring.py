@@ -11,7 +11,7 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict
 
 from .budget import Budget
-from .config import COUNTS, OMITTED_MODELS, Settings, credential, digest, now
+from .config import CONTRIBUTOR_MODEL, CONTRIBUTOR_REASON, COUNTS, OMITTED_MODELS, Settings, credential, digest, now
 from .db import DB
 from .opencode import REVISION, VERSION, interruption_status
 
@@ -31,6 +31,7 @@ def reasoning_label(profile: dict) -> str:
 
 class PublicRow(Strict):
     model_id: str
+    public_only_reason: str | None = None
     transport: Literal['local-opencode'] = 'local-opencode'
     name: str
     epoch: str
@@ -79,6 +80,7 @@ class Comparison(Strict):
 
 class PublicPilot(Strict):
     model_id: str
+    public_only_reason: str | None = None
     transport: Literal['local-opencode'] = 'local-opencode'
     season: str
     unranked: bool = True
@@ -96,6 +98,7 @@ class PublicPilot(Strict):
 
 class PublicScreen(Strict):
     model_id: str
+    public_only_reason: str | None = None
     epoch: str
     transport: Literal['local-opencode'] = 'local-opencode'
     client_version: str = VERSION
@@ -273,6 +276,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
         WHERE c.model_id=? AND c.epoch=? AND j.status='deferred'
         AND j.error='Verified quota rejection; awaiting retry window'""", (model['id'], model['epoch']))
     return PublicRow(model_id=model["id"], name=model["name"], epoch=cycle["epoch"] if cycle else model["epoch"],
+                     public_only_reason=CONTRIBUTOR_REASON if model['id'] == CONTRIBUTOR_MODEL else None,
                      tier=tier, season=cycle["season"] if cycle else None, status=status,
                      availability=availability, free_eligible=model['status'] in {'eligible','authentication_failed','quota_limited',
                          'model_unavailable','configuration_error','cap_violation','cap_unverified','client_access_restricted','provider_error'},
@@ -395,6 +399,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         complete = (sum(expected.values()) in {4, 6} and len(items) == sum(expected.values())
                     and (health == 6 or replacement_cap) and all(progress[b] == expected[b] for b in expected))
         pilots.append(PublicPilot(model_id=cycle['model_id'],
+            public_only_reason=CONTRIBUTOR_REASON if cycle['model_id'] == CONTRIBUTOR_MODEL else None,
             reasoning_setting=reasoning_label(json.loads(cycle['profile'])),
             reasoning_variant=json.loads(cycle['profile']).get('reasoning', {}).get('variant'),
             season=cycle['season'], status='complete' if complete else 'pending',
@@ -431,6 +436,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         generated_items = [r for r in items if r['latency'] is not None]
         profile = json.loads(cycle['profile'])
         public_screens.append(PublicScreen(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
+            public_only_reason=CONTRIBUTOR_REASON if cycle['model_id'] == CONTRIBUTOR_MODEL else None,
             reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
             cap_verified=profile.get('cap_verified', False) and not any(
                 r['status'] == 'cap_unverified' or 'output cap' in (r.get('error') or '').lower() for r in items),

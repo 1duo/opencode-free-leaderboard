@@ -7,7 +7,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from .budget import Budget
-from .config import OMITTED_MODELS, ZEN_BASE, ZEN_DOCS, credential, digest, now, week
+from .config import CONTRIBUTOR_MODEL, OMITTED_MODELS, ZEN_BASE, ZEN_DOCS, contributor_authorization, credential, digest, now, week
 from .db import DB
 
 
@@ -56,7 +56,9 @@ def profile_for(endpoint: str | None, reasoning: dict | None = None) -> dict:
 
 
 def excluded(ident: str) -> bool:
-    return ident in OMITTED_MODELS or ("muse" in ident.lower() and "contributor" in ident.lower())
+    contributor = "muse" in ident.lower() and "contributor" in ident.lower()
+    return ident in OMITTED_MODELS or (contributor and
+        (ident != CONTRIBUTOR_MODEL or contributor_authorization() is None))
 
 
 def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict:
@@ -98,6 +100,9 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
     stamp = now()
     raw = {"sources": [ZEN_DOCS, f"{ZEN_BASE}/models"], "pricing": evidence,
            "catalog_ids": sorted(ids), "hashes": {k: digest(v) for k, v in content.items()}}
+    if authorized := contributor_authorization():
+        raw['contributor_authorization'] = {'model_id': CONTRIBUTOR_MODEL, 'local_date': authorized,
+                                            'public_only': True}
     ident = db.execute("INSERT INTO discovery(observed_at,week,ok,evidence,error) VALUES(?,?,?,?,?)",
                        (stamp, week(), int(ok), json.dumps(raw), error)).lastrowid
     previous = {m["id"]: m for m in db.rows("SELECT * FROM models")}
@@ -115,6 +120,10 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
             reasoning = reasoning_policy(None)
         default = profile_for(endpoint, reasoning)
         prior = json.loads(old['profile']) if old else {}
+        if model == CONTRIBUTOR_MODEL and excluded(model) and old and old['endpoint'] == endpoint:
+            # Expiring consent is not evidence of changed model settings. Keep
+            # the evaluated epoch visible without inspecting or using this route.
+            default = prior
         same = (old and old['endpoint'] == endpoint and
                 {k: v for k, v in prior.items() if k != 'cap_verified'} ==
                 {k: v for k, v in default.items() if k != 'cap_verified'})
@@ -139,6 +148,12 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
             status = "eligible"
         if status == 'eligible' and same and old['status'] in {'cap_violation', 'cap_unverified'}:
             status = old['status']
+        if status == 'eligible' and same and model == CONTRIBUTOR_MODEL:
+            failure = db.one("""SELECT j.status FROM jobs j JOIN cycles c ON c.id=j.cycle_id
+                WHERE c.model_id=? AND c.epoch=? AND j.status IN ('failed','cap_unverified')
+                AND j.error LIKE '%output cap%' ORDER BY j.id DESC LIMIT 1""", (model, old['epoch']))
+            if failure:
+                status = 'cap_violation' if failure['status'] == 'failed' else 'cap_unverified'
         epoch = digest({"id": model, "endpoint": endpoint,
                         "profile": {k: v for k, v in profile.items() if k != "cap_verified"}})[:16]
         db.execute("""INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET

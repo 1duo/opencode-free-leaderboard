@@ -19,7 +19,8 @@ function dateNode(value) {
 function modelName(id) { return report.rows.find(r => r.model_id === id)?.name || id; }
 function reasoningSetting(row) {
   const variant = row.reasoning_variant;
-  return variant ? `${variant[0].toUpperCase()}${variant.slice(1)} · highest exposed` : row.reasoning_setting;
+  const label = variant === "xhigh" ? "Extra high (xhigh)" : variant ? variant[0].toUpperCase() + variant.slice(1) : "";
+  return variant ? `${label} · highest exposed` : row.reasoning_setting;
 }
 function total(values) { return Object.values(values || {}).reduce((a, b) => a + b, 0); }
 function facts(entries) {
@@ -88,7 +89,7 @@ function renderBenchmarkResults(rows, season) {
     benchmarkChart(rows, "livecodebench", "LiveCodeBench coding", season?.livecodebench_release));
 }
 function renderPublicScreens() {
-  const screens = report.public_screens || [];
+  const screens = (report.public_screens || []).filter(r => !r.public_only_reason);
   byId("results").hidden = !screens.length;
   const hasFullSeason = report.seasons.some(s => s.active && !s.partial);
   byId("results").open = !hasFullSeason;
@@ -117,6 +118,29 @@ function renderPublicScreens() {
     if (pendingText(run.pending_reasons)) card.append(node("p", pendingText(run.pending_reasons), "fine"));
     card.append(node("p", `${run.model_id} · epoch ${run.epoch}`, "identifier"), node("p", `Season ${run.season}`, "identifier"));
     details.append(card);
+  }
+}
+function renderContributorResults() {
+  const models = report.rows.filter(r => r.tier === "screen" && r.public_only_reason);
+  const runs = (report.public_screens || []).filter(r => r.public_only_reason);
+  const pilots = (report.pilots || []).filter(r => r.public_only_reason);
+  byId("contributor-results").hidden = !runs.length && !pilots.length;
+  byId("contributor-policy").textContent = models[0]?.public_only_reason || "";
+  const list = byId("contributor-list"); list.replaceChildren();
+  const progress = byId("contributor-progress"); progress.replaceChildren();
+  for (const model of models) {
+    const run = runs.find(r => r.model_id === model.model_id);
+    const pilot = pilots.find(r => r.model_id === model.model_id);
+    const state = run ? `${total(run.progress)}/60 graded` : `Pilot: ${pilot?.health_graded || 0}/6 probes · ${total(pilot?.progress)}/4 held-out questions`;
+    const availability = model.availability === "eligible" ? "" : ` · ${statusLabel(model.availability)}`;
+    progress.append(node("span", `${model.name} · Reasoning: ${reasoningSetting(run || pilot || model)} · ${state}${availability}`, "sub"));
+    if (run) {
+      const manifest = report.seasons.find(s => s.id === run.season);
+      list.append(benchmarkChart([run], "livebench", "LiveBench reasoning", manifest?.livebench_release),
+        benchmarkChart([run], "livecodebench", "LiveCodeBench coding", manifest?.livecodebench_release));
+      progress.append(node("span", `${run.latency_seconds?.toFixed(1) || "—"} s median · ${num(run.accounted_tokens)} tokens · ${pct(run.truncation_rate == null ? null : run.truncation_rate * 100)} truncated`, "sub"));
+      if (pendingText(run.pending_reasons)) progress.append(node("span", pendingText(run.pending_reasons), "sub"));
+    }
   }
 }
 function score(row) {
@@ -172,6 +196,7 @@ function renderSupporting() {
     name.append(node("strong", model.name), node("span", `Reasoning: ${reasoningSetting(model)}`, "sub"), node("span", model.model_id, "sub"));
     const state = model.availability === "eligible" && !model.cap_verified ? "cap_unverified" : model.availability;
     const availability = node("td", statusLabel(state));
+    if (model.public_only_reason) availability.append(node("span", "Public-only · training permitted", "sub"));
     if (model.next_retry_at) availability.append(node("span", `Retry after ${new Date(model.next_retry_at).toLocaleString()}`, "sub"));
     row.append(name, availability); list.append(row);
   }
@@ -202,6 +227,10 @@ async function load() {
     const activeSeason = report.seasons.find(s => s.active && !s.partial)?.id;
     const runs = activeSeason ? report.rows.filter(r => r.tier === "screen" && r.season === activeSeason)
       : report.public_screens || [];
+    const panelLabel = activeSeason ? "Full" : "Public";
+    byId("started-label").textContent = `${panelLabel} screens started`;
+    byId("completed-label").textContent = `${panelLabel} screens complete`;
+    byId("graded-label").textContent = `Graded ${panelLabel.toLowerCase()}-screen answers`;
     byId("evaluated-models").textContent = new Set(runs.filter(r => total(r.progress) > 0).map(r => r.model_id)).size;
     byId("completed-runs").textContent = runs.filter(r => r.scores || r.status === "complete").length;
     byId("graded-answers").textContent = num(runs.reduce((n, r) => n + total(r.progress), 0));
@@ -212,7 +241,7 @@ async function load() {
     for (const blocker of report.blockers) if (blocker !== "Authenticated GPQA access is not configured" && !(messages.length && blocker === "Benchmark season awaits preparation and grader validation")) messages.push(blocker);
     if (!report.discovery_ok) messages.push("Free eligibility could not be reverified.");
     const notice = byId("notice"); notice.hidden = !messages.length; notice.textContent = [...new Set(messages)].join(" ");
-    renderPublicScreens(); renderRankings(); renderSupporting();
+    renderPublicScreens(); renderContributorResults(); renderRankings(); renderSupporting();
   } catch (error) {
     byId("notice").hidden = false; byId("notice").setAttribute("role", "alert");
     byId("notice").textContent = "Results could not be loaded. Refresh the page or use the JSON / CSV exports.";

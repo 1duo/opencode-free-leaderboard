@@ -308,6 +308,97 @@ def test_fail_closed_prices_and_exact_join():
     assert excluded("muse-spark-1.3-contributor-free")
 
 
+def test_contributor_exact_day_authorization(monkeypatch):
+    from datetime import datetime, timedelta
+    from freeboard.config import CONTRIBUTOR_MODEL
+    today = datetime.now().astimezone().date()
+    for date in [None, str(today - timedelta(days=1)), str(today + timedelta(days=1))]:
+        monkeypatch.delenv('FREEBOARD_CONTRIBUTOR_DATE', raising=False)
+        if date:
+            monkeypatch.setenv('FREEBOARD_CONTRIBUTOR_DATE', date)
+        assert excluded(CONTRIBUTOR_MODEL)
+        with pytest.raises(ValueError):
+            configuration(CONTRIBUTOR_MODEL, 4096)
+    monkeypatch.setenv('FREEBOARD_CONTRIBUTOR_DATE', str(today))
+    assert not excluded(CONTRIBUTOR_MODEL)
+    assert excluded('muse-spark-1.2-contributor-free')
+    assert excluded('muse-spark-1.3-contributor')
+    assert excluded('exo-free')
+    assert configuration(CONTRIBUTOR_MODEL, 4096)['model'] == 'opencode/' + CONTRIBUTOR_MODEL
+    value = {'id': CONTRIBUTOR_MODEL, 'status': 'paid', 'endpoint': 'https://opencode.ai/zen/v1/responses',
+             'profile': json.dumps(profile('responses'))}
+    with pytest.raises(ValueError):
+        prompt_body(value, [{'role':'user','content':'synthetic'}])
+
+
+def test_contributor_private_questions_and_schedule_blocked(context, monkeypatch):
+    from datetime import datetime
+    from freeboard.config import CONTRIBUTOR_MODEL
+    monkeypatch.setenv('FREEBOARD_CONTRIBUTOR_DATE', str(datetime.now().astimezone().date()))
+    runner, job, original, item = job_context(context)
+    contributor = {**original, 'id': CONTRIBUTOR_MODEL}
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *a, **k: pytest.fail('Private question dispatched'))
+    with pytest.raises(ValueError, match='private GPQA'):
+        runner.generate(job, contributor, item, 4096)
+    assert not runner.db.rows('SELECT id FROM attempts')
+    monkeypatch.setattr(runner, 'models', lambda: [contributor])
+    monkeypatch.setattr(runner, 'health', lambda *a: pytest.fail('Contributor added to scheduled full panel'))
+    runner.schedule(runner.active_season())
+    with pytest.raises(ValueError, match='public-only'):
+        runner.confirm(CONTRIBUTOR_MODEL)
+
+
+def test_contributor_expiry_preserves_evaluated_epoch(context, monkeypatch):
+    import httpx
+    from datetime import datetime
+    from freeboard.config import CONTRIBUTOR_MODEL, ZEN_BASE, ZEN_DOCS
+    from freeboard.discovery import discover
+    from freeboard.scoring import snapshot
+    db, settings, checkout = context
+    runner = Runner(db, settings, checkout)
+    active = season(db)
+    monkeypatch.setenv('FREEBOARD_CONTRIBUTOR_DATE', str(datetime.now().astimezone().date()))
+    monkeypatch.setattr('freeboard.opencode.client_version', lambda _: '1.18.31')
+    definition = {'api': {'id': CONTRIBUTOR_MODEL, 'url': ZEN_BASE}, 'providerID':'opencode',
+        'cost': {'input':0, 'output':0}, 'capabilities': {'reasoning':True}, 'options':{},
+        'variants': {'xhigh': {'reasoningEffort':'xhigh'}}}
+    monkeypatch.setattr('freeboard.opencode.inspect_models', lambda *_: {CONTRIBUTOR_MODEL: definition})
+    html = f'<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr><tr><td>Muse</td><td>{CONTRIBUTOR_MODEL}</td><td>{ZEN_BASE}/responses</td></tr></table>'
+    html += '<table><tr><th>Model</th><th>Input</th><th>Output</th></tr><tr><td>Muse</td><td>Free</td><td>Free</td></tr></table>'
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, text=html)
+        if str(r.url) == ZEN_DOCS else httpx.Response(200, json={'data':[{'id':CONTRIBUTOR_MODEL}]})))
+    assert discover(db, runner.budget, client)['ok']
+    m = db.one('SELECT * FROM models WHERE id=?', (CONTRIBUTOR_MODEL,))
+    p = {**json.loads(m['profile']), 'cap_verified':True}
+    db.execute('UPDATE models SET profile=? WHERE id=?', (json.dumps(p), CONTRIBUTOR_MODEL))
+    m['profile'] = json.dumps(p)
+    cycle = runner.cycle(m, active, 'public_screen', 'contributor-public')
+    add_item(db, benchmark='livebench')
+    runner.add_panel(cycle, 'screen')
+    db.execute("UPDATE jobs SET status='graded',score=1 WHERE cycle_id=?", (cycle['id'],))
+    assert json.loads(db.one('SELECT evidence FROM discovery ORDER BY id DESC')['evidence'])['contributor_authorization']['public_only']
+    monkeypatch.delenv('FREEBOARD_CONTRIBUTOR_DATE')
+    monkeypatch.setattr('freeboard.opencode.inspect_models', lambda *_: pytest.fail('Excluded route inspected'))
+    assert discover(db, runner.budget, client)['ok']
+    expired = db.one('SELECT * FROM models WHERE id=?', (CONTRIBUTOR_MODEL,))
+    assert expired['status'] == 'excluded' and expired['epoch'] == m['epoch'] and expired['profile'] == m['profile']
+    report = snapshot(db, settings)
+    public = next(r for r in report.public_screens if r.model_id == CONTRIBUTOR_MODEL)
+    assert public.progress['livebench'] == 1 and public.public_only_reason
+    assert all(r.scores is None for r in report.rows)
+    add_item(db, ident='cap-overrun', benchmark='livebench')
+    runner.add_panel(cycle, 'screen')
+    failed = db.one("SELECT id FROM jobs WHERE item_id='cap-overrun'")
+    db.invalidate_cap(failed['id'], 'Combined output cap not verified; no replay')
+    assert discover(db, runner.budget, client)['ok']
+    monkeypatch.setenv('FREEBOARD_CONTRIBUTOR_DATE', str(datetime.now().astimezone().date()))
+    monkeypatch.setattr('freeboard.opencode.inspect_models', lambda *_: {CONTRIBUTOR_MODEL: definition})
+    assert discover(db, runner.budget, client)['ok']
+    reauthorized = db.one('SELECT * FROM models WHERE id=?', (CONTRIBUTOR_MODEL,))
+    assert reauthorized['epoch'] == m['epoch'] and reauthorized['status'] == 'cap_violation'
+    assert not json.loads(reauthorized['profile'])['cap_verified']
+
+
 def test_generation_endpoint_and_free_gates():
     value = {'id': 'alias', 'status': 'eligible', 'endpoint': 'https://opencode.ai/zen/v1/chat/completions',
              'profile': json.dumps(profile('chat', {'mode':'provider-managed','variant':None,'options':{},'available_variants':[]}))}

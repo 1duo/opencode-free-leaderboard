@@ -10,7 +10,7 @@ import httpx
 
 from .adapters import parse
 from .budget import Budget, BudgetExhausted, estimate
-from .config import Settings, credential, digest, now, week
+from .config import CONTRIBUTOR_MODEL, Settings, credential, digest, now, week
 from .db import DB
 from .discovery import discover, excluded
 from .grading import DockerGrader, GradingUnavailable, gpqa_score
@@ -88,6 +88,8 @@ class Runner:
         dt = datetime.now(timezone.utc)
         cohort = (dt.date().toordinal() // 7) % 4
         for model in self.models():
+            if model['id'] == CONTRIBUTOR_MODEL:
+                continue  # Explicit public-only work never joins the full refresh queue.
             self.health(model, season)
             if not json.loads(model["profile"]).get("cap_verified"):
                 continue
@@ -131,6 +133,8 @@ class Runner:
         return self.budget.summary()
 
     def generate(self, job: dict, model: dict, item: dict, cap: int, manual_retry: bool = False) -> None:
+        if model['id'] == CONTRIBUTOR_MODEL and item['benchmark'] == 'gpqa':
+            raise ValueError('Contributor training policy prevents sending private GPQA questions')
         if job.get('response_path'):
             raise RuntimeError('A durable answer exists; this job must not be regenerated')
         prompt_body(model, item['messages'])
@@ -448,6 +452,8 @@ class Runner:
             return {'blocked': 'Public compatibility pilots cannot enter headline evaluations; authenticated GPQA is required'}
         if pilot:
             available = {m['id']: m for m in self.models()}
+            if not json.loads(season['manifest']).get('partial'):
+                available.pop(CONTRIBUTOR_MODEL, None)
             if all_models and pilot_models:
                 raise ValueError('Select all models or explicit IDs, not both')
             selected = sorted(available) if all_models else sorted(pilot_models) if pilot_models else sorted(available)[:3]
@@ -479,7 +485,7 @@ class Runner:
         # Fresh zero pricing alone cannot prove that a catalog endpoint runs.
         # Use completed matching pilots, so an unavailable earlier ID cannot
         # block three other successfully validated endpoints.
-        eligible = self.models()
+        eligible = [m for m in self.models() if m['id'] != CONTRIBUTOR_MODEL]
         targets = [m for m in eligible if json.loads(m['profile']).get('cap_verified') and self.db.one(
             "SELECT id FROM cycles WHERE kind='pilot' AND model_id=? AND epoch=? AND season=? AND completed_at IS NOT NULL",
             (m['id'], m['epoch'], season['id']))]
@@ -493,6 +499,8 @@ class Runner:
         return result
 
     def confirm(self, model_id: str) -> dict:
+        if model_id == CONTRIBUTOR_MODEL:
+            raise ValueError('Contributor evaluation is public-only and cannot enter full confirmations')
         season = self.active_season()
         model = self.db.one("SELECT * FROM models WHERE id=? AND status='eligible'", (model_id,))
         if not model or excluded(model_id):
