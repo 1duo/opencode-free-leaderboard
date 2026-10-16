@@ -65,9 +65,11 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
         for name in ["app.js", "style.css"]:
             shutil.copy(checkout / "web" / name, stage / name)
         (stage / ".nojekyll").write_text("")
-        fields = ["model_id", "tier", "transport", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench",
+        fields = ["model_id", "tier", "transport", "client_version", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench",
                   "gpqa_n", "livebench_n", "livecodebench_n", "gpqa_evaluated_at", "livebench_evaluated_at", "livecodebench_evaluated_at",
                   "accounted_tokens", "reported_tokens", "truncation_rate", "manual_retry_count", "manual_recovered_questions", "public_only_reason"]
+        fields += [f'{metric}_ci_{bound}' for metric in ['reasoning','coding','overall','gpqa','livebench','livecodebench'] for bound in ['low','high']]
+        fields += ['livebench_interval_note', 'livecodebench_interval_note']
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields, lineterminator='\n')
             writer.writeheader()
@@ -76,13 +78,19 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
                 data['transport'] = 'local-opencode'
                 data.update({k: (row.scores or {}).get(k) for k in ["reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench"]})
                 data.update(row.benchmark_scores)
+                data.update({f'{metric}_ci_{bound}': limits[index]
+                             for metric, limits in {**(row.intervals or {}), **row.benchmark_intervals}.items()
+                             for index, bound in enumerate(['low','high'])})
                 data.update({f'{k}_evaluated_at': v for k, v in row.benchmark_evaluated_at.items()})
                 data.update({f"{k}_n": row.progress.get(k, 0) for k in ["gpqa", "livebench", "livecodebench"]})
                 # Keep spreadsheet programs from executing formula-like model names.
                 writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})
-            for row in report.public_screens:
+            for row in report.public_screens + report.lightweight:
                 data = {k: getattr(row, k) for k in fields if hasattr(row, k)}
                 data.update(row.benchmark_scores)
+                data.update({f'{metric}_ci_{bound}': limits[index] for metric, limits in row.intervals.items()
+                             for index, bound in enumerate(['low','high'])})
+                data.update({f'{metric}_interval_note': note for metric, note in getattr(row, 'interval_warnings', {}).items()})
                 data.update({f'{k}_n': row.progress[k] for k in row.expected})
                 data.update({f'{k}_evaluated_at': v for k, v in row.benchmark_evaluated_at.items()})
                 writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})

@@ -17,7 +17,7 @@ import httpx
 from .config import ZEN_BASE, credential, digest
 from .discovery import excluded
 
-VERSION = '1.18.31'
+VERSION = '1.19.3'
 REVISION = 6  # Highest exposed reasoning variant; frozen one-turn permission protocol.
 SYSTEM = 'Follow the supplied benchmark instructions exactly. Answer once. Do not use tools.'
 TOOLS = ('bash', 'read', 'glob', 'grep', 'edit', 'write', 'apply_patch')
@@ -231,8 +231,9 @@ class OpenCode:
         config = configuration(ident, cap)
         if catalog:
             config['provider']['opencode']['whitelist'] = list(catalog)
-            config['provider']['opencode']['models'] = {
-                name: {'limit': {'context': 200000, 'output': cap}} for name in catalog}
+            # Do not create fallback definitions for IDs unknown to this client.
+            # Discovery must inspect real native capabilities and prices.
+            config['provider']['opencode'].pop('models')
         config['provider']['opencode']['options'] = {'apiKey': credential('zen')}
         env = {k: v for k, v in os.environ.items() if not k.startswith('OPENCODE_')}
         env.update({'OPENCODE_CONFIG_CONTENT': json.dumps(config), 'XDG_CONFIG_HOME': str(config_home),

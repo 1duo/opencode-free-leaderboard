@@ -9,8 +9,9 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 
-ZEN_BASE = "https://opencode.ai/zen/v1"
-ZEN_DOCS = "https://docs.opencode.ai/docs/zen/"
+ZEN_BASE = "https://opencode.ai/inference/openai/v1"
+ZEN_DOCS = "https://opencode.ai/v2/docs/console/models/"
+ZEN_CATALOG = "https://opencode.ai/inference/v1/models"
 SEED = 20261008
 CONTRIBUTOR_MODEL = 'muse-spark-1.3-contributor-free'
 CONTRIBUTOR_REASON = 'Prompts and responses may train future Meta models; GPQA is withheld.'
@@ -22,7 +23,7 @@ def contributor_authorization() -> str | None:
     return today if os.environ.get('FREEBOARD_CONTRIBUTOR_DATE') == today else None
 
 
-OMITTED_MODELS = frozenset({'exo-free', 'ling-3.0-flash-fin-free', 'nemotron-3-ultra-free'})
+OMITTED_MODELS = frozenset({'exo-free', 'ling-3.0-flash-fin-free', 'nemotron-3-ultra-free', 'glm-5.3-flash-free'})
 COUNTS = {"screen": {"gpqa": 20, "livebench": 20, "livecodebench": 40},
           "confirmation": {"gpqa": 60, "livebench": 60, "livecodebench": 120},
           "pilot": {"gpqa": 2, "livebench": 2, "livecodebench": 2}}

@@ -9,6 +9,35 @@ from pathlib import Path
 from .discovery import excluded
 
 
+def unanswered_continuation(journal: dict, answers: list[dict], model: dict) -> bool:
+    """Recognize a broken reasoning stream followed by an empty SDK continuation."""
+    if (len(answers) != 2 or journal.get('assistant_turns_observed') != 2
+            or journal.get('error') != 'OpenCode attempted another assistant turn; no replay'
+            or journal.get('observed_retries') or journal.get('denied_permissions')):
+        return False
+
+    def zero_usage(tokens):
+        return (isinstance(tokens, dict)
+                and all(type(tokens.get(k)) is int and tokens[k] == 0 for k in ['input', 'output', 'reasoning'])
+                and type(tokens.get('total', 0)) is int and tokens.get('total', 0) == 0
+                and isinstance(tokens.get('cache'), dict)
+                and all(type(value) is int and value == 0 for value in tokens['cache'].values()))
+
+    first, second = answers
+    for answer in answers:
+        info = answer['info']
+        if (info.get('agent') != 'benchmark' or info.get('providerID') != 'opencode'
+                or info.get('modelID') != model['id'] or info.get('cost') != 0
+                or info.get('error') is not None or not zero_usage(info.get('tokens'))):
+            return False
+    finishes = [p for p in first['parts'] if p.get('type') == 'step-finish']
+    return (first['info'].get('finish') == 'unknown' and len(finishes) == 1
+            and finishes[0].get('reason') == 'unknown' and finishes[0].get('cost') == 0
+            and zero_usage(finishes[0].get('tokens'))
+            and all(p.get('type') in {'step-start', 'reasoning', 'step-finish'} for p in first['parts'])
+            and second['info'].get('finish') is None and not second['parts'])
+
+
 def manual_retry_reason(db, job: dict, model: dict) -> str | None:
     """Inspect unanswered evidence only; never select a retry by answer quality."""
     if job['status'] != 'ambiguous' or job['response_path']:
@@ -28,18 +57,20 @@ def manual_retry_reason(db, job: dict, model: dict) -> str | None:
         journal = json.loads(Path(attempts[-1]['response_path']).read_text())
         transcript = native_transcript(db.state, journal['session_id'])
         user = next(m for m in transcript if m['info'].get('role') == 'user')
-        answer = next(m for m in transcript if m['info'].get('role') == 'assistant')
+        answers = [m for m in transcript if m['info'].get('role') == 'assistant']
         item = json.loads(db.one('SELECT content FROM items WHERE id=?', (job['item_id'],))['content'])
         variant = json.loads(model['profile'])['reasoning']['variant']
-        if (len(transcript) != 2 or journal.get('model_id') != model['id']
+        interrupted = (len(transcript) == 2 and len(answers) == 1
+                       and answers[0]['info'].get('finish') is None
+                       and not any(p.get('type') in {'step-finish', 'tool'} for p in answers[0]['parts']))
+        continued = len(transcript) == 3 and unanswered_continuation(journal, answers, model)
+        if (not (interrupted or continued) or journal.get('model_id') != model['id']
                 or user['info'].get('agent') != 'benchmark'
                 or user['info'].get('model') != {'providerID': 'opencode', 'modelID': model['id'],
                     **({'variant': variant} if variant else {})}
                 or user['info'].get('system', '') != '\n\n'.join(m['content'] for m in item['messages'][:-1])
                 or [p.get('text') for p in user['parts'] if p.get('type') == 'text' and not p.get('synthetic')]
-                    != [item['messages'][-1]['content']]
-                or answer['info'].get('finish') is not None
-                or any(p.get('type') in {'step-finish', 'tool'} for p in answer['parts'])):
+                    != [item['messages'][-1]['content']]):
             return 'Native evidence does not establish an unanswered matching request'
     except (OSError, ValueError, KeyError, TypeError, StopIteration, sqlite3.Error):
         return 'Native interruption evidence could not be verified'

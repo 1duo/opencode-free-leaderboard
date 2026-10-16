@@ -29,6 +29,9 @@ def parser() -> argparse.ArgumentParser:
     commands = root.add_subparsers(dest="command", required=True)
     for name in ["discover", "export", "status", "daily"]:
         commands.add_parser(name)
+    lightweight = commands.add_parser('lightweight', help='Run a fixed 12-question public subset on new free models')
+    lightweight.add_argument('--model', action='append')
+    lightweight.add_argument('--limit', type=int)
     for name in ["pilot", "run"]:
         sub = commands.add_parser(name)
         sub.add_argument("--limit", type=int, help="Maximum jobs processed in this invocation")
@@ -62,7 +65,7 @@ def daily_work(runner: Runner) -> dict:
     except RuntimeError as exc:
         result = {'blocked': str(exc)}
     full = runner.db.one("SELECT id FROM seasons WHERE active=1 AND validated=1 AND COALESCE(json_extract(manifest,'$.partial'),0)=0")
-    public = runner.db.one("SELECT * FROM seasons WHERE validated=1 AND json_extract(manifest,'$.partial')=1 ORDER BY created_at DESC LIMIT 1")
+    public = runner.db.one("SELECT * FROM seasons WHERE validated=1 AND json_extract(manifest,'$.partial')=1 AND json_type(manifest,'$.counts.screen')='object' ORDER BY created_at DESC LIMIT 1")
     if full and any(not runner.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
             AND kind='pilot' AND completed_at IS NOT NULL""",
             (m['id'], m['epoch'], full['id'])) for m in runner.models()):
@@ -100,6 +103,9 @@ def main() -> None:
             runner = Runner(db, settings, checkout)
             if args.command == "discover":
                 result = discover(db, runner.budget)
+            elif args.command == 'lightweight':
+                from .lightweight import run_lightweight
+                result = run_lightweight(runner, args.model, args.limit)
             elif args.command == "status":
                 refresh_publications(db, settings, checkout)
                 report = snapshot(db, settings)
@@ -108,6 +114,7 @@ def main() -> None:
                           "queue_size": report.queue_size,
                           'pilots': [p.model_dump() for p in report.pilots],
                           'public_screens': [p.model_dump() for p in report.public_screens],
+                          'lightweight': [p.model_dump() for p in report.lightweight],
                           "publication": db.one("SELECT snapshot_id,created_at,commit_sha,deployment_status FROM publications ORDER BY id DESC LIMIT 1"),
                           "models": [{"id": r.model_id, "status": r.availability, "cap_verified": r.cap_verified,
                                       "reasoning_setting": r.reasoning_setting, "reasoning_variant": r.reasoning_variant}

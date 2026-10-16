@@ -28,7 +28,7 @@ def context(tmp_path):
 
 def model(db, name="test-free"):
     settings_profile = {**profile("chat", {'mode':'provider-managed','variant':None,'options':{},'available_variants':[]}), "cap_verified": True}
-    db.execute("INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?)", (name, name, "https://opencode.ai/zen/v1/chat/completions", "chat", "eligible", "epoch", 0, json.dumps(settings_profile), now(), None))
+    db.execute("INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?)", (name, name, "https://opencode.ai/inference/openai/v1/chat/completions", "chat", "eligible", "epoch", 0, json.dumps(settings_profile), now(), None))
     return db.one("SELECT * FROM models WHERE id=?", (name,))
 
 
@@ -112,6 +112,42 @@ def test_manual_retry_preserves_unknowns_and_labels_recovered_answer(context, mo
     with pytest.raises(RuntimeError, match='durable answer'):
         runner.generate(runner.db.one('SELECT * FROM jobs'), item_model, item, 4096, manual_retry=True)
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize('failure', [None, 'text', 'usage', 'tool', 'finished', 'continuation'])
+def test_manual_retry_of_reasoning_only_broken_sdk_stream(context, monkeypatch, failure):
+    from freeboard.recovery import manual_retry_reason
+    runner, job, item_model, item, transcript = unanswered_fixture(context, monkeypatch, prior_count=1)
+    journal = Path(runner.db.one('SELECT response_path FROM attempts')['response_path'])
+    journal.write_text(json.dumps({'model_id': item_model['id'], 'session_id': 'unknown-session',
+                                  'assistant_turns_observed': 2,
+                                  'error': 'OpenCode attempted another assistant turn; no replay'}))
+    tokens = {'input': 0, 'output': 0, 'reasoning': 0, 'cache': {'read': 0, 'write': 0}}
+    info = {'role': 'assistant', 'agent': 'benchmark', 'providerID': 'opencode',
+            'modelID': item_model['id'], 'cost': 0, 'tokens': tokens}
+    transcript[1] = {'info': {**info, 'finish': 'unknown'}, 'parts': [
+        {'type': 'reasoning', 'text': 'Unfinished reasoning'},
+        {'type': 'step-finish', 'reason': 'unknown', 'cost': 0, 'tokens': tokens}]}
+    transcript.append({'info': dict(info), 'parts': []})
+    if failure == 'text':
+        transcript[1]['parts'].append({'type': 'text', 'text': 'FINAL: A'})
+    elif failure == 'usage':
+        tokens['output'] = 5
+    elif failure == 'tool':
+        transcript[1]['parts'].append({'type': 'tool'})
+    elif failure == 'finished':
+        transcript[1]['info']['finish'] = 'length'
+    elif failure == 'continuation':
+        transcript[2]['parts'].append({'type': 'reasoning', 'text': 'Second turn content'})
+    if failure:
+        assert manual_retry_reason(runner.db, job, item_model)
+        assert not runner.db.one('SELECT * FROM manual_retries')
+    else:
+        assert manual_retry_reason(runner.db, job, item_model) is None
+        monkeypatch.setattr(runner.opencode, 'generate', lambda *_: native_result())
+        runner.generate(job, item_model, item, 4096, manual_retry=True)
+        assert runner.db.one('SELECT * FROM manual_retries')
+        assert runner.db.one('SELECT COUNT(*) n FROM attempts')['n'] == 2
 
 
 @pytest.mark.parametrize('failure', ['paid', 'cap', 'epoch', 'finished', 'saved', 'withheld'])
@@ -299,7 +335,7 @@ def test_retry_gate_reserves_only_explicit_rejections(context, monkeypatch, stat
 
 
 def test_fail_closed_prices_and_exact_join():
-    html = '<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr><tr><td>Alias</td><td>alias</td><td>https://opencode.ai/zen/v1/chat/completions</td></tr></table>'
+    html = '<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr><tr><td>Alias</td><td>alias</td><td>https://opencode.ai/inference/openai/v1/chat/completions</td></tr></table>'
     prices = '<table><tr><th>Model</th><th>Input</th><th>Output</th><th>Cached Read</th></tr><tr><td>Alias</td><td>Free</td><td>Free</td><td>-</td></tr>{}</table>'
     assert parse_evidence(html)["alias"]["free"] is False
     assert parse_evidence(html + prices.format(""))["alias"]["free"] is True
@@ -325,7 +361,7 @@ def test_contributor_exact_day_authorization(monkeypatch):
     assert excluded('muse-spark-1.3-contributor')
     assert excluded('exo-free')
     assert configuration(CONTRIBUTOR_MODEL, 4096)['model'] == 'opencode/' + CONTRIBUTOR_MODEL
-    value = {'id': CONTRIBUTOR_MODEL, 'status': 'paid', 'endpoint': 'https://opencode.ai/zen/v1/responses',
+    value = {'id': CONTRIBUTOR_MODEL, 'status': 'paid', 'endpoint': 'https://opencode.ai/inference/openai/v1/responses',
              'profile': json.dumps(profile('responses'))}
     with pytest.raises(ValueError):
         prompt_body(value, [{'role':'user','content':'synthetic'}])
@@ -400,7 +436,7 @@ def test_contributor_expiry_preserves_evaluated_epoch(context, monkeypatch):
 
 
 def test_generation_endpoint_and_free_gates():
-    value = {'id': 'alias', 'status': 'eligible', 'endpoint': 'https://opencode.ai/zen/v1/chat/completions',
+    value = {'id': 'alias', 'status': 'eligible', 'endpoint': 'https://opencode.ai/inference/openai/v1/chat/completions',
              'profile': json.dumps(profile('chat', {'mode':'provider-managed','variant':None,'options':{},'available_variants':[]}))}
     messages = [{'role':'system','content':'EXACT SYSTEM'}, {'role':'user','content':'EXACT USER'}]
     body = prompt_body(value, messages)
@@ -496,7 +532,7 @@ def test_highest_reasoning_is_explicit_and_fail_closed(context):
     selected=reasoning_policy(definition)
     assert selected['variant']=='max' and selected['options']=={'reasoningEffort':'max'}
     settings=profile('chat',selected)
-    value={'id':'alias','status':'eligible','endpoint':'https://opencode.ai/zen/v1/chat/completions','profile':json.dumps(settings)}
+    value={'id':'alias','status':'eligible','endpoint':'https://opencode.ai/inference/openai/v1/chat/completions','profile':json.dumps(settings)}
     assert prompt_body(value,[{'role':'user','content':'Q'}])['variant']=='max'
     assert reasoning_label(settings)=='Highest exposed: max'
     lower=reasoning_policy({**definition,'variants':{'high':{'reasoningEffort':'high'}}})
@@ -564,7 +600,8 @@ def test_rejected_tool_is_zero_without_repair_or_grading(context, monkeypatch):
 def test_unrequested_sdk_turn_is_charged_and_never_replayed(context, monkeypatch):
     runner,job,item_model,item=job_context(context)
     journal=runner.settings.state/'logs/extra-turn.json'
-    journal.write_text(json.dumps({'assistant_turns_observed':2}))
+    journal.write_text(json.dumps({'assistant_turns_observed':2,
+                                  'error':'OpenCode attempted another assistant turn; no replay'}))
     def fail(*_):
         runner.opencode.failure_path=str(journal)
         raise RuntimeError('OpenCode attempted another assistant turn; no replay')
@@ -576,6 +613,7 @@ def test_unrequested_sdk_turn_is_charged_and_never_replayed(context, monkeypatch
     assert runner.budget.record_unrequested_turn(attempts[0]['id'],2,str(journal))==attempts[1]['id']
     assert runner.drain(runner.active_season())['processed']==0
     assert runner.db.one('SELECT * FROM jobs')['score'] is None
+    assert runner.db.one('SELECT status FROM models')['status'] == 'protocol_violation'
 
 
 @pytest.mark.parametrize('ambiguous_cap', [False, True])
@@ -655,7 +693,7 @@ def test_saved_answer_graded_after_removal(context, monkeypatch):
 def test_historical_profile_is_immutable(context):
     runner, _, _, _ = job_context(context)
     cycle = runner.db.one('SELECT * FROM cycles')
-    runner.db.execute("UPDATE models SET protocol='responses',endpoint='https://opencode.ai/zen/v1/responses',profile=?",
+    runner.db.execute("UPDATE models SET protocol='responses',endpoint='https://opencode.ai/inference/openai/v1/responses',profile=?",
                       (json.dumps({'protocol': 'responses', 'cap_verified': False}),))
     current = runner.db.one('SELECT * FROM models')
     row, _ = make_row(runner.db, runner.settings, current, cycle, 'screen')
@@ -882,9 +920,13 @@ def test_daily_resumes_validated_public_work_only_when_full_season_is_blocked(co
     from freeboard.cli import daily_work
     db, settings, checkout = context
     active = season(db)
+    mini = {**json.loads(active['manifest']), 'partial': True,
+            'counts': {'lightweight': {'livebench': 6, 'livecodebench': 6}}}
+    db.execute('INSERT INTO seasons VALUES(?,?,?,?,?)',
+               ('lightweight-fixture', '2099-01-01T00:00:00+00:00', json.dumps(mini), 1, 0))
     if not full_season:
         manifest = {**json.loads(active['manifest']), 'partial': True}
-        db.execute('UPDATE seasons SET manifest=?,active=0', (json.dumps(manifest),))
+        db.execute('UPDATE seasons SET manifest=?,active=0 WHERE id=?', (json.dumps(manifest), active['id']))
     runner = Runner(db, settings, checkout)
     calls = []
     def run(**kwargs):
@@ -896,6 +938,8 @@ def test_daily_resumes_validated_public_work_only_when_full_season_is_blocked(co
     assert result['blocked'] == 'Setup incomplete'
     assert calls == ([{}] if full_season else [{}, {'pilot': True, 'all_models': True}])
     assert ('public_screen' in result) is not full_season
+    if not full_season:
+        assert result['public_screen']['season'] == active['id']
 
 
 def test_unavailable_catalog_id_does_not_block_three_completed_full_pilots(context, monkeypatch):

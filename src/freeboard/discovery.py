@@ -7,7 +7,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from .budget import Budget
-from .config import CONTRIBUTOR_MODEL, OMITTED_MODELS, ZEN_BASE, ZEN_DOCS, contributor_authorization, credential, digest, now, week
+from .config import CONTRIBUTOR_MODEL, OMITTED_MODELS, ZEN_BASE, ZEN_CATALOG, ZEN_DOCS, contributor_authorization, credential, digest, now, week
 from .db import DB
 
 
@@ -67,7 +67,7 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
     client = client or httpx.Client(timeout=30, follow_redirects=False)
     content = {}
     error = None
-    for label, url in [("pricing", ZEN_DOCS), ("catalog", f"{ZEN_BASE}/models")]:
+    for label, url in [("pricing", ZEN_DOCS), ("catalog", ZEN_CATALOG)]:
         attempt = budget.reserve("discovery")
         try:
             key = credential("zen") if label == "catalog" else None
@@ -98,7 +98,7 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
         ok, native_models = False, {}
         error = 'Native OpenCode model metadata unavailable'
     stamp = now()
-    raw = {"sources": [ZEN_DOCS, f"{ZEN_BASE}/models"], "pricing": evidence,
+    raw = {"sources": [ZEN_DOCS, ZEN_CATALOG], "pricing": evidence,
            "catalog_ids": sorted(ids), "hashes": {k: digest(v) for k, v in content.items()}}
     if authorized := contributor_authorization():
         raw['contributor_authorization'] = {'model_id': CONTRIBUTOR_MODEL, 'local_date': authorized,

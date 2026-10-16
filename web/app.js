@@ -63,13 +63,13 @@ function benchmarkChart(runs, benchmark, label, release) {
     const ci = run.benchmark_intervals?.[benchmark] || run.intervals?.[benchmark];
     const row = node("div", null, "chart-row"), title = node("div", null, "chart-row-title"), name = node("div");
     name.append(node("strong", modelName(run.model_id)));
-    if (run.tier === "public-screen") name.append(node("span", `Reasoning: ${reasoningSetting(run)}`, "sub"));
+    if (["public-screen", "lightweight"].includes(run.tier)) name.append(node("span", `Reasoning: ${reasoningSetting(run)}`, "sub"));
     if (run.availability && run.availability !== "eligible") name.append(node("span", statusLabel(run.availability), "sub"));
     title.append(name, node("strong", pct(value), "chart-score")); row.append(title);
     if (value != null) {
       row.append(intervalPlot(value, ci));
       const info = node("p", null, "chart-meta");
-      info.append(node("span", `${run.expected[benchmark]} questions · ${ci ? `95% interval ${ci[0].toFixed(1)}–${ci[1].toFixed(1)}%` : "Interval unavailable"}`), dateNode(run.benchmark_evaluated_at?.[benchmark]));
+      info.append(node("span", `${run.expected[benchmark]} questions · ${ci ? `95% interval ${ci[0].toFixed(1)}–${ci[1].toFixed(1)}%` : run.interval_warnings?.[benchmark] ? "Uncertainty unresolved" : "Interval unavailable"}`), dateNode(run.benchmark_evaluated_at?.[benchmark]));
       row.append(info);
     } else row.append(node("p", `${run.progress[benchmark] || 0}/${run.expected[benchmark]} graded · score pending`, "chart-pending"));
     card.append(row);
@@ -87,6 +87,31 @@ function renderBenchmarkResults(rows, season) {
   charts.append(benchmarkChart(rows, "gpqa", "GPQA Diamond", `${rows[0].expected.gpqa} questions`),
     benchmarkChart(rows, "livebench", "LiveBench reasoning", season?.livebench_release),
     benchmarkChart(rows, "livecodebench", "LiveCodeBench coding", season?.livecodebench_release));
+}
+function renderLightweight() {
+  const runs = report.lightweight || [];
+  byId("lightweight-results").hidden = !runs.length;
+  if (!runs.length) return;
+  byId("lightweight-summary").textContent = `${runs.filter(r => r.status === "complete").length}/${runs.length} models complete · OpenCode 1.19.3 · 6 reasoning + 6 coding questions per model. Dots show scores; lines show 95% question-sampling intervals.`;
+  byId("lightweight-list").replaceChildren(
+    benchmarkChart(runs, "livebench", "LiveBench reasoning", "6 questions · 2024-11-25"),
+    benchmarkChart(runs, "livecodebench", "LiveCodeBench Python", "6 problems · release_v6"));
+  const details = byId("lightweight-details"); details.replaceChildren();
+  for (const run of runs) {
+    const card = node("article"); card.append(node("h3", modelName(run.model_id)));
+    card.append(facts([["Status", run.status === "complete" ? "Complete" : statusLabel(run.availability)],
+      ["Benchmark answers", `${total(run.progress)}/12`],
+      ["Compatibility probes", `${run.health_graded}/6 graded · ${run.health_passed} passed`],
+      ["Reasoning", reasoningSetting(run)], ["Combined cap", run.cap_verified ? "Verified" : "Unverified"],
+      ["Rejected tool answers", `${run.tool_rejections} · scored zero`],
+      ["Median latency", run.latency_seconds == null ? "—" : `${run.latency_seconds.toFixed(1)} s`],
+      ["Benchmark reported tokens", num(run.reported_tokens)], ["Benchmark accounted tokens", num(run.accounted_tokens)],
+      ["Truncation", pct(run.truncation_rate == null ? null : run.truncation_rate * 100)],
+      ["Evaluated", dateNode(run.evaluated_at)], ["Client", run.client_version]]));
+    if (total(run.pending_reasons)) card.append(node("p", pendingText(run.pending_reasons), "fine"));
+    if (run.manual_retry_count) card.append(node("p", `${run.manual_retry_count} logged manual ${run.manual_retry_count === 1 ? "retry" : "retries"} · ${run.manual_recovered_questions} recovered`, "fine"));
+    details.append(card);
+  }
 }
 function renderPublicScreens() {
   const screens = (report.public_screens || []).filter(r => !r.public_only_reason);
@@ -217,7 +242,7 @@ function renderSupporting() {
     pilotList.append(card);
   }
   byId("archive").hidden = !report.history.length;
-  for (const row of report.history) byId("history-list").append(node("p", `${row.name} · ${row.tier} · ${fmtDate(row.evaluated_at)} · reasoning ${row.scores.reasoning.toFixed(1)} / coding ${row.scores.coding.toFixed(1)} · ${statusLabel(row.availability)} · ${row.season}`));
+  for (const row of report.history) byId("history-list").append(node("p", `${row.name} · ${row.tier} · ${fmtDate(row.evaluated_at)} · reasoning ${row.scores.reasoning.toFixed(1)} / coding ${row.scores.coding.toFixed(1)} · OpenCode ${row.client_version || "unrecorded"} · ${row.season}`));
 }
 async function load() {
   try {
@@ -225,13 +250,14 @@ async function load() {
     if (!response.ok) throw new Error("Snapshot unavailable");
     report = await response.json();
     const activeSeason = report.seasons.find(s => s.active && !s.partial)?.id;
-    const runs = activeSeason ? report.rows.filter(r => r.tier === "screen" && r.season === activeSeason)
+    const lightweightRuns = report.lightweight || [];
+    const runs = lightweightRuns.length ? lightweightRuns : activeSeason ? [...report.rows, ...report.history].filter(r => r.tier === "screen" && r.season === activeSeason && r.cycle_started_at)
       : report.public_screens || [];
     const panelLabel = activeSeason ? "Full" : "Public";
-    byId("started-label").textContent = `${panelLabel} screens started`;
-    byId("completed-label").textContent = `${panelLabel} screens complete`;
-    byId("graded-label").textContent = `Graded ${panelLabel.toLowerCase()}-screen answers`;
-    byId("evaluated-models").textContent = new Set(runs.filter(r => total(r.progress) > 0).map(r => r.model_id)).size;
+    byId("started-label").textContent = lightweightRuns.length ? "New models checked" : `${panelLabel} screens started`;
+    byId("completed-label").textContent = lightweightRuns.length ? "Checks complete" : `${panelLabel} screens complete`;
+    byId("graded-label").textContent = lightweightRuns.length ? "Graded benchmark answers" : `Graded ${panelLabel.toLowerCase()}-screen answers`;
+    byId("evaluated-models").textContent = new Set(runs.filter(r => total(r.progress) > 0 || r.health_graded > 0).map(r => r.model_id)).size;
     byId("completed-runs").textContent = runs.filter(r => r.scores || r.status === "complete").length;
     byId("graded-answers").textContent = num(runs.reduce((n, r) => n + total(r.progress), 0));
     byId("published").replaceChildren(report.published_at ? dateNode(report.published_at) : node("span", "Local preview"));
@@ -241,7 +267,8 @@ async function load() {
     for (const blocker of report.blockers) if (blocker !== "Authenticated GPQA access is not configured" && !(messages.length && blocker === "Benchmark season awaits preparation and grader validation")) messages.push(blocker);
     if (!report.discovery_ok) messages.push("Free eligibility could not be reverified.");
     const notice = byId("notice"); notice.hidden = !messages.length; notice.textContent = [...new Set(messages)].join(" ");
-    renderPublicScreens(); renderContributorResults(); renderRankings(); renderSupporting();
+    renderLightweight(); renderPublicScreens(); renderContributorResults(); renderRankings(); renderSupporting();
+    if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
   } catch (error) {
     byId("notice").hidden = false; byId("notice").setAttribute("role", "alert");
     byId("notice").textContent = "Results could not be loaded. Refresh the page or use the JSON / CSV exports.";

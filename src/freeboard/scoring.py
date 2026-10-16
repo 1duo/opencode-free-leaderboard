@@ -35,6 +35,7 @@ class PublicRow(Strict):
     transport: Literal['local-opencode'] = 'local-opencode'
     name: str
     epoch: str
+    client_version: str | None = None
     tier: str
     season: str | None
     status: str
@@ -124,6 +125,17 @@ class PublicScreen(Strict):
     truncation_rate: float | None
 
 
+class Lightweight(PublicScreen):
+    tier: str = 'lightweight'
+    availability: str
+    health_graded: int
+    health_passed: int
+    tool_rejections: int = 0
+    interval_warnings: dict[str, str] = {}
+    manual_retry_count: int = 0
+    manual_recovered_questions: int = 0
+
+
 class PublicManifest(Strict):
     id: str
     seed: int
@@ -154,6 +166,7 @@ class Snapshot(Strict):
     comparisons: list[Comparison]
     pilots: list[PublicPilot] = []
     public_screens: list[PublicScreen] = []
+    lightweight: list[Lightweight] = []
     seasons: list[PublicManifest]
     budget: dict[str, int | str | None]
     queue_size: int
@@ -276,6 +289,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
         WHERE c.model_id=? AND c.epoch=? AND j.status='deferred'
         AND j.error='Verified quota rejection; awaiting retry window'""", (model['id'], model['epoch']))
     return PublicRow(model_id=model["id"], name=model["name"], epoch=cycle["epoch"] if cycle else model["epoch"],
+                     client_version=profile.get('version'),
                      public_only_reason=CONTRIBUTOR_REASON if model['id'] == CONTRIBUTOR_MODEL else None,
                      tier=tier, season=cycle["season"] if cycle else None, status=status,
                      availability=availability, free_eligible=model['status'] in {'eligible','authentication_failed','quota_limited',
@@ -364,7 +378,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         blockers.append(discovery["error"])
     queue = db.one(f"""SELECT COUNT(*) AS n FROM jobs j JOIN cycles c ON c.id=j.cycle_id
         JOIN models m ON m.id=c.model_id AND m.epoch=c.epoch
-        WHERE j.status!='graded' AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen')
+        WHERE j.status!='graded' AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen','lightweight')
         AND m.id NOT IN ({','.join('?' for _ in OMITTED_MODELS)})
         AND json_extract(c.profile,'$.transport')='local-opencode'
         AND json_extract(c.profile,'$.protocol_revision')={REVISION}""", tuple(sorted(OMITTED_MODELS)))["n"]
@@ -412,7 +426,9 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
     for cycle in db.rows(f"""SELECT * FROM cycles WHERE kind='public_screen'
         AND json_extract(profile,'$.transport')='local-opencode'
         AND json_extract(profile,'$.protocol_revision')={REVISION}
-        AND epoch=(SELECT epoch FROM models WHERE id=cycles.model_id) ORDER BY started_at,model_id"""):
+        AND started_at=(SELECT MAX(c2.started_at) FROM cycles c2 WHERE c2.kind='public_screen'
+            AND c2.model_id=cycles.model_id AND c2.season=cycles.season
+            AND json_extract(c2.profile,'$.protocol_revision')={REVISION}) ORDER BY started_at,model_id"""):
         if cycle['model_id'] in OMITTED_MODELS:
             continue
         items = records(db, cycle, 'screen')
@@ -436,6 +452,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         generated_items = [r for r in items if r['latency'] is not None]
         profile = json.loads(cycle['profile'])
         public_screens.append(PublicScreen(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
+            client_version=profile['version'],
             public_only_reason=CONTRIBUTOR_REASON if cycle['model_id'] == CONTRIBUTOR_MODEL else None,
             reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
             cap_verified=profile.get('cap_verified', False) and not any(
@@ -449,11 +466,63 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             latency_seconds=float(np.median([r['latency'] for r in generated_items])) if generated_items else None,
             accounted_tokens=usage['accounted'], reported_tokens=usage['reported'],
             truncation_rate=sum(r['truncated'] for r in generated_items) / len(generated_items) if generated_items else None))
+    lightweight = lightweight_results(db, settings)
     generated = now()
     return Snapshot(snapshot_id=digest([generated, [r.model_dump() for r in rows],
-                                       [r.model_dump() for r in public_screens], [r.model_dump() for r in pilots]])[:20],
+                                       [r.model_dump() for r in public_screens], [r.model_dump() for r in pilots],
+                                       [r.model_dump() for r in lightweight]])[:20],
                     generated_at=generated, discovery_at=(discovery or {}).get("observed_at"),
                     discovery_ok=bool((discovery or {}).get("ok")), discovery_error=(discovery or {}).get("error"),
-                    rows=rows, history=history, comparisons=comparisons, pilots=pilots, public_screens=public_screens, seasons=manifests,
+                    rows=rows, history=history, comparisons=comparisons, pilots=pilots, public_screens=public_screens,
+                    lightweight=lightweight, seasons=manifests,
                     budget=Budget(db, settings).summary(), queue_size=queue,
                     missed_deadlines=sum(r.deadline_missed for r in rows if r.tier == 'screen'), blockers=blockers)
+
+
+def lightweight_results(db: DB, settings: Settings) -> list[Lightweight]:
+    result = []
+    for cycle in db.rows("SELECT * FROM cycles WHERE kind='lightweight' ORDER BY started_at,model_id"):
+        if cycle['model_id'] in OMITTED_MODELS:
+            continue
+        items = records(db, cycle, 'lightweight')
+        manifest = json.loads(db.one('SELECT manifest FROM seasons WHERE id=?', (cycle['season'],))['manifest'])
+        expected = manifest['counts']['lightweight']
+        progress = {b: sum(r['benchmark'] == b and r['status'] == 'graded' for r in items) for b in expected}
+        complete = len(items) == 12 and expected == {'livebench': 6, 'livecodebench': 6} and progress == expected
+        profile = json.loads(cycle['profile'])
+        model = db.one('SELECT * FROM models WHERE id=?', (cycle['model_id'],))
+        health = db.one("""SELECT COUNT(*) graded,COALESCE(SUM(j.score),0) passed FROM jobs j
+            WHERE j.cycle_id=(SELECT id FROM cycles WHERE kind='health' AND model_id=? AND epoch=? AND season=?
+                ORDER BY started_at LIMIT 1) AND j.status='graded'""",
+                        (cycle['model_id'], cycle['epoch'], cycle['season']))
+        usage = db.one('SELECT COALESCE(SUM(accounted_tokens),0) accounted,COALESCE(SUM(reported_tokens),0) reported FROM attempts WHERE job_id IN (SELECT id FROM jobs WHERE cycle_id=?)', (cycle['id'],))
+        dates = {b: db.one("""SELECT MAX(a.finished_at) stamp FROM attempts a JOIN jobs j ON j.id=a.job_id
+            JOIN items i ON i.id=j.item_id WHERE j.cycle_id=? AND i.benchmark=? AND j.status='graded'
+            AND a.status IN ('received','recovered')""", (cycle['id'], b))['stamp'] for b in expected}
+        generated_items = [r for r in items if r['latency'] is not None]
+        current = model['epoch'] == cycle['epoch']
+        rejections = sum(bool(json.loads(Path(r['response_path']).read_text()).get('tool_request_rejected'))
+                         for r in generated_items if r.get('response_path'))
+        scores = {b: float(np.mean([r['score'] for r in items if r['benchmark'] == b])) * 100 for b in expected} if complete else {}
+        intervals = {b: np.quantile(v, [.025, .975]).tolist() for b,v in component_bootstrap(items, settings.bootstrap_samples).items()} if complete else {}
+        warnings = {b: 'Unresolved uncertainty: six-question bootstrap interval collapses'
+                    for b, limits in intervals.items() if limits[0] == limits[1]}
+        intervals = {b: limits for b, limits in intervals.items() if b not in warnings}
+        cap = bool(json.loads(model['profile']).get('cap_verified')) if current else bool(complete)
+        cap = cap and not any(r['status'] in {'failed','cap_unverified'} for r in items)
+        reasons = {s: sum(r['status'] == s for r in items) for s in sorted({r['status'] for r in items if r['status'] != 'graded'})}
+        manual = db.one("""SELECT COUNT(*) attempted,COALESCE(SUM(j.status='graded'),0) recovered
+            FROM manual_retries r JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?""", (cycle['id'],))
+        result.append(Lightweight(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
+            client_version=profile['version'], protocol_revision=profile['protocol_revision'],
+            reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning',{}).get('variant'),
+            availability=model['status'] if current else 'historical', cap_verified=cap,
+            status='complete' if complete else 'pending', progress=progress, expected=expected,
+            health_graded=health['graded'], health_passed=int(health['passed']), tool_rejections=rejections, pending_reasons=reasons,
+            manual_retry_count=manual['attempted'], manual_recovered_questions=manual['recovered'],
+            benchmark_scores=scores, intervals=intervals, interval_warnings=warnings, benchmark_evaluated_at=dates,
+            evaluated_at=cycle['completed_at'] if complete else None,
+            latency_seconds=float(np.median([r['latency'] for r in generated_items])) if generated_items else None,
+            accounted_tokens=usage['accounted'], reported_tokens=usage['reported'],
+            truncation_rate=sum(r['truncated'] for r in generated_items)/len(generated_items) if generated_items else None))
+    return result

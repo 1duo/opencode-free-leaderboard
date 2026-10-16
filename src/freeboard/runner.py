@@ -174,7 +174,7 @@ class Runner:
             if self.opencode.failure_path:
                 journal = json.loads(Path(self.opencode.failure_path).read_text())
                 observed_status = interruption_status(journal)
-                if observed_status in {'quota_limited', 'model_unavailable'}:
+                if observed_status in {'quota_limited', 'model_unavailable', 'protocol_violation', 'provider_overloaded'}:
                     status = observed_status
                 for turn in range(2, journal.get('assistant_turns_observed', 1) + 1):
                     self.budget.record_unrequested_turn(attempts[-1], turn, self.opencode.failure_path)
@@ -251,8 +251,8 @@ class Runner:
         cycle = self.db.one("SELECT * FROM cycles WHERE id=?", (cycle_id,))
         if cycle["kind"] == "screen":
             tier, expected = "screen", 80
-        elif cycle["kind"] in {"pilot", "public_screen"}:
-            tier = 'pilot' if cycle['kind'] == 'pilot' else 'screen'
+        elif cycle["kind"] in {"pilot", "public_screen", "lightweight"}:
+            tier = {'pilot': 'pilot', 'public_screen': 'screen', 'lightweight': 'lightweight'}[cycle['kind']]
             expected = self.db.one('SELECT COUNT(*) AS n FROM panels WHERE season=? AND tier=?', (cycle['season'], tier))['n']
         elif cycle['kind'] == 'cap_calibration':
             tier, expected = None, 1
@@ -330,7 +330,7 @@ class Runner:
             jobs = self.db.rows(f"""SELECT j.*,c.model_id,c.epoch,c.kind,c.profile AS cycle_profile,i.content
                 FROM jobs j JOIN cycles c ON c.id=j.cycle_id JOIN items i ON i.id=j.item_id
                 JOIN models m ON m.id=c.model_id WHERE c.season=?
-                AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen')
+                AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen','lightweight')
                 AND json_extract(c.profile,'$.transport')='local-opencode'
                 AND json_extract(c.profile,'$.protocol_revision')={REVISION}
                 AND (j.status='generated' OR (c.epoch=m.epoch AND m.status='eligible'
@@ -348,7 +348,7 @@ class Runner:
                 c.due_at,j.id""", (season["id"], week(), now(), now()))
             jobs = [j for j in jobs if not excluded(j['model_id'])]
             if kind:
-                jobs = [j for j in jobs if j["kind"] == kind or (kind == "pilot" and j["kind"] in {'health','cap_calibration'})]
+                jobs = [j for j in jobs if j["kind"] == kind or (kind in {'pilot','lightweight'} and j["kind"] in {'health','cap_calibration'})]
             if model_ids is not None:
                 jobs = [j for j in jobs if j['model_id'] in model_ids]
             if not jobs:
@@ -368,7 +368,7 @@ class Runner:
                 if job["status"] == "generated":
                     self.grade(job, item, image)
                 self.finish_cycle(job["cycle_id"])
-                if kind != 'pilot' and job_kind == 'health':
+                if kind not in {'pilot', 'lightweight'} and job_kind == 'health':
                     self.schedule(season)
                     self.capacity()
             except BudgetExhausted:

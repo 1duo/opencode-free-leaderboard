@@ -5044,5 +5044,130 @@
       "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
       "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
     }
+  },
+  {
+    "id": "lightweight-31b42151ccd60e7e",
+    "seed": 20261008,
+    "sources": {
+      "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+      "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+      "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+      "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+      "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24"
+    },
+    "livebench_release": "2024-11-25",
+    "livecodebench_release": "release_v6",
+    "language": "Python",
+    "counts": {
+      "lightweight": {
+        "livebench": 6,
+        "livecodebench": 6
+      }
+    },
+    "panels": {
+      "lightweight": [
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livebench:f8e84ee53942b7e6881fd483a404f6d2c875e816fd79f07cf4181d5d0e3a5b31",
+          "hash": "23579fa4a1a1b927c7b783b73d73abdd4a287bf69b15c433559d41010ac1fcbe",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livebench:27780ecab68b99ba747722d3e536086049ba4a8fc768b1357c0e20871a92e41c",
+          "hash": "9b1bf689358f5e672b84ce07bebe20748d08403b74843be477674d96d9dff653",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livebench:f32bae4c10c136c2e8c1180b6bd43c70aeb916935ff767779d95b3093354dd5b",
+          "hash": "c811f7f139c891790e38cbf1fa3b4f783d20d5c79e63faa8b888ee243e4ce3f5",
+          "benchmark": "livebench",
+          "stratum": "spatial"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livebench:ed015ab9a9b9c84e1b5d45695a46f91880ced969877640ef9eafd4c231a8960a",
+          "hash": "a0ee463149b8126694da4d19d01317a13aed921c8660a8859020baa9c068e893",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livebench:d60075facb5ecdbc3618620e77f29db9dc5f24b11eb789c771b3180b48866fbf",
+          "hash": "57f4ce743f1c6daad88427f60420c461bd5cd6d62cef0b68ca445931619c542e",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livebench:977a0ea5fc1727ca664cd2af90b5c4a2f36648891e8f5b6ad047512df081a4d8",
+          "hash": "4fb49d77f0ef38ba6f96ff73d5a16810e1d1ba0fd324eb7a6b54054dbaef89a9",
+          "benchmark": "livebench",
+          "stratum": "zebra_puzzle"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livecodebench:atcoder:abc386_a",
+          "hash": "c9b511dc173394a0d764066e97d063d5f6d4323c599a294e3c0b2525a4a308cd",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livecodebench:leetcode:3312",
+          "hash": "1ab5ac30fbf165b2349816121e6df8f9123c81fe51c3b34dab0cbddb809e25ad",
+          "benchmark": "livecodebench",
+          "stratum": "easy"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livecodebench:atcoder:abc341_c",
+          "hash": "2863d8aa506d54b3118739ee27272aa83381b7465d98c6291782c527c09b47e3",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livecodebench:atcoder:abc305_c",
+          "hash": "55da33f800e3aa15cd7c48f191f0264abe483728c60ef14ed1dd59753f9bd28e",
+          "benchmark": "livecodebench",
+          "stratum": "medium"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livecodebench:leetcode:3261",
+          "hash": "2fadd701ce3df2f460fe3d8970e0d32b05d4266c46d24254cc09322fdee7ba6b",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        },
+        {
+          "id": "public-pilot-c818b85f16b42bf9:livecodebench:atcoder:abc324_f",
+          "hash": "9b3912f0bf3f0b71deb05229c00d73481591f34078d3d661352bc5235a0fe058",
+          "benchmark": "livecodebench",
+          "stratum": "hard"
+        }
+      ]
+    },
+    "validated": true,
+    "active": false,
+    "partial": true,
+    "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
+    "protocol": {
+      "output_cap": 4096,
+      "temperature": 0,
+      "tools": false,
+      "completions": 1,
+      "panel": "lightweight-v1",
+      "source_season": "public-pilot-424b7a865093c836",
+      "strata": {
+        "livebench": {
+          "spatial": 3,
+          "zebra_puzzle": 3
+        },
+        "livecodebench": {
+          "easy": 2,
+          "medium": 2,
+          "hard": 2
+        }
+      },
+      "purpose": "Public subset; no headline or overall ranking"
+    },
+    "grading_files": {
+      "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+      "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+      "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
+    }
   }
 ]
