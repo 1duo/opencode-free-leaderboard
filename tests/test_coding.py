@@ -55,7 +55,8 @@ def expansion_fixture(tmp_path):
         for index in range(count):
             ident=f'{benchmark}:synthetic:{index}'
             panel.append({'id':ident,'hash':'a'*64,'benchmark':benchmark,'stratum':'easy'})
-        manifest={'panels':{'screen' if season=='base' else 'coding':panel}}
+        manifest={'panels':{'screen' if season=='base' else 'coding':panel},
+                  'protocol':{'panel':'bigcodebench-cpu-v1'} if season=='extension' else {}}
         db.execute('INSERT INTO seasons VALUES(?,?,?,?,?)',(season,stamp,json.dumps(manifest),1,0))
         for item in panel:
             db.execute('INSERT INTO items VALUES(?,?,?,?,?,?)',(item['id'],season,benchmark,'easy',item['hash'],'{}'))

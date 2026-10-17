@@ -1,6 +1,6 @@
 # OpenCode Free Model Leaderboard
 
-Choose a free OpenCode model for **reasoning** or **Python coding**.
+Choose a free OpenCode model for **reasoning** or **coding**.
 
 **[View leaderboard ↗](https://1duo.github.io/opencode-free-leaderboard/)** · [JSON](https://1duo.github.io/opencode-free-leaderboard/snapshot.json) · [CSV](https://1duo.github.io/opencode-free-leaderboard/leaderboard.csv)
 
@@ -24,7 +24,7 @@ Use your own setup on macOS, Linux or WSL2 with Docker. [Run evaluations and sub
 
 ## Protocol and statistics
 
-80-question screens: 20 GPQA Diamond, 20 LiveBench and 40 LiveCodeBench. Prepared expansion: [24 practical Python tasks](docs/coding-expansion.md). Highest available reasoning; one completion per question; 95% sampling intervals.
+80-question screens: 20 GPQA Diamond, 20 LiveBench and 40 LiveCodeBench. Prepared expansion: [24 systems C tasks](docs/systems-c.md). Highest available reasoning; one completion per question; 95% sampling intervals.
 
 Only complete, matching full screens are ranked. Other coverage and community submissions are labeled unranked. Benchmark scores do not establish everyday agent performance.
 

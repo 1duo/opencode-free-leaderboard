@@ -1,5 +1,7 @@
 # Coding expansion
 
+The current extension is [Systems C](systems-c.md), covering CPU-only C programming. This document preserves the earlier BigCodeBench panel and its evaluation history. Use `coding --benchmark bigcodebench` to select that panel explicitly.
+
 **BigCodeBench-Instruct v0.1.4, a custom 24-task CPU subset**, adds practical function and library use to LiveCodeBench's algorithmic Python problems. These are custom-subset results, not official BigCodeBench leaderboard scores.
 
 ## Choice
@@ -35,8 +37,8 @@ Intervals use 10,000 deterministic stratified bootstrap draws with equal benchma
 GPQA access is unnecessary for this expansion. On a fresh setup, first prepare a public grading season with `leaderboard prepare-panels --public-only`, then run `pilot --season PUBLIC_SEASON_ID --all-models`. A completed matching full or public compatibility pilot works. Existing validated setups reuse their grading image.
 
 ```sh
-uv run --frozen --no-editable leaderboard coding --prepare-only
-uv run --frozen --no-editable leaderboard coding --model MODEL_ID
+uv run --frozen --no-editable leaderboard coding --benchmark bigcodebench --prepare-only
+uv run --frozen --no-editable leaderboard coding --benchmark bigcodebench --model MODEL_ID
 ```
 
 Omit `--model` for all currently compatible free models. `--limit N` bounds an invocation. Repeat to resume saved work without replaying unknown outcomes. Scheduled common screens take priority; `status` reports completion and capacity.

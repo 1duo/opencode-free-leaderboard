@@ -74,26 +74,27 @@ def test_coding_pilot_progress_is_visible_without_a_provisional_score(context):
     runner.close()
 
 
-def test_composite_coding_export_contains_both_components_and_dates(context, tmp_path):
+@pytest.mark.parametrize('extension', ['bigcodebench', 'systems_c'])
+def test_composite_coding_export_contains_both_components_and_dates(context, tmp_path, extension):
     import csv
     from freeboard.publication import render_site,validate_site
     from freeboard.scoring import CapabilityResult,snapshot
     runner, _, model, _ = fixtures.job_context(context)
     report=snapshot(runner.db,runner.settings)
-    dates={'livecodebench':'2026-10-15T18:00:00+00:00','bigcodebench':'2026-10-16T18:00:00+00:00'}
+    dates={'livecodebench':'2026-10-15T18:00:00+00:00',extension:'2026-10-16T18:00:00+00:00'}
     composite=CapabilityResult(model_id=model['id'],epoch=model['epoch'],category='coding',score=75,
-        source_tier='coding-expanded',sample_counts={'livecodebench':40,'bigcodebench':24},
-        benchmark_scores={'livecodebench':50,'bigcodebench':100},
-        benchmark_weights={'livecodebench':.5,'bigcodebench':.5},benchmark_evaluated_at=dates)
+        source_tier='coding-expanded',sample_counts={'livecodebench':40,extension:24},
+        benchmark_scores={'livecodebench':50,extension:100},
+        benchmark_weights={'livecodebench':.5,extension:.5},benchmark_evaluated_at=dates)
     report=report.model_copy(update={'capabilities':[composite],'coding_weights':composite.benchmark_weights})
     target=tmp_path/'preview'
     render_site(report,runner.checkout,target)
     assert validate_site(target).capabilities[0]==composite
     with (target/'leaderboard.csv').open() as handle:
         row=next(r for r in csv.DictReader(handle) if r['tier']=='capability')
-    assert float(row['coding'])==75 and float(row['bigcodebench'])==100
-    assert row['sample_n']=='64' and row['bigcodebench_n']=='24'
-    assert row['basis']=='LiveCodeBench + BigCodeBench'
+    assert float(row['coding'])==75 and float(row[extension])==100
+    assert row['sample_n']=='64' and row[f'{extension}_n']=='24'
+    assert row['basis']=='LiveCodeBench + '+('BigCodeBench' if extension=='bigcodebench' else 'Systems C')
     assert all(row[f'{b}_evaluated_at']==date for b,date in dates.items())
     runner.close()
 

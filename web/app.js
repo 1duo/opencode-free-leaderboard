@@ -69,7 +69,7 @@ function intervalPlot(value, interval) {
   return plot;
 }
 function basis(result) {
-  return Object.keys(result.sample_counts).map(b => ({gpqa:"GPQA", livebench:"LiveBench", livecodebench:"LiveCodeBench", bigcodebench:"BigCodeBench"})[b]).join(" + ");
+  return Object.keys(result.sample_counts).map(b => ({gpqa:"GPQA", livebench:"LiveBench", livecodebench:"LiveCodeBench", bigcodebench:"BigCodeBench", systems_c:"Systems C"})[b]).join(" + ");
 }
 function sampleLabel(result) {
   return `${basis(result)} · ${total(result.sample_counts)} questions`;
@@ -78,7 +78,7 @@ function categoryResults(category) {
   const visible = new Set(currentModels().map(m => m.model_id));
   const community = (report.community_results || []).filter(r => r.scores[category] != null && !report.rows.some(m =>
     m.model_id === r.model_id && ["removed", "paid", "excluded"].includes(m.availability))).map(r => {
-    const benchmarks = (category === "coding" ? ["livecodebench", "bigcodebench"] : ["gpqa", "livebench"]).filter(b => r.sample_counts[b]);
+    const benchmarks = (category === "coding" ? ["livecodebench", "bigcodebench", "systems_c"] : ["gpqa", "livebench"]).filter(b => r.sample_counts[b]);
     return {...r, category, score:r.scores[category], interval:r.intervals[category], interval_note:r.interval_notes[category], rank:null,
       name:report.rows.find(m => m.model_id === r.model_id)?.name || r.model_id, availability:"community",
       sample_counts:Object.fromEntries(benchmarks.map(b => [b, r.sample_counts[b]])),
@@ -122,7 +122,8 @@ function renderRankings() {
     const row = node("tr"), name = node("td"), evidence = node("td"), date = node("td");
     name.append(node("strong", model.name), node("span", `Reasoning: ${reasoningSetting(model)}`, "sub"));
     evidence.append(node("span", sampleLabel(result)));
-    if (result.benchmark_weights?.bigcodebench === 0.5) evidence.append(node("span", `Algorithmic ${result.benchmark_scores.livecodebench.toFixed(1)} · practical ${result.benchmark_scores.bigcodebench.toFixed(1)}`, "sub"));
+    const extension = result.benchmark_weights?.systems_c === 0.5 ? "systems_c" : result.benchmark_weights?.bigcodebench === 0.5 ? "bigcodebench" : null;
+    if (extension) evidence.append(node("span", `Algorithmic ${result.benchmark_scores.livecodebench.toFixed(1)} · ${extension === "systems_c" ? "systems C" : "practical Python"} ${result.benchmark_scores[extension].toFixed(1)}`, "sub"));
     if (result.rank == null) evidence.append(provenance(result));
     if (model.availability !== "eligible" && !result.submission_id) evidence.append(node("span", statusLabel(model.availability), "sub"));
     const interval = result.interval ? `${result.interval[0].toFixed(1)}–${result.interval[1].toFixed(1)}` : result.interval_note ? "Unresolved" : "—";
@@ -134,7 +135,9 @@ function renderRankings() {
   }
   if (!rows.length) { const row = node("tr"), cell = node("td", "Complete results are pending.", "empty"); cell.colSpan = 6; row.append(cell); body.append(row); }
   byId("score-heading").textContent = `${view === "reasoning" ? "Reasoning" : "Coding"} / 100`;
-  byId("coding-note").hidden = view !== "coding" || report.coding_weights?.bigcodebench !== 0.5;
+  const extension = report.coding_weights?.systems_c === 0.5 ? "systems C" : report.coding_weights?.bigcodebench === 0.5 ? "practical Python" : null;
+  byId("coding-note").hidden = view !== "coding" || !extension;
+  if (extension) byId("coding-note").textContent = `50% algorithmic coding · 50% ${extension} · matching 64-question panels.`;
 }
 function renderPicks() {
   const list = byId("picks"); list.replaceChildren();
@@ -188,7 +191,8 @@ async function load() {
     const notice = byId("notice"); notice.hidden = !messages.length; notice.textContent = [...new Set(messages)].join(" ");
     byId("benchmark-list").replaceChildren(categoryChart("reasoning"), categoryChart("coding"));
     renderPicks(); renderRankings(); renderAvailability();
-    if (report.coding_weights?.bigcodebench === 0.5) byId("coding-method").textContent = "Equal average of LiveCodeBench algorithmic coding and BigCodeBench practical Python pass@1. Both panels must be complete; coverage and dates are shown for each model.";
+    const extension = report.coding_weights?.systems_c === 0.5 ? "Systems C" : report.coding_weights?.bigcodebench === 0.5 ? "BigCodeBench practical Python" : null;
+    if (extension) byId("coding-method").textContent = `Equal average of LiveCodeBench algorithmic coding and ${extension} pass@1. Both panels must be complete; coverage and dates are shown for each model.`;
     for (const button of document.querySelectorAll("[data-view]")) button.disabled = false;
     if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
   } catch (error) {

@@ -13,6 +13,7 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .config import COUNTS, ZEN_CATALOG, ZEN_DOCS, digest
+from .coding_protocol import coding_spec
 
 Hash = Annotated[str, Field(pattern=r'^[0-9a-f]{64}$')]
 Handle = Annotated[str, Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9-]{0,38}$')]
@@ -26,7 +27,7 @@ class Strict(BaseModel):
 
 
 class QuestionResult(Strict):
-    id: str = Field(pattern=r'^(gpqa|livebench|livecodebench|bigcodebench):[A-Za-z0-9_.:-]+$', max_length=200)
+    id: str = Field(pattern=r'^(gpqa|livebench|livecodebench|bigcodebench|systems_c):[A-Za-z0-9_.:-]+$', max_length=200)
     hash: Hash
     score: float = Field(ge=0, le=1)
     attempts: int = Field(ge=1, strict=True)
@@ -140,12 +141,24 @@ def validate_submission(record: ResultSubmission, manifests: list[dict]) -> Comm
     if not manifest or record.panel_fingerprint != fingerprint(manifest, record.tier):
         raise ValueError('Submission does not match a published, validated panel')
     selected = panel(manifest, record.tier)
+    coding_benchmark = None
+    if record.tier == 'coding':
+        if manifest.get('protocol', {}).get('panel'):
+            coding_benchmark = coding_spec(manifest)['benchmark']
+        elif manifest.get('counts', {}).get('coding') == {'bigcodebench': 24}:
+            coding_benchmark = 'bigcodebench'  # Original public submission format.
+        else:
+            raise ValueError('Unknown frozen coding protocol')
     expected = (COUNTS[record.tier] if record.tier in {'screen', 'confirmation'} else
                 {'livebench': 20, 'livecodebench': 40} if record.tier == 'public-screen' else
-                {'bigcodebench':24} if record.tier == 'coding' else {'livebench': 6, 'livecodebench': 6})
+                {coding_benchmark:24} if record.tier == 'coding' else {'livebench': 6, 'livecodebench': 6})
     counts = {b: sum(i['benchmark'] == b for i in selected) for b in expected}
     if counts != expected or len(selected) != sum(expected.values()):
         raise ValueError('Submission tier has incorrect benchmark coverage')
+    if record.tier == 'coding' and manifest.get('protocol', {}).get('panel'):
+        strata = coding_spec(manifest)['strata']
+        if {s: sum(i['stratum'] == s for i in selected) for s in strata} != strata:
+            raise ValueError('Submission tier has incorrect coding domain coverage')
     if len(record.questions) != len(selected) or len({q.id for q in record.questions}) != len(selected):
         raise ValueError('Complete panels with unique question IDs are required')
     reference = {i['id']: i for i in selected}
@@ -154,17 +167,17 @@ def validate_submission(record: ResultSubmission, manifests: list[dict]) -> Comm
         item = reference.get(question.id)
         if not item or item['hash'] != question.hash:
             raise ValueError('Question IDs/hashes differ from the frozen panel')
-        if item['benchmark'] in {'gpqa', 'livecodebench', 'bigcodebench'} and question.score not in {0, 1}:
+        if item['benchmark'] in {'gpqa', 'livecodebench', 'bigcodebench', 'systems_c'} and question.score not in {0, 1}:
             raise ValueError('GPQA and coding grades must be binary')
         graded.append({'item_id': question.id, 'benchmark': item['benchmark'], 'stratum': item['stratum'], 'score': question.score})
     draws = bootstrap(graded) if record.tier in {'screen', 'confirmation'} else component_bootstrap(graded)
     scores = {b: float(np.mean([i['score'] for i in graded if i['benchmark'] == b])) * 100 for b in expected}
-    categories = ({'coding':scores['bigcodebench']} if record.tier=='coding' else
+    categories = ({'coding':scores[coding_benchmark]} if record.tier=='coding' else
                   {'reasoning': (scores['gpqa'] + scores['livebench']) / 2 if 'gpqa' in scores else scores['livebench'],
                    'coding': scores['livecodebench']})
     intervals, notes = {}, {}
     for category in categories:
-        key = ('bigcodebench' if record.tier=='coding' else category if 'gpqa' in scores else
+        key = (coding_benchmark if record.tier=='coding' else category if 'gpqa' in scores else
                {'reasoning': 'livebench', 'coding': 'livecodebench'}[category])
         bounds = np.quantile(draws[key], [.025, .975]).tolist()
         if record.tier == 'lightweight' and bounds[0] == bounds[1]:

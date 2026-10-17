@@ -13,6 +13,7 @@ from pathlib import Path
 import pyarrow.parquet as pq
 
 from .budget import estimate
+from .coding_protocol import coding_spec
 from .config import SEED, digest, now, week
 from .discovery import discover
 from .grading import GradingUnavailable, docker_environment
@@ -176,7 +177,11 @@ def run_coding(runner, season: dict, selected: list[str] | None = None, limit: i
     evidence = discover(runner.db, runner.budget, runner.client)
     if not evidence['ok']:
         return {'blocked':evidence['error']}
-    available = {m['id']:m for m in runner.models() if json.loads(m['profile']).get('cap_verified')
+    proof = json.loads(runner.db.one('SELECT evidence FROM discovery ORDER BY id DESC LIMIT 1')['evidence'])
+    available = {m['id']:m for m in runner.db.rows('SELECT * FROM models ORDER BY id')
+        if m['id'] in proof['catalog_ids'] and proof['pricing'].get(m['id'],{}).get('free')
+        and m['status'] not in {'excluded','paid','removed','unsupported'}
+        and json.loads(m['profile']).get('cap_verified')
         and runner.db.one("SELECT id FROM cycles WHERE model_id=? AND epoch=? AND kind='pilot' AND completed_at IS NOT NULL",
                           (m['id'],m['epoch']))}
     selected = sorted(set(selected)) if selected else sorted(available)
@@ -213,11 +218,15 @@ def run_coding(runner, season: dict, selected: list[str] | None = None, limit: i
         processed += runner.drain(season,'coding',None if limit is None else limit-processed,set(selected))['processed']
     from .scoring import snapshot
     report = snapshot(runner.db,runner.settings)
-    if (report.coding_weights.get('bigcodebench') == 0.5 and any(
+    spec = coding_spec(json.loads(season['manifest']))
+    if (report.coding_weights.get(spec['benchmark']) == 0.5 and any(
             c.category=='coding' and c.score is not None and c.season==season['id'] for c in report.capabilities)):
         manifest = json.loads(runner.db.one('SELECT manifest FROM seasons WHERE id=?',(season['id'],))['manifest'])
         if not manifest.get('coding_promoted_at'):
             manifest['coding_promoted_at'] = now()
             runner.db.execute('UPDATE seasons SET manifest=? WHERE id=?',(json.dumps(manifest),season['id']))
-    return {'season':season['id'],'models':selected,'questions_per_model':24,'held_out_per_model':2,
-            'processed':processed,'budget':runner.budget.summary()}
+    return {'season':season['id'],'models':selected,'questions_per_model':24,
+            'held_out_per_model':len(spec['strata']), 'processed':processed,
+            'blocked': None if any(m['status']=='eligible' for m in available.values()) else
+                'OpenCode generation access is restricted; validated panels and queued jobs are retained',
+            'budget':runner.budget.summary()}

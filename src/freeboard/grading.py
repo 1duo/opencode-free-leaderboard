@@ -86,6 +86,12 @@ class DockerGrader:
                    "--cpus=1", "--memory=1g", "--memory-swap=1g", "--pids-limit=64",
                    "--tmpfs=/tmp:rw,noexec,nosuid,size=256m", "--tmpfs=/dev/shm:rw,noexec,nosuid,size=64m",
                    image]
+        if item.get('benchmark') == 'systems_c':
+            # Compiled binaries need one executable scratch mount; Python/legacy
+            # graders retain their original noexec mounts and frozen behavior.
+            command[-1:-1] = ['--tmpfs=/work:rw,exec,nosuid,nodev,size=128m,mode=1777']
+            item = {key: item[key] for key in ['benchmark', 'header_name', 'header', 'test',
+                                              'test_count', 'framework_hash']}
         try:
             result = subprocess.run(command, input=json.dumps({"item": item, "text": text}),
                                     capture_output=True, text=True, timeout=180, env=docker_environment(self.settings))
