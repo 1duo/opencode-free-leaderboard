@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Literal
 
 import numpy as np
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .budget import Budget
 from .config import COUNTS, OMITTED_MODELS, Settings, credential, digest, now
@@ -125,6 +125,7 @@ class PublicScreen(Strict):
     intervals: dict[str, list[float]]
     benchmark_evaluated_at: dict[str, str | None] = {}
     evaluated_at: str | None
+    cycle_started_at: str | None = None
     latency_seconds: float | None
     accounted_tokens: int
     reported_tokens: int
@@ -142,6 +143,17 @@ class Lightweight(PublicScreen):
     interval_warnings: dict[str, str] = {}
 
 
+class PublicProtocol(Strict):
+    output_cap: int | None = None
+    temperature: float | None = None
+    tools: bool | None = None
+    completions: int | None = None
+    panel: Literal['lightweight-v1'] | None = None
+    source_season: str | None = None
+    strata: dict[Literal['livebench', 'livecodebench'], dict[Literal['spatial', 'zebra_puzzle', 'easy', 'medium', 'hard'], int]] = {}
+    purpose: Literal['Public subset; no headline or overall ranking'] | None = None
+
+
 class PublicManifest(Strict):
     id: str
     seed: int
@@ -155,7 +167,7 @@ class PublicManifest(Strict):
     active: bool
     partial: bool = False
     grader_image: str | None
-    protocol: dict = {}
+    protocol: PublicProtocol = Field(default_factory=PublicProtocol)
     grading_files: dict[str, str] = {}
 
 
@@ -172,6 +184,8 @@ class CapabilityResult(Strict):
     benchmark_scores: dict[str, float] = {}
     evaluated_at: str | None = None
     rank: int | None = None
+    stale: bool = False
+    refresh_pending: bool = False
 
 
 class Snapshot(Strict):
@@ -197,7 +211,7 @@ class Snapshot(Strict):
 
 
 def merged_capabilities(rows: list[PublicRow], public_screens: list[PublicScreen],
-                        lightweight: list[Lightweight]) -> list[CapabilityResult]:
+                        lightweight: list[Lightweight], history: list[PublicRow] | None = None) -> list[CapabilityResult]:
     """One result per current model/category; larger panels replace nested quick checks."""
     result = []
     priority = {'screen': 3, 'public-screen': 2, 'lightweight': 1}
@@ -205,6 +219,10 @@ def merged_capabilities(rows: list[PublicRow], public_screens: list[PublicScreen
         if model.tier != 'screen' or model.availability in {'removed', 'excluded', 'paid', 'unsupported'}:
             continue
         sources = [model] if model.scores and model.cap_verified else []
+        # A new unfinished cycle does not erase a completed matching screen.
+        sources += [r for r in history or [] if r.model_id == model.model_id and r.epoch == model.epoch
+                    and r.season == model.season and r.tier == 'screen'
+                    and r.scores and r.cap_verified and model.cap_verified]
         sources += [r for r in [*public_screens, *lightweight]
                     if r.model_id == model.model_id and r.epoch == model.epoch
                     and r.status == 'complete' and r.cap_verified and model.cap_verified]
@@ -227,7 +245,13 @@ def merged_capabilities(rows: list[PublicRow], public_screens: list[PublicScreen
                     score=sum(scores[b] for b in benchmarks) / len(benchmarks), interval=interval,
                     interval_note=getattr(source, 'interval_warnings', {}).get(metric),
                     sample_counts=counts, benchmark_scores={b: scores[b] for b in benchmarks},
-                    evaluated_at=max((d for d in dates if d), default=source.evaluated_at))
+                    evaluated_at=max((d for d in dates if d), default=source.evaluated_at),
+                    stale=bool((stamp := getattr(source, 'cycle_started_at', None) or source.evaluated_at)
+                        and (datetime.now(timezone.utc) - datetime.fromisoformat(stamp)).days >= 28),
+                    refresh_pending=(source.tier == 'screen' and not model.scores) or (
+                        source.tier == 'public-screen' and any(r.model_id == source.model_id
+                            and r.epoch == source.epoch and r.season == source.season and r.status == 'pending'
+                            and (r.cycle_started_at or '') > (source.cycle_started_at or '') for r in public_screens)))
                 choices.append((sum(counts.values()), priority[source.tier], candidate.evaluated_at or '', source.season or '', candidate))
             result.append(max(choices, key=lambda c: c[:4])[4] if choices else CapabilityResult(
                 model_id=model.model_id, epoch=model.epoch, category=category))
@@ -380,7 +404,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                          'model_unavailable','configuration_error','cap_violation','cap_unverified','client_access_restricted','provider_error'},
                      protocol=profile['protocol'], endpoint=profile.get('endpoint', model['endpoint']),
                      cap_verified=profile.get("cap_verified", False) and not (cycle and cycle['epoch'] == model['epoch']
-                         and availability in {'cap_violation', 'cap_unverified'}), observed_at=model["observed_at"],
+                         and not json.loads(model['profile']).get('cap_verified', False)), observed_at=model["observed_at"],
                      cap_failure=cap_failure,
                      next_retry_at=retry['at'] if availability == 'quota_limited' else None,
                      reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
@@ -527,10 +551,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
     for cycle in db.rows(f"""SELECT * FROM cycles WHERE kind='public_screen'
         AND json_extract(profile,'$.transport')='local-opencode'
         AND json_extract(profile,'$.protocol_revision')={REVISION}
-        AND started_at=(SELECT MAX(c2.started_at) FROM cycles c2 WHERE c2.kind='public_screen'
-            AND c2.model_id=cycles.model_id AND c2.season=cycles.season
-            AND c2.epoch=cycles.epoch
-            AND json_extract(c2.profile,'$.protocol_revision')={REVISION}) ORDER BY started_at,model_id"""):
+        ORDER BY started_at,model_id"""):
         if cycle['model_id'] in OMITTED_MODELS:
             continue
         items = records(db, cycle, 'screen')
@@ -565,6 +586,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
                                               for r in items if r['status'] != 'graded'})},
             benchmark_scores=scores, intervals=intervals, benchmark_evaluated_at=component_dates,
             evaluated_at=cycle['completed_at'] if complete else None,
+            cycle_started_at=cycle['started_at'],
             latency_seconds=float(np.median([r['latency'] for r in generated_items])) if generated_items else None,
             accounted_tokens=usage['accounted'], reported_tokens=usage['reported'],
             truncation_rate=sum(r['truncated'] for r in generated_items) / len(generated_items) if generated_items else None,
@@ -577,7 +599,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
                     generated_at=generated, discovery_at=(discovery or {}).get("observed_at"),
                     discovery_ok=bool((discovery or {}).get("ok")), discovery_error=(discovery or {}).get("error"),
                     rows=rows, history=history, comparisons=comparisons, pilots=pilots, public_screens=public_screens,
-                    lightweight=lightweight, capabilities=merged_capabilities(rows, public_screens, lightweight), seasons=manifests,
+                    lightweight=lightweight, capabilities=merged_capabilities(rows, public_screens, lightweight, history), seasons=manifests,
                     budget=Budget(db, settings).summary(), queue_size=queue,
                     missed_deadlines=sum(r.deadline_missed for r in rows if r.tier == 'screen'), blockers=blockers)
 

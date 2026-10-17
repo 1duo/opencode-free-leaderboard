@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import fcntl
 import json
+import os
+import shutil
 import sqlite3
+import tempfile
 from contextlib import closing, contextmanager
 from pathlib import Path
 
@@ -104,10 +107,30 @@ class DB:
 
     def backup(self) -> None:
         target = self.state / "backups" / f"{now()[:10]}.sqlite3"
-        # A transaction context alone leaves the connection open and its WAL growing.
-        with closing(sqlite3.connect(target)) as conn:
-            self.conn.backup(conn)
-        target.chmod(0o600)
+        required = self.conn.execute('PRAGMA page_count').fetchone()[0] * self.conn.execute('PRAGMA page_size').fetchone()[0]
+        if shutil.disk_usage(target.parent).free < required + 64 * 1024**2:
+            raise RuntimeError('Insufficient disk space for an atomic backup; previous backups are intact')
+        journal = Path(str(target) + '-wal')
+        if journal.exists() and journal.stat().st_size:
+            raise RuntimeError('Previous backup has an active journal; checkpoint it before replacement')
+        # Build a standalone database, validate and sync it, then replace the daily
+        # backup. Failed writes must never damage the last successful copy.
+        with tempfile.TemporaryDirectory(prefix='.backup-', dir=target.parent) as folder:
+            staged = Path(folder) / 'state.sqlite3'
+            with closing(sqlite3.connect(staged)) as conn:
+                staged.chmod(0o600)
+                self.conn.backup(conn)
+                conn.execute('PRAGMA journal_mode=DELETE')
+                if conn.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
+                    raise RuntimeError('Backup validation failed; previous backups are intact')
+            with staged.open('rb') as handle:
+                os.fsync(handle.fileno())
+            staged.replace(target)
+            directory = os.open(target.parent, os.O_RDONLY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
         for old in sorted((self.state / "backups").glob("*.sqlite3"))[:-7]:
             old.unlink()
 

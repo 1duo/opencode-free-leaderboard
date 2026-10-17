@@ -964,7 +964,7 @@ def test_explicit_retries_are_bounded(context, monkeypatch):
     def retry(*args):
         import time
         for _ in range(3):
-            args[-1]({'next':time.time()*1000+1000})
+            args[-1]({'next':time.time()*1000+1000, 'message':'HTTP 503', 'response_observed':False})
         pytest.fail('Retry limit must abort the client')
     monkeypatch.setattr(runner.opencode,'generate',retry)
     runner.generate(job, item_model, item, 4096)

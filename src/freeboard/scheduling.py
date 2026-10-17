@@ -43,7 +43,8 @@ def install(settings: Settings, checkout: Path) -> Path:
     plist = Path.home() / "Library/LaunchAgents/ai.opencode.free-leaderboard.plist"
     plist.parent.mkdir(parents=True, exist_ok=True)
     domain = f"gui/{os.getuid()}"
-    subprocess.run(["launchctl", "bootout", domain, str(plist)], capture_output=True)
+    # Prepare everything before stopping the working job. A failed fetch or
+    # invalid source checkout must not disable the existing schedule.
     scheduled = scheduler_checkout(settings)
     data = {"Label": "ai.opencode.free-leaderboard",
             "ProgramArguments": [str(binary), '-m', 'freeboard.cli',
@@ -57,9 +58,29 @@ def install(settings: Settings, checkout: Path) -> Path:
     for key in ['DOCKER_HOST', 'DOCKER_CONFIG']:
         if os.environ.get(key):
             data['EnvironmentVariables'][key] = os.environ[key]
-    plist.write_bytes(plistlib.dumps(data))
-    plist.chmod(0o600)
-    result = subprocess.run(["launchctl", "bootstrap", domain, str(plist)], capture_output=True)
-    if result.returncode:
-        raise RuntimeError("launchd bootstrap failed; launch agent file was saved")
+    contents = plistlib.dumps(data)
+    previous = plist.read_bytes() if plist.exists() else None
+    temporary = plist.with_suffix('.plist.partial')
+    temporary.write_bytes(contents)
+    temporary.chmod(0o600)
+    try:
+        subprocess.run(["launchctl", "bootout", domain, str(plist)], capture_output=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        temporary.unlink(missing_ok=True)
+        raise RuntimeError('Could not stop launch agent safely; configuration was not replaced') from None
+    temporary.replace(plist)
+    def bootstrap():
+        try:
+            return subprocess.run(["launchctl", "bootstrap", domain, str(plist)], capture_output=True, timeout=30).returncode == 0
+        except (OSError, subprocess.TimeoutExpired):
+            return False
+    if not bootstrap():
+        if previous is not None:
+            temporary.write_bytes(previous)
+            temporary.chmod(0o600)
+            temporary.replace(plist)
+            if not bootstrap():
+                raise RuntimeError('launchd install and rollback failed; previous configuration is saved, reinstall the schedule')
+            raise RuntimeError('launchd install failed; previous schedule restored')
+        raise RuntimeError('launchd bootstrap failed; launch agent file was saved for inspection')
     return plist

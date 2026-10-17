@@ -21,6 +21,25 @@ function reasoningSetting(row) {
   return variant ? `${label} · highest exposed` : row.reasoning_setting;
 }
 function total(values) { return Object.values(values || {}).reduce((a, b) => a + b, 0); }
+function validateSnapshot(data) {
+  if (!data || data.schema_version !== 2 || !Array.isArray(data.rows) || !Array.isArray(data.capabilities)
+      || data.snapshot_id !== document.body.dataset.snapshot) throw new Error("Incompatible snapshot");
+  const ids = new Set(data.rows.filter(r => r.tier === "screen").map(r => r.model_id));
+  const seen = new Set(), validScore = n => Number.isFinite(n) && n >= 0 && n <= 100;
+  for (const result of data.capabilities) {
+    const key = `${result.model_id}/${result.category}`;
+    if (!ids.has(result.model_id) || !["reasoning", "coding"].includes(result.category) || seen.has(key)
+        || (result.score != null && !validScore(result.score))
+        || (result.interval != null && (!Array.isArray(result.interval) || result.interval.length !== 2
+          || !result.interval.every(validScore) || result.interval[0] > result.interval[1]))) throw new Error("Invalid result");
+    seen.add(key);
+  }
+  return data;
+}
+function eligibilityFresh() {
+  const age = Date.now() - Date.parse(report.discovery_at);
+  return report.discovery_ok && Number.isFinite(age) && age >= -86400000 && age <= 7 * 86400000;
+}
 function currentModels() {
   return report.rows.filter(r => r.tier === "screen" && !["removed", "excluded", "paid", "unsupported"].includes(r.availability)
     && (!["authentication_failed", "client_access_restricted", "model_unavailable"].includes(r.availability)
@@ -61,6 +80,7 @@ function categoryChart(category) {
     const row = node("div", null, "chart-row"), title = node("div", null, "chart-row-title"), name = node("div");
     name.append(node("strong", model.name), node("span", sampleLabel(result), "sub"));
     if (result.rank == null) name.append(node("span", "Unranked", "sub"));
+    if (result.stale) name.append(node("span", "Refresh overdue", "sub"));
     title.append(name, node("strong", pct(result.score), "chart-score"));
     row.append(title, intervalPlot(result.score, result.interval));
     const meta = node("p", null, "chart-meta");
@@ -83,7 +103,8 @@ function renderRankings() {
     if (model.availability !== "eligible") evidence.append(node("span", statusLabel(model.availability), "sub"));
     const interval = result.interval ? `${result.interval[0].toFixed(1)}–${result.interval[1].toFixed(1)}` : result.interval_note ? "Unresolved" : "—";
     date.append(dateNode(result.evaluated_at));
-    if (model.status === "stale") date.append(node("span", "Stale", "sub"));
+    if (result.stale) date.append(node("span", "Refresh overdue", "sub"));
+    else if (result.refresh_pending) date.append(node("span", "Refresh in progress", "sub"));
     row.append(node("td", result.rank == null ? "—" : String(result.rank)), name, node("td", result.score.toFixed(1), "score"), node("td", interval), evidence, date);
     body.append(row);
   }
@@ -93,8 +114,8 @@ function renderRankings() {
 function renderPicks() {
   const list = byId("picks"); list.replaceChildren();
   for (const category of ["reasoning", "coding"]) {
-    const leaders = categoryResults(category).filter(r => r.rank === 1 && currentModels().find(m => m.model_id === r.model_id)?.availability === "eligible");
-    if (!report.discovery_ok || !leaders.length) continue;
+    const leaders = categoryResults(category).filter(r => r.rank === 1 && !r.stale && currentModels().find(m => m.model_id === r.model_id)?.availability === "eligible");
+    if (!eligibilityFresh() || !leaders.length) continue;
     const card = node("article", null, "pick-card");
     card.append(node("p", `Top ${category} score${leaders.length > 1 ? " · tied" : ""}`, "eyebrow"));
     for (const result of leaders) {
@@ -107,6 +128,7 @@ function renderPicks() {
     card.append(node("strong", `${leaders[0].score.toFixed(1)} / 100`, "pick-score"));
     list.append(card);
   }
+  byId("pick-note").hidden = !list.children.length;
 }
 function renderAvailability() {
   const models = currentModels().filter(m => !["reasoning", "coding"].every(c => (report.capabilities || []).some(r => r.model_id === m.model_id && r.category === c && r.score != null)));
@@ -123,21 +145,30 @@ function renderAvailability() {
   }
 }
 async function load() {
+  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 15000);
   try {
-    const response = await fetch("snapshot.json", {cache:"no-store"});
+    const response = await fetch(`snapshot.json?snapshot=${encodeURIComponent(document.body.dataset.snapshot)}`, {cache:"no-store", signal:controller.signal});
     if (!response.ok) throw new Error("Snapshot unavailable");
-    report = await response.json();
+    report = validateSnapshot(await response.json());
     byId("snapshot-date").textContent = report.published_at ? `Updated ${fmtDate(report.published_at)}` : "Local preview";
-    byId("catalog-date").textContent = `Free pricing checked ${fmtDate(report.discovery_at)}`;
+    byId("catalog-date").textContent = `Catalog checked ${fmtDate(report.discovery_at)}`;
     const messages = [];
     if (!report.discovery_ok) messages.push("Free eligibility could not be reverified.");
+    else if (!eligibilityFresh()) messages.push("Free pricing needs a fresh check; results retain their evaluation dates.");
+    if (report.capabilities.some(r => r.stale)) messages.push("Some results are overdue for refresh.");
     const notice = byId("notice"); notice.hidden = !messages.length; notice.textContent = [...new Set(messages)].join(" ");
     byId("benchmark-list").replaceChildren(categoryChart("reasoning"), categoryChart("coding"));
     renderPicks(); renderRankings(); renderAvailability();
+    for (const button of document.querySelectorAll("[data-view]")) button.disabled = false;
     if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
   } catch (error) {
+    report = null;
+    for (const id of ["picks", "ranking", "benchmark-list"]) byId(id).replaceChildren();
+    byId("pick-note").hidden = true; byId("supporting").hidden = true;
     byId("notice").hidden = false; byId("notice").setAttribute("role", "alert");
     byId("notice").textContent = "Results could not be loaded. Refresh the page or use the JSON / CSV exports.";
+  } finally {
+    clearTimeout(timeout); byId("results-table").setAttribute("aria-busy", "false");
   }
 }
 function selectView(category) {

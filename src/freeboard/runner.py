@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -38,6 +39,10 @@ class Runner:
         self.grader = DockerGrader(settings)
         self.client = client or httpx.Client(timeout=settings.request_timeout, follow_redirects=False)
         self.opencode = OpenCode(settings)
+
+    def close(self) -> None:
+        self.opencode.close()
+        self.client.close()
 
     def active_season(self) -> dict:
         season = self.db.one("SELECT * FROM seasons WHERE active=1 AND validated=1")
@@ -143,6 +148,8 @@ class Runner:
             raise ValueError('Provider privacy evidence prevents sending private GPQA questions')
         if job.get('response_path'):
             raise RuntimeError('A durable answer exists; this job must not be regenerated')
+        if shutil.disk_usage(self.settings.state).free < 64 * 1024**2:
+            raise RuntimeError('Insufficient disk space to save a response; no generation dispatched')
         prompt_body(model, item['messages'])
         if manual_retry:
             reason = manual_retry_reason(self.db, job, model, additional_retry=additional_retry)
@@ -223,7 +230,17 @@ class Runner:
             code = (error.get('data') or {}).get('statusCode')
             self.budget.finish(attempt, status, code if type(code) is int else None, response_path=str(path))
             self.db.execute('UPDATE models SET status=? WHERE id=?', (status, model['id']))
-            known_rejection = bool(result.get('info', {}).get('error') or result.get('error'))
+            # An error can arrive after partial reasoning, answer text or a tool
+            # request. Only a proven empty, single-turn rejection is replayable.
+            parts = result.get('parts', [])
+            tokens = result.get('info', {}).get('tokens') or {}
+            empty_usage = (isinstance(tokens, dict) and isinstance(tokens.get('cache', {}), dict)
+                and all(type(v) is int and v == 0 for k, v in tokens.items() if k != 'cache')
+                and all(type(v) is int and v == 0 for v in tokens.get('cache', {}).values()))
+            known_rejection = (bool(error) and isinstance(parts, list)
+                and result.get('assistant_turns', 1) == 1 and not result.get('tool_parts')
+                and all(isinstance(p, dict) and p.get('type') == 'step-start' for p in parts)
+                and empty_usage)
             self.db.execute("UPDATE jobs SET status=?,response_path=?,next_after=?,error=? WHERE id=?",
                             ('deferred' if known_rejection and not manual_retry else 'ambiguous', None if known_rejection and not manual_retry else str(path),
                              (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), message, job['id']))

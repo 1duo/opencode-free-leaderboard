@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -120,7 +121,7 @@ def quota_retry_at(journal: dict, transcript: list[dict], model: dict, item: dic
 
 def native_transcript(state: Path, session: str) -> list[dict]:
     path = state / 'opencode-data-v3/opencode/opencode.db'
-    with sqlite3.connect(f'file:{path}?mode=ro', uri=True) as connection:
+    with closing(sqlite3.connect(f'file:{path}?mode=ro', uri=True)) as connection:
         return [{'info': json.loads(data), 'parts': [json.loads(p) for (p,) in connection.execute(
             'SELECT data FROM part WHERE message_id=?', (ident,))]}
             for ident, data in connection.execute('SELECT id,data FROM message WHERE session_id=?', (session,))]

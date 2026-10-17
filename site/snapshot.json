@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "snapshot_id": "ea897cf749ea10ad075c",
-  "generated_at": "2026-10-17T16:58:57+00:00",
+  "snapshot_id": "194fe5008b73805a163f",
+  "generated_at": "2026-10-17T17:24:10+00:00",
   "published_at": null,
   "discovery_at": "2026-10-17T16:47:50+00:00",
   "discovery_ok": true,
@@ -2124,6 +2124,7 @@
       "intervals": {},
       "benchmark_evaluated_at": {},
       "evaluated_at": null,
+      "cycle_started_at": "2026-10-09T03:06:36+00:00",
       "latency_seconds": 22.394189750077203,
       "accounted_tokens": 401033,
       "reported_tokens": 361559,
@@ -2176,6 +2177,7 @@
         "livecodebench": "2026-10-10T16:43:34+00:00"
       },
       "evaluated_at": "2026-10-10T16:43:34+00:00",
+      "cycle_started_at": "2026-10-09T03:06:36+00:00",
       "latency_seconds": 86.03125404193997,
       "accounted_tokens": 389671,
       "reported_tokens": 376308,
@@ -2228,6 +2230,7 @@
         "livecodebench": "2026-10-09T04:54:04+00:00"
       },
       "evaluated_at": "2026-10-09T04:54:04+00:00",
+      "cycle_started_at": "2026-10-09T03:06:37+00:00",
       "latency_seconds": 10.49055820866488,
       "accounted_tokens": 345038,
       "reported_tokens": 345038,
@@ -2268,6 +2271,7 @@
       "intervals": {},
       "benchmark_evaluated_at": {},
       "evaluated_at": null,
+      "cycle_started_at": "2026-10-10T20:38:01+00:00",
       "latency_seconds": 24.035036875400692,
       "accounted_tokens": 50249,
       "reported_tokens": 50249,
@@ -2320,6 +2324,7 @@
         "livecodebench": "2026-10-17T09:12:16+00:00"
       },
       "evaluated_at": "2026-10-17T09:12:16+00:00",
+      "cycle_started_at": "2026-10-17T08:07:55+00:00",
       "latency_seconds": 48.07868475001305,
       "accounted_tokens": 616547,
       "reported_tokens": 411229,
@@ -2363,6 +2368,7 @@
         "livecodebench": "2026-10-16T16:26:39+00:00"
       },
       "evaluated_at": "2026-10-16T16:26:40+00:00",
+      "cycle_started_at": null,
       "latency_seconds": 4.646402249956736,
       "accounted_tokens": 63570,
       "reported_tokens": 63570,
@@ -2421,6 +2427,7 @@
         "livecodebench": "2026-10-16T16:31:10+00:00"
       },
       "evaluated_at": "2026-10-16T16:31:11+00:00",
+      "cycle_started_at": null,
       "latency_seconds": 26.5312294170144,
       "accounted_tokens": 83501,
       "reported_tokens": 83501,
@@ -2472,6 +2479,7 @@
         "livecodebench": "2026-10-16T17:24:19+00:00"
       },
       "evaluated_at": "2026-10-16T17:24:20+00:00",
+      "cycle_started_at": null,
       "latency_seconds": 193.25968793750508,
       "accounted_tokens": 131633,
       "reported_tokens": 86942,
@@ -2529,6 +2537,7 @@
         "livecodebench": "2026-10-16T16:53:19+00:00"
       },
       "evaluated_at": "2026-10-16T16:53:20+00:00",
+      "cycle_started_at": null,
       "latency_seconds": 39.32258256251225,
       "accounted_tokens": 119002,
       "reported_tokens": 89272,
@@ -2564,7 +2573,9 @@
         "livebench": 35.0
       },
       "evaluated_at": "2026-10-17T04:06:24+00:00",
-      "rank": 3
+      "rank": 3,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "beam-free",
@@ -2585,7 +2596,9 @@
         "livecodebench": 35.0
       },
       "evaluated_at": "2026-10-17T04:03:46+00:00",
-      "rank": 4
+      "rank": 4,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "deepseek-v4.1-flash-free",
@@ -2608,7 +2621,9 @@
         "livebench": 30.0
       },
       "evaluated_at": "2026-10-17T05:30:24+00:00",
-      "rank": 4
+      "rank": 4,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "deepseek-v4.1-flash-free",
@@ -2629,7 +2644,9 @@
         "livecodebench": 67.5
       },
       "evaluated_at": "2026-10-17T04:27:43+00:00",
-      "rank": 1
+      "rank": 1,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "longcat-2.5-preview-free",
@@ -2652,7 +2669,9 @@
         "livebench": 55.00000000000001
       },
       "evaluated_at": "2026-10-17T06:50:35+00:00",
-      "rank": 2
+      "rank": 2,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "longcat-2.5-preview-free",
@@ -2673,7 +2692,9 @@
         "livecodebench": 60.0
       },
       "evaluated_at": "2026-10-17T06:32:06+00:00",
-      "rank": 2
+      "rank": 2,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "nemotron-3.5-super-vl-free",
@@ -2694,7 +2715,9 @@
         "livebench": 20.0
       },
       "evaluated_at": "2026-10-17T08:34:29+00:00",
-      "rank": null
+      "rank": null,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "nemotron-3.5-super-vl-free",
@@ -2715,7 +2738,9 @@
         "livecodebench": 30.0
       },
       "evaluated_at": "2026-10-17T09:12:16+00:00",
-      "rank": null
+      "rank": null,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "space-bunny-free",
@@ -2738,7 +2763,9 @@
         "livebench": 80.0
       },
       "evaluated_at": "2026-10-17T07:08:17+00:00",
-      "rank": 1
+      "rank": 1,
+      "stale": false,
+      "refresh_pending": false
     },
     {
       "model_id": "space-bunny-free",
@@ -2759,7 +2786,9 @@
         "livecodebench": 50.0
       },
       "evaluated_at": "2026-10-17T07:02:30+00:00",
-      "rank": 3
+      "rank": 3,
+      "stale": false,
+      "refresh_pending": false
     }
   ],
   "seasons": [
@@ -4271,9 +4300,13 @@
       "grader_image": null,
       "protocol": {
         "output_cap": 4096,
-        "temperature": 0,
+        "temperature": 0.0,
         "tools": false,
-        "completions": 1
+        "completions": 1,
+        "panel": null,
+        "source_season": null,
+        "strata": {},
+        "purpose": null
       },
       "grading_files": {
         "Dockerfile": "fb131352570e02651f2a1b9acdc1ce090e89b898b584b4e4786491a65a977ee9",
@@ -5789,9 +5822,13 @@
       "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
       "protocol": {
         "output_cap": 4096,
-        "temperature": 0,
+        "temperature": 0.0,
         "tools": false,
-        "completions": 1
+        "completions": 1,
+        "panel": null,
+        "source_season": null,
+        "strata": {},
+        "purpose": null
       },
       "grading_files": {
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -7799,9 +7836,13 @@
       "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
       "protocol": {
         "output_cap": 4096,
-        "temperature": 0,
+        "temperature": 0.0,
         "tools": false,
-        "completions": 1
+        "completions": 1,
+        "panel": null,
+        "source_season": null,
+        "strata": {},
+        "purpose": null
       },
       "grading_files": {
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -7910,7 +7951,7 @@
       "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
       "protocol": {
         "output_cap": 4096,
-        "temperature": 0,
+        "temperature": 0.0,
         "tools": false,
         "completions": 1,
         "panel": "lightweight-v1",

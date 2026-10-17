@@ -25,20 +25,25 @@ def parse_evidence(html: str) -> dict[str, dict]:
         header = [c.lower() for c in rows[0]]
         if "model id" in header and "endpoint" in header:
             for row in rows[1:]:
-                if len(row) < 3:
+                if len(row) <= max(header.index('model id'), header.index('endpoint')):
                     continue
                 ident = row[header.index("model id")].strip("` ")
                 endpoint = row[header.index("endpoint")].strip("` ")
-                endpoints[ident] = {"name": row[0], "endpoint": endpoint}
+                entry = {"name": row[0], "endpoint": endpoint}
+                if ident in endpoints and endpoints[ident] != entry:
+                    entry['ambiguous'] = True
+                endpoints[ident] = entry
         if "input" in header and "output" in header and "model" in header:
             for row in rows[1:]:
-                if len(row) >= 3:
-                    prices.setdefault(row[0], []).append(row[1:])
+                if len(row) == len(header):
+                    prices.setdefault(row[header.index('model')], []).append(
+                        [row[header.index('input')], row[header.index('output')]]
+                        + [v for k, v in zip(header, row) if k not in {'model', 'input', 'output'}])
     result = {}
     for ident, entry in endpoints.items():
         evidence = prices.get(entry["name"], [])
         # '-' denotes an inapplicable cache operation. Input and output must be explicit.
-        free = bool(evidence) and all(len(p) >= 2 and p[0].lower() == "free"
+        free = not entry.get('ambiguous') and bool(evidence) and all(len(p) >= 2 and p[0].lower() == "free"
                                      and p[1].lower() == "free"
                                      and all(x.lower() in {"free", "-", "—"} for x in p)
                                      for p in evidence)
@@ -65,6 +70,9 @@ def excluded(ident: str) -> bool:
 
 def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, catalog_only: bool = False) -> dict:
     from .opencode import client_version, inspect_models, reasoning_policy
+    if client is None:
+        with httpx.Client(timeout=30, follow_redirects=False) as owned:
+            return discover(db, budget, owned, catalog_only=catalog_only)
     if catalog_only:
         used = budget.summary()
         planned = budget.plan([], 0, 2)
@@ -72,7 +80,6 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, cata
                    (used['attempts_used'] + planned['planned_attempts'], week()))
     else:
         client_version(db.state)
-    client = client or httpx.Client(timeout=30, follow_redirects=False)
     content = {}
     error = None
     for label, url in [("pricing", ZEN_DOCS), ("catalog", ZEN_CATALOG)]:
@@ -91,6 +98,8 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, cata
     evidence = parse_evidence(content.get("pricing", ""))
     try:
         catalog = json.loads(content.get("catalog", "{}"))
+        if not isinstance(catalog, dict) or not isinstance(catalog.get('data'), list) or any(not isinstance(m, dict) for m in catalog['data']):
+            raise ValueError('Malformed catalog')
         ids = {m["id"] for m in catalog["data"] if isinstance(m.get("id"), str)}
         if not ids or not evidence:
             raise ValueError("Empty or unrecognized official source")
@@ -148,7 +157,7 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, cata
             status = "verification_unavailable"
         elif model not in ids:
             status = "removed"
-        elif not proof or not proof["prices"]:
+        elif not proof or not proof["prices"] or proof.get('ambiguous'):
             status = "pricing_unknown"
         elif not proof["free"]:
             status = "paid"

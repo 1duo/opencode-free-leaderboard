@@ -61,8 +61,15 @@ def reasoning_policy(model: dict | None) -> dict:
             'definition_hash': digest({k: model[k] for k in ['api', 'capabilities', 'options', 'variants']})}
 
 
+def client_binary(state: Path) -> str:
+    # Isolate benchmark runtime upgrades from the interactive client. Whichever
+    # executable is selected must still pass the exact version check.
+    pinned = state / 'bin' / f'opencode-{VERSION}'
+    return str(pinned) if pinned.is_file() else shutil.which('opencode') or str(state.home() / '.opencode/bin/opencode')
+
+
 def client_version(state) -> str:
-    binary = shutil.which('opencode') or str(state.home() / '.opencode/bin/opencode')
+    binary = client_binary(state)
     try:
         result = subprocess.run([binary, '--version'], cwd=state, capture_output=True, text=True, timeout=15, check=True)
     except (OSError, subprocess.SubprocessError):
@@ -246,7 +253,7 @@ class OpenCode:
         self.log = tempfile.NamedTemporaryFile(mode='w', prefix='opencode-server-v3-', suffix='.log',
                                               dir=self.settings.state / 'logs', delete=False)
         log_path = Path(self.log.name)
-        binary = shutil.which('opencode') or str(directory.home() / '.opencode/bin/opencode')
+        binary = client_binary(self.settings.state)
         self.process = subprocess.Popen([binary, 'serve', '--pure', '--hostname', '127.0.0.1', '--port', '0'],
                                         cwd=directory, env=env, stdout=self.log, stderr=self.log)
         until = time.monotonic() + 15

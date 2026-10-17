@@ -15,7 +15,7 @@ from .scoring import Snapshot, snapshot
 
 SITE_FILES = {"index.html", "app.js", "style.css", "snapshot.json", "leaderboard.csv", "manifest.json", ".nojekyll"}
 SOURCE_ROOTS = {"src", "tests", "grading", "web", "docs", ".github"}
-SOURCE_FILES = {"pyproject.toml", "uv.lock", ".gitignore", "README.md", "LICENSE", "AGENTS.md"}
+SOURCE_FILES = {"pyproject.toml", "uv.lock", ".gitignore", "README.md", "LICENSE", "AGENTS.md", "SECURITY.md", "CONTRIBUTING.md"}
 
 
 def public_source(path: str) -> bool:
@@ -33,6 +33,8 @@ def public_source(path: str) -> bool:
 
 
 def validate_site(folder: Path) -> Snapshot:
+    if folder.is_symlink():
+        raise ValueError('Public export must not be a symlink')
     files = {p.name for p in folder.iterdir()}
     if files != SITE_FILES or any(p.is_symlink() or not p.is_file() for p in folder.iterdir()):
         raise ValueError("Unexpected file in public export")
@@ -68,7 +70,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
         fields = ["model_id", "tier", "transport", "client_version", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench",
                   "gpqa_n", "livebench_n", "livecodebench_n", "gpqa_evaluated_at", "livebench_evaluated_at", "livecodebench_evaluated_at",
                   "accounted_tokens", "reported_tokens", "truncation_rate", "manual_retry_count", "manual_recovered_questions", "public_only_reason",
-                  "cap_limit", "cap_observed", "category", "category_score", "sample_n", "source_tier", "rank", "basis", "category_interval_note"]
+                  "cap_limit", "cap_observed", "category", "category_score", "sample_n", "source_tier", "rank", "basis", "category_interval_note", "stale", "refresh_pending"]
         fields += [f'{metric}_ci_{bound}' for metric in ['reasoning','coding','overall','gpqa','livebench','livecodebench'] for bound in ['low','high']]
         fields += ['livebench_interval_note', 'livecodebench_interval_note']
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
@@ -98,6 +100,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
                         'category': result.category, 'category_score': result.score,
                         result.category: result.score, 'source_tier': result.source_tier,
                         'sample_n': sum(result.sample_counts.values()), 'rank': result.rank,
+                        'stale': result.stale, 'refresh_pending': result.refresh_pending,
                         'basis': ' + '.join({'gpqa':'GPQA', 'livebench':'LiveBench', 'livecodebench':'LiveCodeBench'}[b]
                                             for b in result.sample_counts),
                         'evaluated_at': result.evaluated_at, 'category_interval_note': result.interval_note,
@@ -131,10 +134,34 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
 
 
 def command(args: list[str], checkout: Path) -> str:
-    result = subprocess.run(args, cwd=checkout, capture_output=True, text=True, timeout=120)
+    try:
+        result = subprocess.run(args, cwd=checkout, capture_output=True, text=True, timeout=120)
+    except (OSError, subprocess.TimeoutExpired):
+        raise RuntimeError(f'{args[0]} operation unavailable or timed out; private state is retained') from None
     if result.returncode:
-        raise RuntimeError(f"{args[0]} operation failed: {result.stderr.strip()[:300]}")
+        raise RuntimeError(f"{args[0]} operation failed; check authentication, connectivity and repository permissions")
     return result.stdout.strip()
+
+
+def ensure_pages(settings: Settings, checkout: Path) -> None:
+    route = f'repos/{settings.repository}/pages'
+    def inspect() -> dict | None:
+        try:
+            result = subprocess.run(['gh', 'api', route], cwd=checkout,
+                                    capture_output=True, text=True, timeout=30)
+            data = json.loads(result.stdout)
+            if not isinstance(data, dict):
+                raise ValueError('Unexpected Pages response')
+        except (OSError, subprocess.TimeoutExpired, ValueError):
+            raise RuntimeError('Cannot verify GitHub Pages; existing deployment is unchanged') from None
+        if result.returncode and data.get('status') == '404':
+            return None
+        if result.returncode or data.get('build_type') != 'workflow':
+            raise RuntimeError('GitHub Pages verification failed; a workflow publication source is required')
+        return data
+    if inspect() is None:
+        # A permission, rate-limit or server error is never evidence of absence.
+        command(['gh', 'api', '--method', 'POST', route, '-f', 'build_type=workflow'], checkout)
 
 
 def publish(db: DB, settings: Settings, checkout: Path, create=False) -> dict:
@@ -166,10 +193,6 @@ def publish(db: DB, settings: Settings, checkout: Path, create=False) -> dict:
     unexpected = [p for p in tracked + staged_paths if not public_source(p)]
     if unexpected:
         raise ValueError("Unexpected tracked files; review before publication")
-    command(["git", "add", "--", *sorted(allowed)], checkout)
-    staged = command(["git", "diff", "--cached", "--name-only"], checkout)
-    if staged:
-        command(["git", "commit", "-m", "Publish reproducible free-model leaderboard snapshot"], checkout)
     origin = subprocess.run(["git", "remote", "get-url", "origin"], cwd=checkout, capture_output=True, text=True)
     expected = f"https://github.com/{settings.repository}.git"
     if origin.returncode:
@@ -182,10 +205,11 @@ def publish(db: DB, settings: Settings, checkout: Path, create=False) -> dict:
         command(["git", "remote", "add", "origin", expected], checkout)
     elif origin.stdout.strip() not in {expected, f"git@github.com:{settings.repository}.git"}:
         raise ValueError("Origin does not match the configured publication repository")
-    # Configure Pages before pushing so the first workflow can deploy successfully.
-    pages = subprocess.run(["gh", "api", f"repos/{settings.repository}/pages"], capture_output=True, text=True)
-    if pages.returncode:
-        command(["gh", "api", "--method", "POST", f"repos/{settings.repository}/pages", "-f", "build_type=workflow"], checkout)
+    ensure_pages(settings, checkout)
+    command(["git", "add", "--", *sorted(allowed)], checkout)
+    staged = command(["git", "diff", "--cached", "--name-only"], checkout)
+    if staged:
+        command(["git", "commit", "-m", "Publish reproducible free-model leaderboard snapshot"], checkout)
     command(["git", "push", "-u", "origin", "main"], checkout)
     sha = command(["git", "rev-parse", "HEAD"], checkout)
     db.execute("INSERT INTO publications(snapshot_id,created_at,commit_sha,deployment_status) VALUES(?,?,?,?)",

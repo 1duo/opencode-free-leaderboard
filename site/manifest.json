@@ -1507,9 +1507,13 @@
     "grader_image": null,
     "protocol": {
       "output_cap": 4096,
-      "temperature": 0,
+      "temperature": 0.0,
       "tools": false,
-      "completions": 1
+      "completions": 1,
+      "panel": null,
+      "source_season": null,
+      "strata": {},
+      "purpose": null
     },
     "grading_files": {
       "Dockerfile": "fb131352570e02651f2a1b9acdc1ce090e89b898b584b4e4786491a65a977ee9",
@@ -3025,9 +3029,13 @@
     "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
     "protocol": {
       "output_cap": 4096,
-      "temperature": 0,
+      "temperature": 0.0,
       "tools": false,
-      "completions": 1
+      "completions": 1,
+      "panel": null,
+      "source_season": null,
+      "strata": {},
+      "purpose": null
     },
     "grading_files": {
       "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -5035,9 +5043,13 @@
     "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
     "protocol": {
       "output_cap": 4096,
-      "temperature": 0,
+      "temperature": 0.0,
       "tools": false,
-      "completions": 1
+      "completions": 1,
+      "panel": null,
+      "source_season": null,
+      "strata": {},
+      "purpose": null
     },
     "grading_files": {
       "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -5146,7 +5158,7 @@
     "grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6",
     "protocol": {
       "output_cap": 4096,
-      "temperature": 0,
+      "temperature": 0.0,
       "tools": false,
       "completions": 1,
       "panel": "lightweight-v1",

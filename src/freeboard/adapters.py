@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .budget import usage_total
 
 
 class Completion(BaseModel):
@@ -91,6 +92,8 @@ def parse(protocol: str, data: dict) -> Completion:
         usage = {'prompt_tokens': tokens['input'] + cache.get('read', 0) + cache.get('write', 0),
                  'completion_tokens': output, 'total_tokens': tokens.get('total', sum(values)),
                  'source': 'opencode-normalized'}
+        if usage_total(usage) is None:
+            raise ValueError('Inconsistent native token accounting')
         truncated = finish['reason'] == 'length'
         if data.get('tool_request_rejected'):
             text = ''

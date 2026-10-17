@@ -28,7 +28,7 @@ def parser() -> argparse.ArgumentParser:
     source_checkout = Path(__file__).resolve().parents[2]
     root.add_argument("--checkout", type=Path, default=source_checkout if (source_checkout / "web").is_dir() else Path.cwd())
     commands = root.add_subparsers(dest="command", required=True)
-    for name in ["export", "status", "daily"]:
+    for name in ["export", "status", "daily", "doctor"]:
         commands.add_parser(name)
     discovery = commands.add_parser('discover')
     discovery.add_argument('--catalog-only', action='store_true',
@@ -64,6 +64,11 @@ def parser() -> argparse.ArgumentParser:
 
 
 def daily_work(runner: Runner) -> dict:
+    def attempt(operation):
+        try:
+            return operation()
+        except RuntimeError as exc:
+            return {'blocked': str(exc)}
     try:
         result = runner.run()
     except RuntimeError as exc:
@@ -73,25 +78,25 @@ def daily_work(runner: Runner) -> dict:
     if full and any(not runner.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
             AND kind='pilot' AND completed_at IS NOT NULL""",
             (m['id'], m['epoch'], full['id'])) for m in runner.models() if gpqa_allowed(runner.db, m)):
-        pilot = runner.run(pilot=True, all_models=True)
-        result = {**runner.run(), 'pilot': pilot}
+        pilot = attempt(lambda: runner.run(pilot=True, all_models=True))
+        result = {**attempt(runner.run), 'pilot': pilot}
     if result.get('blocked') and not full and public:
         from .public_run import run_public
         runner.active_season = lambda: public
-        result['public_pilot'] = runner.run(pilot=True, all_models=True)
-        result['public_screen'] = run_public(runner, public)
+        result['public_pilot'] = attempt(lambda: runner.run(pilot=True, all_models=True))
+        result['public_screen'] = attempt(lambda: run_public(runner, public))
     elif full and public:
         from .public_run import run_public
         restricted = [m['id'] for m in runner.models() if not gpqa_allowed(runner.db, m)]
         if restricted:
             runner.active_season = lambda: public
-            result['public_pilot'] = runner.run(pilot=True, pilot_models=restricted)
+            result['public_pilot'] = attempt(lambda: runner.run(pilot=True, pilot_models=restricted))
             runnable = [m['id'] for m in runner.models() if m['id'] in restricted
                         and json.loads(m['profile']).get('cap_verified') and runner.db.one(
                             "SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind='pilot' AND completed_at IS NOT NULL",
                             (m['id'], m['epoch'], public['id']))]
             if runnable:
-                result['public_screen'] = run_public(runner, public, runnable)
+                result['public_screen'] = attempt(lambda: run_public(runner, public, runnable))
     return result
 
 
@@ -99,8 +104,9 @@ def main() -> None:
     args = parser().parse_args()
     settings = Settings(state=args.state)
     checkout = args.checkout.resolve()
-    settings.initialize(checkout)
+    db = runner = None
     try:
+        settings.initialize(checkout)
         if args.allow_contributor_today:
             if args.command not in {'discover', 'pilot', 'run'} or (args.command == 'run' and not args.public_only):
                 raise ValueError('Contributor authorization supports discovery and public-only pilots/screens')
@@ -117,8 +123,11 @@ def main() -> None:
         db = DB(settings.state)
         with db.locked():
             runner = Runner(db, settings, checkout)
-            if args.command == "discover":
-                result = discover(db, runner.budget, catalog_only=args.catalog_only)
+            if args.command == 'doctor':
+                from .diagnostics import doctor
+                result = doctor(db, settings, checkout)
+            elif args.command == "discover":
+                result = discover(db, runner.budget, runner.client, catalog_only=args.catalog_only)
             elif args.command == 'lightweight':
                 from .lightweight import run_lightweight
                 result = run_lightweight(runner, args.model, args.limit)
@@ -203,8 +212,11 @@ def main() -> None:
                         result["publication"] = publish(db, settings, checkout)
                 else:
                     result["publication"] = publish(db, settings, checkout)
-            db.backup()
+            if args.command not in {'doctor', 'status', 'export'}:
+                db.backup()
             print(json.dumps(result, indent=2, default=str))
+            if args.command == 'doctor' and not result['ready']:
+                sys.exit(1)
     except KeyboardInterrupt:
         print(json.dumps({'interrupted': True, 'next': 'Resume the same command; durable work is retained'}), file=sys.stderr)
         sys.exit(130)
@@ -213,6 +225,11 @@ def main() -> None:
         safe = str(exc) if isinstance(exc, (RuntimeError, ValueError)) else f"{type(exc).__name__}: operation failed; check prerequisites and official source availability"
         print(json.dumps({"error": safe}), file=sys.stderr)
         sys.exit(1)
+    finally:
+        if runner is not None:
+            runner.close()
+        if db is not None:
+            db.conn.close()
 
 
 if __name__ == "__main__":

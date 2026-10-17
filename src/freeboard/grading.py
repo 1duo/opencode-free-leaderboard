@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -13,6 +14,19 @@ from .config import Settings, digest
 
 class GradingUnavailable(RuntimeError):
     pass
+
+
+def docker_environment(settings: Settings) -> dict[str, str]:
+    env = dict(os.environ)
+    # A private Colima engine may coexist with an unrelated interactive context.
+    # Explicit operator settings always win; no global context is changed.
+    socket = settings.state / 'colima/freeboard/docker.sock'
+    if not env.get('DOCKER_HOST') and not env.get('DOCKER_CONTEXT') and socket.is_socket():
+        env['DOCKER_HOST'] = f'unix://{socket}'
+        config = settings.state / 'docker-client'
+        if not env.get('DOCKER_CONFIG') and config.is_dir():
+            env['DOCKER_CONFIG'] = str(config)
+    return env
 
 
 def gpqa_score(answer: str, text: str) -> float:
@@ -36,7 +50,7 @@ class DockerGrader:
             raise GradingUnavailable("Docker is not installed; code grading remains pending")
         if manifest.get("grader_image"):
             result = subprocess.run(["docker", "image", "inspect", manifest['grader_image'], "--format", "{{.Id}}"],
-                                    capture_output=True, text=True, timeout=15)
+                                    capture_output=True, text=True, timeout=15, env=docker_environment(self.settings))
             if result.returncode == 0 and result.stdout.strip() == manifest['grader_image']:
                 return manifest['grader_image']
             raise GradingUnavailable("This season's immutable grader image is missing; restore it before regrading")
@@ -48,7 +62,7 @@ class DockerGrader:
             for name, path in manifest["upstream_paths"].items():
                 shutil.copytree(Path(path), context / name)
             result = subprocess.run(["docker", "build", "--tag", self.tag, str(context)],
-                                    capture_output=True, text=True, timeout=600)
+                                    capture_output=True, text=True, timeout=600, env=docker_environment(self.settings))
             (self.settings.state / 'logs/grader-build.log').write_text(result.stdout + result.stderr)
             if result.returncode:
                 raise GradingUnavailable("Docker grading image build failed; see private logs/grader-build.log")
@@ -57,7 +71,7 @@ class DockerGrader:
     def image_id(self) -> str:
         try:
             result = subprocess.run(["docker", "image", "inspect", self.tag, "--format", "{{.Id}}"],
-                                    capture_output=True, text=True, timeout=15)
+                                    capture_output=True, text=True, timeout=15, env=docker_environment(self.settings))
         except (OSError, subprocess.TimeoutExpired):
             raise GradingUnavailable("Docker grading image unavailable") from None
         if result.returncode or not result.stdout.startswith("sha256:"):
@@ -74,9 +88,9 @@ class DockerGrader:
                    image]
         try:
             result = subprocess.run(command, input=json.dumps({"item": item, "text": text}),
-                                    capture_output=True, text=True, timeout=180)
+                                    capture_output=True, text=True, timeout=180, env=docker_environment(self.settings))
         except subprocess.TimeoutExpired:
-            subprocess.run(["docker", "rm", "--force", name], capture_output=True, timeout=15)
+            subprocess.run(["docker", "rm", "--force", name], capture_output=True, timeout=15, env=docker_environment(self.settings))
             # A whole-container timeout is infrastructure uncertainty, not a failed answer.
             raise GradingUnavailable("Container exceeded outer timeout; grading pending") from None
         except OSError:

@@ -26,3 +26,11 @@ The current first release may publish an honest setup/pending page while API cre
 Provider access can disappear between price verification and dispatch. An OpenCode-only free-tier promotion can also reject the controlled client configuration; switching transport does not guarantee access. Keep the exact provider response status, mark access/quota failures, and stop using the endpoint. No local pricing check can make a contractual guarantee about provider billing. Daily revalidation and explicit model gating minimize that gap.
 
 An interrupted attempt without a response remains ambiguous until an operator can reconcile it from provider evidence. Do not reissue it to improve a score. Container infrastructure timeouts remain ungraded. Pending screens cannot replace older complete scores; older scores remain available with their original dates.
+
+## Production operations
+
+`doctor` checks local prerequisites without inference. A private, version-checked benchmark executable can coexist with a newer interactive OpenCode. Backups use validated atomic replacement, and schedule installation prepares source before stopping the prior job and rolls back failed bootstrap. A low-disk guard stops new requests before reservation.
+
+An error after partial response content or usage remains ambiguous. Native usage totals must reconcile before grading. Completed matching screens survive unfinished refreshes with original dates; both full and public screens can renew after 28 days, with stale/pending flags and preserved prior cycles. Public protocol metadata rejects unknown fields.
+
+Reusable offline release checks gate Pages deployment, including production/privacy regressions, selected evaluation safety checks and strict renderer/artifact consistency. The browser rejects mismatched snapshots, bounds loading time and hides recommendations when eligibility evidence is stale. See [operations](operations.md) for installation, rollback and recovery.

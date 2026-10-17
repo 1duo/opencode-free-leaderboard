@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timedelta, timezone
 
 from .budget import estimate
 from .config import COUNTS, OMITTED_MODELS, digest, week
@@ -59,10 +60,24 @@ def run_public(runner, season: dict, selected: list[str] | None = None, limit: i
         raise ValueError('Public screen requires current free eligibility, a verified cap, and a completed matching pilot')
     for ident in selected:
         m = runnable[ident]
-        cycle_id = 'public_screen:' + digest([ident, m['epoch'], season['id']])[:24]
-        cycle = runner.cycle(m, season, 'public_screen', cycle_id)
+        cycle = public_cycle(runner, m, season)
         runner.add_panel(cycle, 'screen')
         plan_public_screen(runner, cycle)
     result = runner.drain(season, 'public_screen', limit, set(selected))
     result['budget'] = plan_public_screen(runner, {'season': season['id']})
     return {'unranked': True, 'panel': 'public-screen', 'models': selected, **result}
+
+
+def public_cycle(runner, model: dict, season: dict) -> dict:
+    latest = runner.db.one("""SELECT * FROM cycles WHERE model_id=? AND epoch=? AND season=?
+        AND kind='public_screen' ORDER BY started_at DESC LIMIT 1""", (model['id'], model['epoch'], season['id']))
+    if latest and datetime.now(timezone.utc) - datetime.fromisoformat(latest['started_at']) < timedelta(days=28):
+        return latest
+    identity = [model['id'], model['epoch'], season['id']]
+    if latest:
+        identity.append(week())
+    cycle = runner.cycle(model, season, 'public_screen', 'public_screen:' + digest(identity)[:24])
+    if latest:
+        due = (datetime.fromisoformat(latest['started_at']) + timedelta(days=28)).isoformat()
+        runner.db.execute('UPDATE cycles SET due_at=? WHERE id=?', (due, cycle['id']))
+    return runner.db.one('SELECT * FROM cycles WHERE id=?', (cycle['id'],))

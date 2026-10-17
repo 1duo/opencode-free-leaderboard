@@ -1,142 +1,92 @@
 # OpenCode Free Model Leaderboard
 
-A local, persistent benchmark runner using the installed OpenCode client with verified free Zen models, with a static GitHub Pages leaderboard. Raw datasets, answers, responses, state and credentials stay outside this repository.
+Compare free OpenCode models for reasoning and Python coding on fixed benchmark subsets.
 
-## Install
+**[Live leaderboard](https://1duo.github.io/opencode-free-leaderboard/)** · [JSON](https://1duo.github.io/opencode-free-leaderboard/snapshot.json) · [CSV](https://1duo.github.io/opencode-free-leaderboard/leaderboard.csv) · [Operations](docs/operations.md)
+
+The local runner keeps datasets, answers, responses, credentials and SQLite state private. GitHub Actions validates and publishes a sanitized static snapshot; it never runs model requests.
+
+## Setup
+
+Use macOS, Python 3.11 managed by [uv](https://docs.astral.sh/uv/), authenticated `gh`, and a running Docker Desktop or Colima engine. Allow roughly 15 GB for initial datasets, the grader and seven backups. Accept the [GPQA access terms](https://huggingface.co/datasets/Idavidrein/gpqa) before preparing full panels.
 
 ```sh
 uv sync --frozen --no-editable
-uv run --no-editable leaderboard status
+uv run --frozen --no-editable leaderboard doctor
+uv run --frozen --no-editable leaderboard auth hf
+# Optional: reuse an existing native OpenCode API credential, or store one:
+uv run --frozen --no-editable leaderboard auth zen
 ```
 
-Python 3.11 is managed by uv. Start [Docker Desktop](https://docs.docker.com/desktop/setup/install/mac-install/) or a working Colima Docker engine before grading. Budget roughly 15 GB of free local disk space for datasets, the grading image and rotating backups. Accept access to [GPQA](https://huggingface.co/datasets/Idavidrein/gpqa) using your Hugging Face account; its terms prohibit publishing examples. Supply credentials in your own terminal, never in a commit or chat:
+The validated generation client is **OpenCode 1.19.3, protocol revision 6**. A different version is blocked before inference. OpenCode v2 has a different API and has not passed the benchmark compatibility protocol. Updating your interactive client does not authorize a changed benchmark configuration. Existing evaluations retain their original client versions and epochs.
 
-Use `uv run --no-editable` for commands on macOS if filesystem hidden flags cause editable-install `.pth` files to be skipped by Python. The installed launch agent directly uses the project's virtual environment with an explicit source path, avoiding dependency installation during scheduled runs.
+To keep an independent benchmark client, install the official executable at `state/bin/opencode-1.19.3`. The runner prefers that file and verifies its version before use. See [the pinned client setup](docs/operations.md#pinned-client).
+
+Credentials go into macOS Keychain. `HF_TOKEN`, `OPENCODE_API_KEY`, an existing OpenCode API credential and the standard Hugging Face token file are also supported. The native public free-model credential is used if no Zen key is configured; official zero-price evidence is still required. Never put secrets into a command argument, issue or commit.
+
+## Run locally
 
 ```sh
-uv run --no-editable leaderboard auth zen
-uv run --no-editable leaderboard auth hf
+uv run --frozen --no-editable leaderboard discover
+uv run --frozen --no-editable leaderboard prepare-panels
+uv run --frozen --no-editable leaderboard pilot
+uv run --frozen --no-editable leaderboard run
+uv run --frozen --no-editable leaderboard status
+uv run --frozen --no-editable leaderboard export
 ```
 
-Credentials are stored and read in macOS Keychain through Security.framework using the dedicated `freeboard` account. Environment variables `OPENCODE_API_KEY` and `HF_TOKEN`, an existing OpenCode API credential, and the standard local Hugging Face token file are supported. Without a Zen key, the runner uses [OpenCode's public free-model credential](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/provider/provider.ts). It still requires fresh official zero-price evidence and never substitutes a paid endpoint.
+`pilot` starts with three eligible models in lexicographic order. `pilot --all-models` checks all eligible models. A model needs its own successful held-out pilot and verified token cap before its screen. `run --limit 10` bounds an invocation; the same command resumes durable work. `confirm MODEL_ID` queues a manual 240-question confirmation, reusing that cycle's 80 screen answers and adding 160 questions.
 
-For a reliable scheduled runtime outside the public checkout:
+Use `prepare-panels --public-only`, then `pilot --season SEASON_ID --all-models` and `run --public-only --season SEASON_ID` for public-only evaluation. These 60-question screens contain no GPQA and remain unranked against full screens. `lightweight` checks new models on a nested 12-question public subset; larger completed panels replace those values without pooling duplicate questions.
 
-```sh
-UV_PROJECT_ENVIRONMENT="$HOME/Library/Application Support/OpenCodeFreeLeaderboard/runtime" uv sync --frozen --no-editable --link-mode copy
-```
-
-The launch agent prefers that private runtime when installed. It uses a managed public-source clone at `state/scheduler-checkout`, outside macOS's protected Documents directory. Installing the schedule clones or fast-forwards the already published source and sets an explicit source path. Reinstall the schedule after publishing code updates; scheduled snapshots are committed from the managed clone. The computer and Docker engine must be running.
-
-## First evaluation
-
-```sh
-uv run --no-editable leaderboard discover
-uv run --no-editable leaderboard prepare-panels
-uv run --no-editable leaderboard pilot
-uv run --no-editable leaderboard run
-uv run --no-editable leaderboard export
-uv run --no-editable leaderboard publish --create-repository
-uv run --no-editable leaderboard schedule install
-```
-
-Discovery must succeed against both the official catalog and pricing page. Pricing parsing is fail-closed: missing or contradictory evidence blocks generation. The full pilot selects the first three GPQA-permitted endpoints lexicographically, with six health probes and six held-out benchmark questions each. Pilot answers never enter rankings.
-
-Use `leaderboard discover --catalog-only` to refresh official catalog and pricing evidence after a local client update without changing frozen benchmark settings. This mode does not inspect native capabilities or authorize a changed client; new or changed routes stay unverified. Generation still requires the pinned, validated client and native definitions. Retired models are absent from the current view; completed historical results remain in the exports. Nemotron Lightning is omitted from evaluations after repeated native free-tier access rejections. Specialized endpoints such as Jev stay outside the reasoning/coding comparison.
-
-GPQA dispatch also requires explicit, current no-training statements for the exact model in the official provider documentation. Missing, ambiguous, or contradictory privacy evidence blocks private questions before an attempt is reserved. This evidence is stored separately from generation settings, so a policy observation cannot reset an evaluation epoch or replace accepted answers. Models without this evidence use the separate public pilot and 60-question screen; the daily scheduler handles these even when a full season is active. Existing restricted GPQA records remain private and are withheld from scores.
-
-Generation requires the validated OpenCode version 1.19.3 (earlier evaluations retain 1.18.31). Each question uses a fresh session through a dedicated loopback server with a fixed benchmark agent. Native file/shell tool schemas remain present for free-tier compatibility; tool use and external paths require permission, every request is rejected, and rejected tool attempts score zero. No permission is granted and no repair turn is allowed. Other tools, plugins, sharing, parallel tasks, title/summary agents, and compaction are disabled. No step limit is set, avoiding the client's maximum-step summary instruction on the first response. The original benchmark system instruction is sent in the system field and its question in user parts; they are never flattened. OpenCode adds its own environment context, so these results measure this client configuration.
-
-The cap probe deliberately requests a long JSON array. Cap verification requires bounded usage for the five other synthetic checks and a synthetic cap check truncated at the 256-token limit. If the initial probe ends early or has an unknown outcome, one separate fixed text-streaming calibration can establish the limit; the original outcome remains recorded and no accepted probe or benchmark question is repeated. Cached input and hidden reasoning subfields are never added twice. This checks observed gateway behavior, not an assurance about every future response. A cap violation removes verification and prevents further headline requests. A client, configuration, or endpoint change creates a new evaluation epoch and requires a new pilot. There is no model substitution or paid provider fallback. Muse Spark Contributor endpoints are excluded by default.
-
-An explicit `--allow-contributor-today` invocation can authorize only `muse-spark-1.3-contributor-free` for the current local date. Discovery records the date and public-only restriction. Use this root option with `pilot --season PUBLIC_PILOT_ID --model muse-spark-1.3-contributor-free`, then `run --public-only --season PUBLIC_PILOT_ID --model muse-spark-1.3-contributor-free`. The Contributor route permits prompts and completions to train future Meta models, so the runner blocks private GPQA questions, full panels and confirmations. Its separate 60-question results and exports disclose this policy and never enter the 80-question rankings. Scheduled runs do not inherit this authorization.
-
-A native free-quota interruption may resume only when its explicit rejection and saved native transcript prove that no response content was produced. The exact model, variant and question must match. The provider's retry time gates every pending request to that model across seasons, the original conservative charge is retained, and the same three-attempt limit applies. Partial content, unknown outcomes and exhausted retries are never replayed.
-
-While GPQA access is pending, `prepare-panels --public-only` freezes a separate compatibility panel. Run `pilot --season PUBLIC_PILOT_ID` to evaluate six synthetic probes and two held-out questions each from LiveBench and LiveCodeBench per selected model. This pilot cannot be promoted or used for headline rankings. `prepare-panels --season SEASON_ID` validates an already frozen panel without downloading or resampling it. Download caches can be discarded after the selected questions and manifest are stored and backed up; preserve the private SQLite state.
-
-All generation goes through the real OpenCode client; the runner does not post completions directly to Zen. Discovery still reads the official catalog and pricing page. Only an exact, currently verified zero-price Zen ID is selectable. Provider free-tier restrictions can still reject the client configuration and are shown explicitly.
-
-Earlier direct API and native configurations remain in private storage and count against their original budgets, but are excluded from current public scores, pilots, and queues. New answers use protocol revision 6 and separate epochs; no earlier answers are reused. Revision 3 removed every tool schema, which caused avoidable free-tier rejections. Revision 4 also exposed an automatic filesystem denial that could trigger a repair turn. Revision 5 corrected permission handling; revision 6 additionally selects the highest reasoning variant exposed by the installed client.
-
-Discovery reads the installed client's model definitions without generating an answer. Each request explicitly selects the highest advertised reasoning effort (`max`, then `xhigh`, then `high`, as available). The client validates the current definition before dispatch and preserves the selected variant in its session record and the private response journal. The page, JSON and CSV display the setting for each evaluation. Models with no exposed control are labeled **Provider-managed · no selectable level**; their maximum reasoning cannot be verified. Requested effort remains subject to the combined token cap and is not independent evidence of provider internals. Changed controls create a new epoch and require fresh answers.
-
-Once a model's public pilot completes, finish the frozen 20 LiveBench and 40 LiveCodeBench questions independently of GPQA setup:
-
-```sh
-uv run --no-editable leaderboard run --public-only --season PUBLIC_PILOT_ID --model MODEL_ID
-```
-
-Use `pilot --all-models --season PUBLIC_PILOT_ID` to check the verified free evaluation list. Pilot capacity scales to the selected unfinished work plus already-accounted usage. Then `run --public-only --season PUBLIC_PILOT_ID` finishes screens for all models with successful matching pilots and verified caps. Configured omissions stay outside evaluations and public reports across rediscovery. Private records and budget charges are retained.
-
-These 60-question public screens have separate persistent cycles, component scores and stratified intervals. In the unified view their LiveBench score supplies Reasoning and LiveCodeBench supplies Coding, with coverage and sample counts visible; they remain outside full-screen ranks and have no overall score or automatic confirmation extension. Screens require a verified cap and a matching completed OpenCode pilot. Saved answers resume by grading, and pilot answers are never reused. Adding GPQA creates a new full season with fresh answers.
-
-## Routine operation
-
-The `launchd` agent runs at 09:15 local time and at login. Keep the private runtime and managed scheduled checkout at their installed paths and keep Docker running. Daily execution revalidates eligibility, completes missing pilots for the active full season, and resumes screens only after each model's matching pilot and health evidence are complete; health jobs are unique to each model/epoch/season/week. Models have four stable refresh cohorts. A 28-day deadline depends on provider availability and the computer running.
-
-While GPQA setup is incomplete, daily execution resumes the latest validated public pilot and screen. It publishes new progress without promoting these subsets into full rankings. Future quota retries wait for both the provider's reset window and the next local invocation.
-
-`run --limit 10` processes at most ten jobs. `confirm MODEL_ID` queues 160 extra questions on the model's completed, current screen cycle. The next run processes headline obligations before confirmation extensions; confirmations do not automatically expand the weekly budget.
-
-Private state defaults to `~/Library/Application Support/OpenCodeFreeLeaderboard/`, with SQLite WAL, response files, isolated OpenCode session/config/cache directories, pinned datasets and upstream source archives, logs, and seven daily backups. All commands share a nonblocking process lock. Use `--state /absolute/private/path` before the command to override storage; placing it inside the checkout is rejected.
-
-Responses are written atomically before grading. If the runner crashes with a saved response, recovery grades it without regeneration. Requests with no durable response are marked ambiguous; no automatic replay occurs. Generation has a ten-minute overall deadline; the event listener has no separate idle read timeout. Listener failure journals record the exception type for private diagnosis. Authentication errors, quotas, and infrastructure errors do not count as failed benchmark answers. Client retries require an explicit retryable HTTP or provider rejection before any response content, with at most two retries. Header, socket and stream failures with unknown outcomes stop without retrying. No repair completions are allowed. Failed/ambiguous jobs remain visible and prevent a complete-panel rank; do not erase them to obtain a better sample. A new scheduled cycle may start after 28 days even if the previous screen is incomplete; its original records remain.
-
-Missing output usage or inconsistent reasoning accounting also blocks headline eligibility, retaining the response without replay. Recovery applies the same cap checks as normal execution. Historical rows retain the configuration used by their evaluation cycle.
-
-For explicitly authorized recovery of unanswered unknown requests, use `leaderboard retry-missing --season SEASON` (optionally `--model MODEL_ID`). This grants one extra request per missing question in the latest full screen, including questions whose normal retry allowance was exhausted. It never replaces a saved, graded, withheld or cap-invalid answer. Fresh free eligibility, a verified cap, a matching pilot and native interruption evidence are required. The original attempts, charges and job state remain in the private audit; retry consumption and reservation commit atomically before dispatch. Native retries are disabled for this exception. A failed or interrupted manual attempt cannot be retried again. Daily scheduling never grants this authorization. JSON/CSV retain manual retry and recovered-question counts.
-
-An unanswered stream may contain unfinished reasoning. A broken SDK continuation qualifies only when the first turn has no answer text or tools, ends with an unknown finish and zero usage, and the second turn is empty. Such unknown attempts retain their conservative token charges. Answer text, a normal completion, nonzero token usage, or second-turn content blocks this recovery path.
-
-A separately authorized further recovery is recorded in `manual_retry_extensions`, without resetting or replacing the original manual-retry audit. It permits at most one additional attempt for that unanswered job and applies the same native-evidence, eligibility and cap guards. It is never granted by the CLI's normal recovery command or daily scheduling. Counts distinguish recovery attempts from distinct recovered questions.
-
-The page leads with the highest observed reasoning and coding scores on matching full screens, then shows current category scores, highest reasoning settings, uncertainty, coverage and evaluation dates. Other catalog models appear in a compact availability list. Execution budgets, compatibility pilots, retries, historical evaluations, client versions and numeric cap-failure evidence remain in JSON/CSV and source records rather than the reader-facing page.
+`discover --catalog-only` refreshes pricing and catalog evidence without changing frozen client settings or authorizing inference. Provider access restrictions remain a separate prerequisite. A free catalog listing does not prove that an endpoint accepts this benchmark setup.
 
 ## Protocol and statistics
 
-| Benchmark | Screen | Confirmation |
+| Component | Screen | Manual confirmation |
 |---|---:|---:|
 | GPQA Diamond | 20 | 60 |
 | LiveBench reasoning | 20 | 60 |
-| LiveCodeBench Python generation | 40 | 120 |
+| LiveCodeBench Python | 40 | 120 |
+| Total | 80 | 240 |
 
-Panels are nested and deterministic (seed 20261008). GPQA is stratified by subject; answer ordering is frozen. LiveBench uses the verified 2024-11-25 spatial and zebra-puzzle panel with equal allocation. LiveCodeBench uses code_generation_lite release_v6 with proportional difficulty strata, its pinned generic OpenAI-style prompt and fenced-code extraction, and its official harness in Docker. The grader uses six-second test timeouts, one CPU, 1 GiB memory and a 180-second outer infrastructure timeout. Its resolved image ID is recorded in each validated season.
+Panels are deterministic and nested, with seed `20261008`. LiveBench uses spatial and zebra questions active on **2024-11-25**; LiveCodeBench uses `code_generation_lite`, `release_v6`. Data and graders are pinned by revision. Public manifests contain IDs, hashes and strata, never prompts or answer keys.
 
-One accepted answer, no granted tools, no self-repair, temperature zero where supported, 4,096 maximum generated tokens including reasoning where supported. Explicit manual recoveries of unanswered requests are labeled; they do not select among scored answers. Invalid formats, rejected tool requests, refusals, wrong answers and truncations are graded objectively. LiveBench zebra grading preserves upstream fractional credit.
+- **Reasoning:** equal average of GPQA and LiveBench. Public-only results use LiveBench and disclose that coverage.
+- **Coding:** LiveCodeBench pass@1.
+- **Ranking:** complete, matching full screens only. Other coverage is unranked. An unfinished refresh preserves the prior completed score with its original date and refresh status.
+- **Uncertainty:** 10,000 deterministic stratified bootstrap draws; paired comparisons use identical panel draws. A difference interval containing zero is unresolved. Intervals measure question sampling, not repeated-generation variability.
 
-The page has two categories: Reasoning and Coding. Reasoning equally averages GPQA and LiveBench when both are present; a LiveBench-only panel uses its LiveBench score with explicit coverage. Coding is LiveCodeBench pass@1. Each model/category uses its largest complete panel from the current evaluation epoch. Equal-size candidates prefer a full screen, then a public screen, then a quick check, and then the latest category evaluation date. Larger panels replace nested checks in the view, keeping repeated questions from being counted twice. Pilots, incomplete panels, unverified caps and old epochs cannot supply a current category score. Numeric ranks and paired comparisons retain the common full-screen panel requirement.
+Each question gets one accepted completion, no permitted tools or repair turns, temperature zero where supported, and a combined 4,096-token generation cap. The highest native reasoning variant is selected explicitly; models without a selectable control are labeled provider-managed. Native tool schemas remain present for compatibility, but requests are rejected and score zero. Client environment context is part of the recorded configuration.
 
-`snapshot.json` exposes the selected values in `capabilities`; CSV rows with `tier=capability` contain `category`, `category_score`, `sample_n`, `source_tier`, `basis` and rank. Both exports retain underlying panel records and component scores for auditing. Existing 10,000 deterministic stratified bootstrap intervals are reused for the selected panel, including the joint GPQA/LiveBench reasoning interval. Collapsed six-question intervals stay unresolved. Full-screen overall scores and manual confirmations remain in the underlying exports. Matching full panels support paired comparisons; a difference interval containing zero is unresolved. Intervals reflect question sampling, not repeated generations.
+GPQA dispatch requires current, exact no-training evidence for the model. Routes without it use public questions only. Contributor models are excluded by default. A changed endpoint, client or effective configuration creates a new epoch with a new pilot; silent changes behind an unchanged alias may be undetectable.
 
-These small, older public subsets may have appeared in model training. The intervals do not measure contamination, hidden alias changes, provider reporting errors, or repeated-generation variability. Exact point-score ties share a displayed position; unresolved comparisons do not establish a winner. No code review can establish absolute fairness or trustworthiness.
+These are small, older public benchmark subsets, potentially present in model training. They measure benchmark capability and do not establish everyday agent suitability. Scores, coverage, dates and uncertainty should be read together.
 
-Weekly minimums are 300 recorded client attempts and one million accounted tokens. The initial request is reserved before dispatch; retry events are reserved during client backoff. At most two retries are allowed, and long backoffs abort the session. Counts describe reserved client attempts and observed retries, not a provider HTTP audit. Tokens are client-normalized; cache and reasoning are added once. Unknown outcomes retain their conservative reservation and block further requests to that model in the session. Capacity scales to outstanding headline questions, six probes per eligible model and 25% retry headroom. Accounted tokens conservatively use UTF-8 prompt bytes plus 8,192 tokens of client/environment overhead and the generation cap until actual totals are reported. These estimates are not provider invoices. Explicit discovery calls and failed attempts count toward the dispatch budget. Client-reported token overruns are recorded even if they exceed a reserved estimate; subsequent requests stop at the budget boundary.
-
-## Publication and seasons
-
-The default repository is `1duo/opencode-free-leaderboard`. `publish` validates an explicit public export and commits only allowed source/publication paths; it never stages private state. GitHub Actions deploys the complete Pages artifact and stamps its publication time. Pushing a commit is not confirmation of deployment; check the Pages workflow. A failed workflow preserves the last deployed site.
-
-Public JSON/CSV include aggregate results, dates, token accounting and availability. Public manifests contain question IDs, hashes and strata, not question text or answers. Static rendering receives only a strict public snapshot schema. If setup or discovery is unavailable, the page shows pending status and prerequisites without invented scores.
-
-For a candidate season, update explicit revision pins, run `prepare-panels`, then `pilot --season SEASON` and `run --season SEASON`. Promote with `prepare-panels --promote` only after every runnable endpoint has a complete candidate screen. Old seasons remain archived. Silent changes behind an unchanged alias may be undetectable; endpoint/configuration epochs do not identify the underlying model.
-
-Representative repository/agent tasks are outside this release. Benchmark capability does not establish practical agent suitability.
-
-## Targeted verification
+## Publish and operate
 
 ```sh
-uv run --no-editable pytest -q tests/test_core.py
-uv run --no-editable ruff check src tests grading/worker.py
+uv run --frozen --no-editable leaderboard publish --create-repository
+UV_PROJECT_ENVIRONMENT="$HOME/Library/Application Support/OpenCodeFreeLeaderboard/runtime" uv sync --frozen --no-editable --link-mode copy
+uv run --frozen --no-editable leaderboard schedule install
 ```
 
-See [architecture and acceptance notes](docs/architecture.md) and the [2026-10-08 code review and pilot execution record](docs/review-2026-10-08.md).
+The default public repository is `1duo/opencode-free-leaderboard`. Publication stages only allowed source and public files. Offline production/privacy checks and artifact validation must pass before Pages deployment; a failed check or deployment preserves the last live site. Evaluation dates and deployment time are separate.
 
-### Lightweight checks for new models
+The launch agent runs at **09:15 local time daily and at login**, using a managed source checkout outside Documents. Do not reinstall it just to resume work: installation starts it immediately. Full screens target a 28-day refresh in four cohorts. Deadlines depend on provider availability, Docker and the computer running; missed deadlines are retained explicitly.
 
-`leaderboard lightweight` discovers and checks free IDs that have not been evaluated before, and resumes unfinished lightweight runs. `--model ID` selects an explicit verified free ID; `--limit N` bounds work per invocation. It never refreshes older models merely because the client or endpoint changed.
+The weekly plan scales above minimums of 300 attempts and one million accounted tokens. Requests reserve conservative usage before dispatch. Unknown usage retains that reservation. Explicit retries are bounded; unknown or partially answered requests are never automatically replayed. Confirmations use spare capacity.
 
-The frozen public panel contains 12 questions: three spatial and three zebra questions from LiveBench 2024-11-25, and two Python problems at each of easy, medium and hard from LiveCodeBench release_v6. It is nested in the validated public screen, selected deterministically with seed 20261008, and uses the same pinned prompts and graders. Six separate synthetic health probes establish compatibility and the 256-token combined cap before benchmark requests; benchmark completions have a 4,096-token combined cap. Highest native reasoning controls are recorded explicitly. All 12 answers must be graded before component scores appear. These small-sample checks remain unranked, separate from 80-question screens; JSON/CSV include their tier, client version and 95% stratified bootstrap intervals. Collapsed bootstrap intervals are withheld as unresolved, and tool-request zeros are counted explicitly. No GPQA material enters this tier.
+Private state is under `~/Library/Application Support/OpenCodeFreeLeaderboard/`. Every command uses a process lock. Daily SQLite backups are validated and atomically replaced; seven successful daily copies rotate only after a new copy succeeds. Keep an independent encrypted backup for disk failure recovery.
 
-OpenCode's official pricing page and catalog now use the Console URLs. The pinned V1 client uses the exact native inference route; discovery requires matching IDs, zero prices, and supported protocol evidence. Refresh its isolated native model metadata after client updates before evaluating newly added IDs. Native discovery does not create synthetic fallback definitions for unknown models.
+See [operations and recovery](docs/operations.md), [architecture](docs/architecture.md), [security](SECURITY.md), and the [evaluation audit](docs/review-2026-10-08.md).
+
+## Development
+
+```sh
+uv run --frozen --no-editable ruff check src tests grading/worker.py
+uv run --frozen --no-editable pytest -q tests/test_production.py tests/test_privacy.py
+node --check web/app.js
+```
+
+These checks do not call models or need credentials. CI also runs selected evaluation safety regressions and checks the committed site against its renderer. Follow [CONTRIBUTING.md](CONTRIBUTING.md); do not change frozen prompts, grading limits or accepted answers to improve results.
