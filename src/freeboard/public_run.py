@@ -33,14 +33,17 @@ def plan_public_screen(runner, cycle: dict) -> dict:
                  if i['model_id'] not in OMITTED_MODELS]
     used = runner.budget.summary()
     planned = runner.budget.plan(estimates, 0)
-    runner.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?) WHERE week=?',
-                      (used['attempts_used'] + planned['planned_attempts'], used['accounted_tokens'] + planned['planned_tokens'], week()))
+    # One question may need all three bounded reservations before usage is reconciled.
+    tokens = max(planned['planned_tokens'], 3 * max(estimates, default=0))
+    runner.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?),planned_tokens=? WHERE week=?',
+                      (used['attempts_used'] + planned['planned_attempts'], used['accounted_tokens'] + tokens, tokens, week()))
     return runner.budget.summary()
 
 
 def run_public(runner, season: dict, selected: list[str] | None = None, limit: int | None = None) -> dict:
     validate_public_screen(runner, season)
     runner.db.recover()
+    plan_public_screen(runner, {'season': season['id']})
     evidence = discover(runner.db, runner.budget, runner.client)
     if not evidence['ok']:
         return {'blocked': evidence['error']}
@@ -61,4 +64,5 @@ def run_public(runner, season: dict, selected: list[str] | None = None, limit: i
         runner.add_panel(cycle, 'screen')
         plan_public_screen(runner, cycle)
     result = runner.drain(season, 'public_screen', limit, set(selected))
+    result['budget'] = plan_public_screen(runner, {'season': season['id']})
     return {'unranked': True, 'panel': 'public-screen', 'models': selected, **result}

@@ -1154,6 +1154,63 @@ def test_public_manual_retry_labels_distinguish_pending_and_recovered(context, m
     assert recovered.unranked
 
 
+def test_full_resume_can_revalidate_after_attempt_floor_is_used(context, monkeypatch):
+    runner, _, _, _ = job_context(context)
+    for _ in range(runner.settings.minimum_attempts):
+        attempt = runner.budget.reserve('discovery')
+        runner.budget.finish(attempt, 'ok')
+    calls = []
+
+    def discovery(_db, budget, _client):
+        for _ in range(2):
+            attempt = budget.reserve('discovery')
+            budget.finish(attempt, 'ok')
+            calls.append(attempt)
+        return {'ok': True}
+
+    monkeypatch.setattr('freeboard.runner.discover', discovery)
+    monkeypatch.setattr('freeboard.runner.credential', lambda _: 'test-only')
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *_: pytest.fail('Incomplete pilot must block generation'))
+    assert 'blocked' in runner.run()
+    assert len(calls) == 2
+
+
+def test_public_capacity_replans_after_heavy_retries_and_exhausted_resume(context, monkeypatch):
+    from freeboard.public_run import run_public
+    runner, item_model, active = public_screen_fixture(context)
+    for _ in range(runner.settings.minimum_attempts):
+        attempt = runner.budget.reserve('discovery')
+        runner.budget.finish(attempt, 'ok')
+    pilot = runner.cycle(item_model, active, 'pilot', 'completed-pilot')
+    runner.db.execute('UPDATE cycles SET completed_at=? WHERE id=?', (now(), pilot['id']))
+
+    def discovery(_db, budget, _client):
+        for _ in range(2):
+            attempt = budget.reserve('discovery')
+            budget.finish(attempt, 'ok')
+        return {'ok': True}
+
+    def generation(_model, _messages, _cap, on_retry):
+        for attempt in [1, 2]:
+            on_retry({'type': 'retry', 'attempt': attempt, 'next': 0, 'response_observed': False,
+                      'message': '{"message":"Streaming response failed: [503] Upstream overloaded"}'})
+        return native_result()
+
+    monkeypatch.setattr('freeboard.public_run.discover', discovery)
+    monkeypatch.setattr(runner.opencode, 'generate', generation)
+    monkeypatch.setattr(runner.grader, 'grade', lambda *_: 1)
+    result = run_public(runner, active, [item_model['id']])
+    assert result['processed'] == 60
+    assert runner.db.one("SELECT COUNT(*) n FROM jobs WHERE status='graded'")['n'] == 60
+    assert not runner.db.rows('SELECT * FROM manual_retries')
+    budget = runner.budget.summary()
+    assert budget['attempts_used'] == runner.settings.minimum_attempts + 2 + 60 * 3
+    assert budget['attempts_limit'] >= budget['attempts_used'] + 2
+    assert budget['accounted_tokens'] > runner.settings.minimum_tokens
+    assert budget['tokens_limit'] >= budget['accounted_tokens']
+    assert result['budget'] == budget
+
+
 def test_public_screen_gate_resume_and_no_headline_rank(context, monkeypatch):
     from freeboard.public_run import run_public
     from freeboard.scoring import snapshot

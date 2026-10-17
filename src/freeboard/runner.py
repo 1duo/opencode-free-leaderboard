@@ -333,6 +333,9 @@ class Runner:
         private_ids = None if manifest.get('partial') else {m['id'] for m in self.models() if gpqa_allowed(self.db, m)}
         processed = 0
         while limit is None or processed < limit:
+            if kind == 'public_screen':
+                from .public_run import plan_public_screen
+                plan_public_screen(self, {'season': season['id']})
             jobs = self.db.rows(f"""SELECT j.*,c.model_id,c.epoch,c.kind,c.profile AS cycle_profile,i.content
                 FROM jobs j JOIN cycles c ON c.id=j.cycle_id JOIN items i ON i.id=j.item_id
                 JOIN models m ON m.id=c.model_id WHERE c.season=?
@@ -449,6 +452,7 @@ class Runner:
 
     def run(self, pilot=False, limit=None, pilot_models=None, all_models=False) -> dict:
         self.db.recover()
+        self.capacity()  # Preserve room for fresh eligibility checks after an exhausted resume.
         result = discover(self.db, self.budget, self.client)
         if not result["ok"]:
             return {"blocked": result["error"], "discovery": result}
