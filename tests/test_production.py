@@ -236,6 +236,7 @@ def test_private_manifest_extension_cannot_enter_public_export(context, tmp_path
 
 def test_failed_schedule_preparation_never_stops_existing_agent(tmp_path, monkeypatch):
     from freeboard.scheduling import install
+    monkeypatch.setattr('freeboard.scheduling.sys.platform', 'darwin')
     state, home = tmp_path / 'state', tmp_path / 'home'
     binary = state / 'runtime/bin/python'
     binary.parent.mkdir(parents=True)
@@ -251,6 +252,7 @@ def test_failed_schedule_preparation_never_stops_existing_agent(tmp_path, monkey
 
 def test_failed_schedule_bootstrap_restores_previous_agent(tmp_path, monkeypatch):
     from freeboard.scheduling import install
+    monkeypatch.setattr('freeboard.scheduling.sys.platform', 'darwin')
     state, home = tmp_path / 'state', tmp_path / 'home'
     binary = state / 'runtime/bin/python'
     binary.parent.mkdir(parents=True)

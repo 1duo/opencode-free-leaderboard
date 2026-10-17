@@ -169,11 +169,14 @@ def test_manual_doctor_does_not_require_github_or_launchd(context, monkeypatch):
 
 def test_linux_state_and_auth_setup_are_explicit(tmp_path, monkeypatch):
     from freeboard.config import default_state, save_credential
+    from freeboard.scheduling import install
     monkeypatch.setattr('freeboard.config.sys.platform', 'linux')
     monkeypatch.setenv('XDG_STATE_HOME', str(tmp_path))
     assert default_state() == tmp_path / 'opencode-free-leaderboard'
     with pytest.raises(RuntimeError, match='Linux/WSL2'):
         save_credential('hf', 'synthetic')
+    with pytest.raises(RuntimeError, match='Linux/WSL2'):
+        install(Settings(state=tmp_path), tmp_path)
     with pytest.raises(ValueError):
         Settings(repository='../bad/repo')
 
