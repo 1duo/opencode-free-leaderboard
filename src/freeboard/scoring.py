@@ -96,6 +96,8 @@ class PublicPilot(Strict):
     pending_reasons: dict[str, int]
     benchmark_scores: dict[str, float]
     evaluated_at: str | None
+    manual_retry_count: int = 0
+    manual_recovered_questions: int = 0
 
 
 class PublicScreen(Strict):
@@ -124,6 +126,8 @@ class PublicScreen(Strict):
     accounted_tokens: int
     reported_tokens: int
     truncation_rate: float | None
+    manual_retry_count: int = 0
+    manual_recovered_questions: int = 0
 
 
 class Lightweight(PublicScreen):
@@ -133,8 +137,6 @@ class Lightweight(PublicScreen):
     health_passed: int
     tool_rejections: int = 0
     interval_warnings: dict[str, str] = {}
-    manual_retry_count: int = 0
-    manual_recovered_questions: int = 0
 
 
 class PublicManifest(Strict):
@@ -315,6 +317,12 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                      manual_retry_count=manual['attempted'], manual_recovered_questions=manual['recovered']), draws
 
 
+def manual_recoveries(db: DB, cycle_id: str) -> dict:
+    row = db.one("""SELECT COUNT(*) AS attempted,COALESCE(SUM(j.status='graded'),0) AS recovered
+        FROM manual_retries r JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?""", (cycle_id,))
+    return {'manual_retry_count': row['attempted'], 'manual_recovered_questions': row['recovered']}
+
+
 def snapshot(db: DB, settings: Settings) -> Snapshot:
     rows, history, draws_by_model = [], [], {}
     active = db.one("SELECT id FROM seasons WHERE active=1")
@@ -426,7 +434,8 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             pending_reasons={s: sum(r['status'] == s for r in items) for s in sorted({r['status'] for r in items if r['status'] != 'graded'})},
             benchmark_scores={b: float(np.mean([r['score'] for r in items if r['benchmark'] == b])) * 100
                               for b in expected if expected[b] and progress[b] == expected[b]},
-            evaluated_at=cycle['completed_at'] if complete else None))
+            evaluated_at=cycle['completed_at'] if complete else None,
+            **manual_recoveries(db, cycle['id'])))
     public_screens = []
     for cycle in db.rows(f"""SELECT * FROM cycles WHERE kind='public_screen'
         AND json_extract(profile,'$.transport')='local-opencode'
@@ -470,7 +479,8 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             evaluated_at=cycle['completed_at'] if complete else None,
             latency_seconds=float(np.median([r['latency'] for r in generated_items])) if generated_items else None,
             accounted_tokens=usage['accounted'], reported_tokens=usage['reported'],
-            truncation_rate=sum(r['truncated'] for r in generated_items) / len(generated_items) if generated_items else None))
+            truncation_rate=sum(r['truncated'] for r in generated_items) / len(generated_items) if generated_items else None,
+            **manual_recoveries(db, cycle['id'])))
     lightweight = lightweight_results(db, settings)
     generated = now()
     return Snapshot(snapshot_id=digest([generated, [r.model_dump() for r in rows],

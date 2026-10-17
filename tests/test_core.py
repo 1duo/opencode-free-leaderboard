@@ -1125,6 +1125,35 @@ def public_screen_fixture(context):
     return Runner(db, settings, checkout), item_model, active
 
 
+@pytest.mark.parametrize('kind', ['pilot', 'public_screen'])
+def test_public_manual_retry_labels_distinguish_pending_and_recovered(context, monkeypatch, kind):
+    from freeboard.scoring import snapshot
+    runner, item_model, active = public_screen_fixture(context)
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    if kind == 'pilot':
+        add_item(runner.db, 'held-out', tier='pilot', benchmark='livebench')
+    cycle = runner.cycle(item_model, active, kind, 'manual-labels')
+    runner.add_panel(cycle, 'pilot' if kind == 'pilot' else 'screen')
+    job = runner.db.one('SELECT * FROM jobs ORDER BY id LIMIT 1')
+    first = runner.budget.reserve('opencode_generation', 100, job['id'], item_model['id'])
+    runner.budget.finish(first, 'ambiguous')
+    runner.db.execute("UPDATE jobs SET status='ambiguous' WHERE id=?", (job['id'],))
+    retry = runner.budget.reserve('opencode_generation', 100, job['id'], item_model['id'], manual_retry=True)
+
+    def result():
+        report = snapshot(runner.db, runner.settings)
+        return (report.pilots if kind == 'pilot' else report.public_screens)[0]
+
+    pending = result()
+    assert pending.manual_retry_count == 1 and pending.manual_recovered_questions == 0
+    runner.budget.finish(retry, 'received')
+    runner.db.execute("UPDATE jobs SET status='graded',score=0 WHERE id=?", (job['id'],))
+    recovered = result()
+    assert recovered.manual_retry_count == recovered.manual_recovered_questions == 1
+    assert recovered.model_dump()['manual_recovered_questions'] == 1
+    assert recovered.unranked
+
+
 def test_public_screen_gate_resume_and_no_headline_rank(context, monkeypatch):
     from freeboard.public_run import run_public
     from freeboard.scoring import snapshot

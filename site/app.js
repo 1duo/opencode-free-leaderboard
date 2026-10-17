@@ -23,6 +23,9 @@ function reasoningSetting(row) {
   return variant ? `${label} · highest exposed` : row.reasoning_setting;
 }
 function total(values) { return Object.values(values || {}).reduce((a, b) => a + b, 0); }
+function recoveryLabel(run) {
+  return run?.manual_retry_count ? `${run.manual_retry_count} logged manual ${run.manual_retry_count === 1 ? "retry" : "retries"} · ${run.manual_recovered_questions} recovered` : "";
+}
 function facts(entries) {
   const dl = node("dl", null, "facts");
   for (const [label, value] of entries) {
@@ -142,6 +145,7 @@ function renderPublicScreens() {
     card.append(facts([["Client", `OpenCode ${run.client_version}`], ["Reasoning", run.reasoning_setting], ["Status", statusLabel(run.status)], ["Graded", `${total(run.progress)}/${total(run.expected)} answers`], ["Output cap", run.cap_verified ? "Verified" : "Unverified"], ["Median latency", run.latency_seconds == null ? "—" : `${run.latency_seconds.toFixed(1)} s`], ["Accounted tokens", num(run.accounted_tokens)], ["Client-recorded tokens", num(run.reported_tokens)], ["Truncated", pct(run.truncation_rate == null ? null : run.truncation_rate * 100)], ["Evaluated", dateNode(run.evaluated_at)]]));
     if (pendingText(run.pending_reasons)) card.append(node("p", pendingText(run.pending_reasons), "fine"));
     card.append(node("p", `${run.model_id} · epoch ${run.epoch}`, "identifier"), node("p", `Season ${run.season}`, "identifier"));
+    if (recoveryLabel(run)) card.append(node("p", recoveryLabel(run), "fine"));
     details.append(card);
   }
 }
@@ -160,6 +164,8 @@ function renderContributorResults() {
     const state = run ? `${total(run.progress)}/60 graded` : `Pilot: ${pilot?.health_graded || 0}/6 probes · ${total(pilot?.progress)}/4 held-out questions`;
     const availability = model.availability === "eligible" ? "" : ` · ${statusLabel(model.availability)}`;
     progress.append(node("span", `${model.name} · Reasoning: ${reasoningSetting(run || pilot || model)} · ${state}${availability}`, "sub"));
+    if (recoveryLabel(pilot)) progress.append(node("span", `Pilot: ${recoveryLabel(pilot)}`, "sub"));
+    if (recoveryLabel(run)) progress.append(node("span", recoveryLabel(run), "sub"));
     if (model.public_only_reason.includes("Meta")) progress.append(node("span", model.public_only_reason, "sub"));
     if (run) {
       progress.append(node("span", `${run.latency_seconds?.toFixed(1) || "—"} s median · ${num(run.accounted_tokens)} tokens · ${pct(run.truncation_rate == null ? null : run.truncation_rate * 100)} truncated`, "sub"));
@@ -248,6 +254,7 @@ function renderSupporting() {
     card.append(node("h3", modelName(pilot.model_id)));
     card.append(facts([["Reasoning", pilot.reasoning_setting], ["Health graded", `${pilot.health_graded}/6`], ["Benchmark graded", `${total(pilot.progress)}/${total(pilot.expected)}`], ["Cap probe", pilot.cap_probe_verified ? "Verified" : "Unverified"], ["Evaluated", dateNode(pilot.evaluated_at)]]));
     for (const [b, s] of Object.entries(pilot.benchmark_scores)) card.append(node("p", `${{gpqa:"GPQA Diamond", livebench:"LiveBench", livecodebench:"LiveCodeBench"}[b]}: ${pct(s)} · ${pilot.expected[b]} questions`, "fine"));
+    if (recoveryLabel(pilot)) card.append(node("p", recoveryLabel(pilot), "fine"));
     pilotList.append(card);
   }
   byId("archive").hidden = !report.history.length;
