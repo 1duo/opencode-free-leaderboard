@@ -202,7 +202,7 @@ def merged_capabilities(rows: list[PublicRow], public_screens: list[PublicScreen
     result = []
     priority = {'screen': 3, 'public-screen': 2, 'lightweight': 1}
     for model in rows:
-        if model.tier != 'screen' or model.availability in {'removed', 'excluded', 'paid'}:
+        if model.tier != 'screen' or model.availability in {'removed', 'excluded', 'paid', 'unsupported'}:
             continue
         sources = [model] if model.scores and model.cap_verified else []
         sources += [r for r in [*public_screens, *lightweight]

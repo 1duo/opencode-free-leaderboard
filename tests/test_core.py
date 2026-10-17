@@ -600,6 +600,36 @@ def test_omitted_models_stay_out_of_runs_reports_and_rediscovery(context, monkey
     assert db.one('SELECT accounted_tokens FROM attempts WHERE id=?', (attempt,))['accounted_tokens'] == charged
 
 
+def test_catalog_only_refresh_preserves_settings_and_leaves_new_routes_unverified(context, monkeypatch):
+    import httpx
+    from freeboard.config import ZEN_BASE, ZEN_DOCS
+    from freeboard.discovery import discover
+    db, settings, _ = context
+    existing = model(db)
+    retired = model(db, 'retired-free')
+    db.execute("UPDATE models SET status='cap_violation' WHERE id=?", (existing['id'],))
+    monkeypatch.setattr('freeboard.opencode.client_version', lambda _: pytest.fail('Catalog refresh inspected client'))
+    monkeypatch.setattr('freeboard.opencode.inspect_models', lambda *_: pytest.fail('Catalog refresh inspected native settings'))
+    ids = [existing['id'], retired['id'], 'new-free']
+    html = '<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr>' + ''.join(
+        f'<tr><td>{i}</td><td>{i}</td><td>{ZEN_BASE}/chat/completions</td></tr>' for i in ids) + '</table>'
+    html += '<table><tr><th>Model</th><th>Input</th><th>Output</th></tr>' + ''.join(
+        f'<tr><td>{i}</td><td>Free</td><td>Free</td></tr>' for i in ids) + '</table>'
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, text=html)
+        if str(r.url) == ZEN_DOCS else httpx.Response(200, json={'data': [{'id': existing['id']}, {'id': 'new-free'}]})))
+    budget = Budget(db, settings)
+    assert discover(db, budget, client, catalog_only=True)['ok']
+    observed = db.one('SELECT * FROM models WHERE id=?', (existing['id'],))
+    assert (observed['epoch'], observed['profile'], observed['status']) == (existing['epoch'], existing['profile'], 'cap_violation')
+    assert db.one('SELECT status FROM models WHERE id=?', (retired['id'],))['status'] == 'removed'
+    new = db.one("SELECT * FROM models WHERE id='new-free'")
+    assert new['status'] == 'configuration_error' and not json.loads(new['profile'])['cap_verified']
+    with pytest.raises(ValueError):
+        prompt_body(new, [{'role': 'user', 'content': 'Do not dispatch'}])
+    assert budget.summary()['discovery_attempts'] == 2 and budget.summary()['opencode_attempts'] == 0
+    assert json.loads(db.one('SELECT evidence FROM discovery ORDER BY id DESC LIMIT 1')['evidence'])['catalog_only']
+
+
 def test_highest_reasoning_is_explicit_and_fail_closed(context):
     from freeboard.scoring import reasoning_label
     from freeboard.config import digest
@@ -1219,6 +1249,12 @@ def test_merged_public_and_quick_scores_use_one_complete_panel_without_imputing_
     quick, _ = merged_capabilities([base], [], [small])
     assert quick.score == 100 and quick.sample_counts == {'livebench': 6}
     assert quick.interval is None and 'Unresolved' in quick.interval_note
+
+
+def test_unsupported_catalog_endpoint_has_no_current_category_entries(context):
+    from freeboard.scoring import merged_capabilities
+    base, public, small = capability_sources(context)
+    assert merged_capabilities([base.model_copy(update={'availability': 'unsupported'})], [public], [small]) == []
 
 
 @pytest.mark.parametrize('case', ['old_epoch', 'partial', 'invalid_cap'])

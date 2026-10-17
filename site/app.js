@@ -22,7 +22,7 @@ function reasoningSetting(row) {
 }
 function total(values) { return Object.values(values || {}).reduce((a, b) => a + b, 0); }
 function currentModels() {
-  return report.rows.filter(r => r.tier === "screen" && !["removed", "excluded", "paid"].includes(r.availability));
+  return report.rows.filter(r => r.tier === "screen" && !["removed", "excluded", "paid", "unsupported"].includes(r.availability));
 }
 function intervalPlot(value, interval) {
   const plot = node("div", null, "interval-plot");
@@ -46,7 +46,8 @@ function sampleLabel(result) {
   return `${basis(result)} · ${total(result.sample_counts)} questions`;
 }
 function categoryResults(category) {
-  return (report.capabilities || []).filter(r => r.category === category && r.score != null)
+  const visible = new Set(currentModels().map(m => m.model_id));
+  return (report.capabilities || []).filter(r => r.category === category && r.score != null && visible.has(r.model_id))
     .sort((a, b) => Number(b.rank != null) - Number(a.rank != null) || b.score - a.score || a.model_id.localeCompare(b.model_id));
 }
 function categoryChart(category) {

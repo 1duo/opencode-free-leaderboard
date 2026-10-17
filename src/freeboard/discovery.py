@@ -63,9 +63,15 @@ def excluded(ident: str) -> bool:
         (ident != CONTRIBUTOR_MODEL or contributor_authorization() is None))
 
 
-def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict:
+def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, catalog_only: bool = False) -> dict:
     from .opencode import client_version, inspect_models, reasoning_policy
-    client_version(db.state)
+    if catalog_only:
+        used = budget.summary()
+        planned = budget.plan([], 0, 2)
+        db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?) WHERE week=?',
+                   (used['attempts_used'] + planned['planned_attempts'], week()))
+    else:
+        client_version(db.state)
     client = client or httpx.Client(timeout=30, follow_redirects=False)
     content = {}
     error = None
@@ -95,13 +101,15 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
     free_ids = sorted(i for i in ids if not excluded(i) and evidence.get(i, {}).get('free')
                       and profile_for(evidence[i]['endpoint'])['protocol'] == 'opencode') if ok else []
     try:
-        native_models = inspect_models(budget.settings, free_ids) if free_ids else {}
+        native_models = inspect_models(budget.settings, free_ids) if free_ids and not catalog_only else {}
     except (RuntimeError, httpx.HTTPError, ValueError, KeyError, TypeError):
         ok, native_models = False, {}
         error = 'Native OpenCode model metadata unavailable'
     stamp = now()
     raw = {"sources": [ZEN_DOCS, ZEN_CATALOG], "pricing": evidence,
            "catalog_ids": sorted(ids), "hashes": {k: digest(v) for k, v in content.items()}}
+    if catalog_only:
+        raw['catalog_only'] = True
     if authorized := contributor_authorization():
         raw['contributor_authorization'] = {'model_id': CONTRIBUTOR_MODEL, 'local_date': authorized,
                                             'public_only': True}
@@ -122,6 +130,10 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
             reasoning = reasoning_policy(None)
         default = profile_for(endpoint, reasoning)
         prior = json.loads(old['profile']) if old else {}
+        if catalog_only and old and old['endpoint'] == endpoint:
+            # Catalog evidence cannot replace a benchmark's frozen native settings.
+            # New/changed routes retain an unverified profile and cannot generate.
+            default = prior
         if model == CONTRIBUTOR_MODEL and excluded(model) and old and old['endpoint'] == endpoint:
             # Expiring consent is not evidence of changed model settings. Keep
             # the evaluated epoch visible without inspecting or using this route.
@@ -156,7 +168,7 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None) -> dict
                 AND j.error LIKE '%output cap%' ORDER BY j.id DESC LIMIT 1""", (model, old['epoch']))
             if failure:
                 status = 'cap_violation' if failure['status'] == 'failed' else 'cap_unverified'
-        epoch = digest({"id": model, "endpoint": endpoint,
+        epoch = old['epoch'] if catalog_only and same else digest({"id": model, "endpoint": endpoint,
                         "profile": {k: v for k, v in profile.items() if k != "cap_verified"}})[:16]
         db.execute("""INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET
             name=excluded.name,endpoint=excluded.endpoint,protocol=excluded.protocol,

@@ -28,8 +28,11 @@ def parser() -> argparse.ArgumentParser:
     source_checkout = Path(__file__).resolve().parents[2]
     root.add_argument("--checkout", type=Path, default=source_checkout if (source_checkout / "web").is_dir() else Path.cwd())
     commands = root.add_subparsers(dest="command", required=True)
-    for name in ["discover", "export", "status", "daily"]:
+    for name in ["export", "status", "daily"]:
         commands.add_parser(name)
+    discovery = commands.add_parser('discover')
+    discovery.add_argument('--catalog-only', action='store_true',
+                           help='Refresh official catalog/pricing without inspecting or changing frozen native settings')
     lightweight = commands.add_parser('lightweight', help='Run a fixed 12-question public subset on new free models')
     lightweight.add_argument('--model', action='append')
     lightweight.add_argument('--limit', type=int)
@@ -115,7 +118,7 @@ def main() -> None:
         with db.locked():
             runner = Runner(db, settings, checkout)
             if args.command == "discover":
-                result = discover(db, runner.budget)
+                result = discover(db, runner.budget, catalog_only=args.catalog_only)
             elif args.command == 'lightweight':
                 from .lightweight import run_lightweight
                 result = run_lightweight(runner, args.model, args.limit)

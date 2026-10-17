@@ -23,7 +23,8 @@ def contributor_authorization() -> str | None:
     return today if os.environ.get('FREEBOARD_CONTRIBUTOR_DATE') == today else None
 
 
-OMITTED_MODELS = frozenset({'exo-free', 'ling-3.0-flash-fin-free', 'nemotron-3-ultra-free', 'glm-5.3-flash-free'})
+OMITTED_MODELS = frozenset({'exo-free', 'ling-3.0-flash-fin-free', 'nemotron-3-ultra-free', 'glm-5.3-flash-free',
+                          'nemotron-3.5-lightning-free'})
 COUNTS = {"screen": {"gpqa": 20, "livebench": 20, "livecodebench": 40},
           "confirmation": {"gpqa": 60, "livebench": 60, "livecodebench": 120},
           "pilot": {"gpqa": 2, "livebench": 2, "livecodebench": 2}}
