@@ -96,6 +96,26 @@ def test_coding_result_pr_recomputes_only_coding_and_rejects_fractional_grades()
         validate_submission(ResultSubmission.model_validate(data),[manifest])
 
 
+def test_exhausted_budget_can_revalidate_before_new_coding_session(tmp_path):
+    from freeboard.budget import Budget
+    from freeboard.coding import plan_coding_capacity
+    from freeboard.config import week
+    db,settings,*_=expansion_fixture(tmp_path)
+    try:
+        budget=Budget(db,settings)
+        budget.plan([],0)
+        budget.reserve('synthetic',settings.minimum_tokens)
+        db.execute('UPDATE budgets SET attempts_limit=1 WHERE week=?',(week(),))
+        db.execute('UPDATE items SET content=?', (json.dumps({'messages':[{'role':'user','content':'Synthetic fixture.'}]}),))
+        runner=SimpleNamespace(db=db,budget=budget)
+        plan_coding_capacity(runner,{'id':'extension'},2)
+        attempt=budget.reserve('discovery')
+        assert attempt and budget.summary()['attempts_limit']>=budget.summary()['planned_attempts']
+        assert budget.reserve('synthetic-generation',14000)
+    finally:
+        db.conn.close()
+
+
 def test_incomplete_expansion_keeps_existing_scores_and_ranks(tmp_path):
     db,settings,caps,models,evaluations=expansion_fixture(tmp_path)
     try:

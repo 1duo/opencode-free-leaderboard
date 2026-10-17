@@ -145,6 +145,15 @@ def prepare_coding(runner) -> dict:
     return runner.db.one('SELECT * FROM seasons WHERE id=?', (ident,))
 
 
+def plan_coding_capacity(runner, season: dict, models: int) -> None:
+    reserve = [estimate(json.loads(row['content'])['messages'],4096) for row in runner.db.rows(
+        'SELECT i.content FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=?',(season['id'],))] * models
+    used = runner.budget.summary()
+    planned = runner.budget.plan(reserve,0,2)
+    runner.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?) WHERE week=?',
+        (used['attempts_used']+planned['planned_attempts'],used['accounted_tokens']+planned['planned_tokens'],week()))
+
+
 def run_coding(runner, season: dict, selected: list[str] | None = None, limit: int | None = None) -> dict:
     runner.grader.build(json.loads(season['manifest']),runner.checkout)
     clean = subprocess.run(['git','status','--porcelain','--untracked-files=all','--','src','grading'],
@@ -152,6 +161,9 @@ def run_coding(runner, season: dict, selected: list[str] | None = None, limit: i
     if clean.returncode or clean.stdout.strip():
         raise RuntimeError('Commit runner and grader changes before coding model requests')
     runner.db.recover()
+    # Eligibility calls themselves consume attempts, so scale the new session
+    # before discovery even when the prior week's allocation is fully spent.
+    plan_coding_capacity(runner,season,len(set(selected)) if selected else max(1,len(runner.models())))
     evidence = discover(runner.db, runner.budget, runner.client)
     if not evidence['ok']:
         return {'blocked':evidence['error']}
@@ -175,12 +187,7 @@ def run_coding(runner, season: dict, selected: list[str] | None = None, limit: i
         runner.finish_cycle(pilot['id'])
         cycles.append((model,pilot))
     # Plan both the held-out checks and the future screen before dispatch.
-    reserve = [estimate(json.loads(row['content'])['messages'],4096) for row in runner.db.rows(
-        "SELECT i.content FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=?", (season['id'],))] * len(selected)
-    used = runner.budget.summary()
-    planned = runner.budget.plan(reserve,0)
-    runner.db.execute('UPDATE budgets SET attempts_limit=MAX(attempts_limit,?),tokens_limit=MAX(tokens_limit,?) WHERE week=?',
-        (used['attempts_used']+planned['planned_attempts'], used['accounted_tokens']+planned['planned_tokens'],week()))
+    plan_coding_capacity(runner,season,len(selected))
     processed = runner.drain(season, 'coding_pilot', limit, set(selected))['processed']
     for model, pilot in cycles:
         if runner.db.one('SELECT completed_at FROM cycles WHERE id=?',(pilot['id'],))['completed_at']:
