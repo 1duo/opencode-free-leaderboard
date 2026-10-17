@@ -17,12 +17,12 @@ from .config import COUNTS, PINS, SEED, Settings, credential, digest, now
 from .db import DB
 
 
-def upstream(settings: Settings, name: str) -> Path:
-    revision = PINS[f"{name}_grader"]
+def upstream(settings: Settings, name: str, *, revision: str | None = None, repo: str | None = None) -> Path:
+    revision = revision or PINS[f"{name}_grader"]
     target = settings.state / "upstream" / f"{name}-{revision}"
     if target.exists():
         return target
-    repo = "LiveBench/LiveBench" if name == "livebench" else "LiveCodeBench/LiveCodeBench"
+    repo = repo or ("LiveBench/LiveBench" if name == "livebench" else "LiveCodeBench/LiveCodeBench")
     with httpx.Client(timeout=120, follow_redirects=True) as client:
         response = client.get(f"https://codeload.github.com/{repo}/tar.gz/{revision}")
         response.raise_for_status()

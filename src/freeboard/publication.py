@@ -33,7 +33,8 @@ def public_source(path: str) -> bool:
     extensions = {'src': {'.py'}, 'tests': {'.py'}, 'docs': {'.md'},
                   '.github': {'.yml', '.yaml'}, 'web': {'.html', '.css', '.js'}}
     if root == 'grading':
-        return path in {'grading/Dockerfile', 'grading/worker.py', 'grading/requirements.txt'}
+        return path in {'grading/Dockerfile', 'grading/worker.py', 'grading/requirements.txt',
+                        'grading/coding.Dockerfile', 'grading/coding_worker.py', 'grading/coding-requirements.txt'}
     return root in extensions and part.suffix in extensions[root]
 
 
@@ -109,7 +110,7 @@ def render_site(report: Snapshot, checkout: Path, target: Path) -> dict:
                   "accounted_tokens", "reported_tokens", "truncation_rate", "manual_retry_count", "manual_recovered_questions", "public_only_reason",
                   "cap_limit", "cap_observed", "category", "category_score", "sample_n", "source_tier", "rank", "basis", "category_interval_note", "stale", "refresh_pending", "verification", "contributor", "submission_id"]
         fields += [f'{metric}_ci_{bound}' for metric in ['reasoning','coding','overall','gpqa','livebench','livecodebench'] for bound in ['low','high']]
-        fields += ['livebench_interval_note', 'livecodebench_interval_note']
+        fields += ['livebench_interval_note', 'livecodebench_interval_note', 'bigcodebench', 'bigcodebench_n', 'bigcodebench_evaluated_at', 'bigcodebench_ci_low', 'bigcodebench_ci_high']
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields, lineterminator='\n')
             writer.writeheader()
@@ -128,7 +129,7 @@ def render_site(report: Snapshot, checkout: Path, target: Path) -> dict:
                 writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})
             for result in report.community_results:
                 for category, score in result.scores.items():
-                    benchmarks = ['livecodebench'] if category == 'coding' else [b for b in ['gpqa', 'livebench'] if b in result.sample_counts]
+                    benchmarks = [b for b in (['livecodebench','bigcodebench'] if category == 'coding' else ['gpqa','livebench']) if b in result.sample_counts]
                     data = {'model_id': result.model_id, 'tier': 'community', 'transport': 'local-opencode',
                         'client_version': '1.19.3', 'season': result.season, 'source_tier': result.tier,
                         'status': 'complete', 'verification': result.verification, 'contributor': result.contributor,
@@ -141,6 +142,16 @@ def render_site(report: Snapshot, checkout: Path, target: Path) -> dict:
                         data.update({f'{category}_ci_{bound}': result.intervals[category][index] for index, bound in enumerate(['low', 'high'])})
                     writer.writerow(data)
             models = {r.model_id: r for r in report.rows if r.tier == 'screen'}
+            for result in report.coding_evaluations:
+                data={'model_id':result.model_id,'epoch':result.epoch,'tier':'coding','source_tier':'coding',
+                    'transport':'local-opencode','client_version':'1.19.3','season':result.season,'status':result.status,
+                    'category':'coding','category_score':result.score,'bigcodebench':result.score,
+                    'bigcodebench_n':result.progress,'sample_n':result.progress,'evaluated_at':result.evaluated_at,
+                    'bigcodebench_evaluated_at':result.evaluated_at,'accounted_tokens':result.accounted_tokens,
+                    'reported_tokens':result.reported_tokens,'truncation_rate':result.truncation_rate}
+                if result.interval:
+                    data.update(bigcodebench_ci_low=result.interval[0],bigcodebench_ci_high=result.interval[1])
+                writer.writerow({k:"'"+v if isinstance(v,str) and v.startswith(('=','+','-','@')) else v for k,v in data.items()})
             for result in report.capabilities:
                 model = models[result.model_id]
                 data = {'model_id': result.model_id, 'epoch': result.epoch, 'tier': 'capability',

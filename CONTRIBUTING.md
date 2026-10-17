@@ -62,7 +62,7 @@ uv run --frozen --no-editable leaderboard submit-results \
   --tier public-screen --season SEASON_ID
 ```
 
-Supported tiers: `screen` (80), `public-screen` (60), `lightweight` (12), `confirmation` (240). The command writes `results/<submission-id>.json` and is idempotent for the same evaluation cycle. It exports only IDs/hashes, per-question grades and accounting, frozen settings, dates, platform and provenance. New cycles capture the clean runner commit when they begin. Legacy cycles retain a null `runner_revision`; `exporter_revision` identifies the exporter and must not be confused with the generation source. Review the file before committing. Keep the private database, prompts, answer keys, raw responses and logs on your machine.
+Supported tiers: `screen` (80), `public-screen` (60), `lightweight` (12), `confirmation` (240), and `coding` (24 BigCodeBench CPU tasks; [setup](docs/coding-expansion.md)). The command writes `results/<submission-id>.json` and is idempotent for the same evaluation cycle. It exports only IDs/hashes, per-question grades and accounting, frozen settings, dates, platform and provenance. New cycles capture the clean runner commit when they begin. Legacy cycles retain a null `runner_revision`; `exporter_revision` identifies the exporter and must not be confused with the generation source. Review the file before committing. Keep the private database, prompts, answer keys, raw responses and logs on your machine.
 
 ```sh
 gh auth login

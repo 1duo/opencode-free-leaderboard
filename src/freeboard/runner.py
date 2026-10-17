@@ -295,8 +295,9 @@ class Runner:
         cycle = self.db.one("SELECT * FROM cycles WHERE id=?", (cycle_id,))
         if cycle["kind"] == "screen":
             tier, expected = "screen", 80
-        elif cycle["kind"] in {"pilot", "public_screen", "lightweight"}:
-            tier = {'pilot': 'pilot', 'public_screen': 'screen', 'lightweight': 'lightweight'}[cycle['kind']]
+        elif cycle["kind"] in {"pilot", "public_screen", "lightweight", "coding", "coding_pilot"}:
+            tier = {'pilot': 'pilot', 'public_screen': 'screen', 'lightweight': 'lightweight',
+                    'coding':'coding', 'coding_pilot':'coding_pilot'}[cycle['kind']]
             expected = self.db.one('SELECT COUNT(*) AS n FROM panels WHERE season=? AND tier=?', (cycle['season'], tier))['n']
         elif cycle['kind'] == 'cap_calibration':
             tier, expected = None, 1
@@ -378,7 +379,7 @@ class Runner:
             jobs = self.db.rows(f"""SELECT j.*,c.model_id,c.epoch,c.kind,c.profile AS cycle_profile,i.content
                 FROM jobs j JOIN cycles c ON c.id=j.cycle_id JOIN items i ON i.id=j.item_id
                 JOIN models m ON m.id=c.model_id WHERE c.season=?
-                AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen','lightweight')
+                AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen','lightweight','coding','coding_pilot')
                 AND json_extract(c.profile,'$.transport')='local-opencode'
                 AND json_extract(c.profile,'$.protocol_revision')={REVISION}
                 AND (j.status='generated' OR (c.epoch=m.epoch AND m.status='eligible'

@@ -18,7 +18,7 @@ Hash = Annotated[str, Field(pattern=r'^[0-9a-f]{64}$')]
 Handle = Annotated[str, Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9-]{0,38}$')]
 Effort = Literal['minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'thinking']
 AvailableEffort = Literal['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'thinking']
-Tier = Literal['screen', 'confirmation', 'public-screen', 'lightweight']
+Tier = Literal['screen', 'confirmation', 'public-screen', 'lightweight', 'coding']
 
 
 class Strict(BaseModel):
@@ -26,7 +26,7 @@ class Strict(BaseModel):
 
 
 class QuestionResult(Strict):
-    id: str = Field(pattern=r'^(gpqa|livebench|livecodebench):[A-Za-z0-9_.:-]+$', max_length=200)
+    id: str = Field(pattern=r'^(gpqa|livebench|livecodebench|bigcodebench):[A-Za-z0-9_.:-]+$', max_length=200)
     hash: Hash
     score: float = Field(ge=0, le=1)
     attempts: int = Field(ge=1, strict=True)
@@ -52,7 +52,7 @@ class ResultSubmission(Strict):
     contributor: Handle
     model_id: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$')
     epoch: str = Field(pattern=r'^[0-9a-f]{16}$')
-    season: str = Field(pattern=r'^(s1|public-pilot|lightweight)-[0-9a-f]{16}$')
+    season: str = Field(pattern=r'^(s1|public-pilot|lightweight|coding)-[0-9a-f]{16}$')
     tier: Tier
     panel_fingerprint: Hash
     runner_revision: str | None = Field(default=None, pattern=r'^[0-9a-f]{40}$')
@@ -142,7 +142,7 @@ def validate_submission(record: ResultSubmission, manifests: list[dict]) -> Comm
     selected = panel(manifest, record.tier)
     expected = (COUNTS[record.tier] if record.tier in {'screen', 'confirmation'} else
                 {'livebench': 20, 'livecodebench': 40} if record.tier == 'public-screen' else
-                {'livebench': 6, 'livecodebench': 6})
+                {'bigcodebench':24} if record.tier == 'coding' else {'livebench': 6, 'livecodebench': 6})
     counts = {b: sum(i['benchmark'] == b for i in selected) for b in expected}
     if counts != expected or len(selected) != sum(expected.values()):
         raise ValueError('Submission tier has incorrect benchmark coverage')
@@ -154,16 +154,18 @@ def validate_submission(record: ResultSubmission, manifests: list[dict]) -> Comm
         item = reference.get(question.id)
         if not item or item['hash'] != question.hash:
             raise ValueError('Question IDs/hashes differ from the frozen panel')
-        if item['benchmark'] in {'gpqa', 'livecodebench'} and question.score not in {0, 1}:
+        if item['benchmark'] in {'gpqa', 'livecodebench', 'bigcodebench'} and question.score not in {0, 1}:
             raise ValueError('GPQA and coding grades must be binary')
         graded.append({'item_id': question.id, 'benchmark': item['benchmark'], 'stratum': item['stratum'], 'score': question.score})
     draws = bootstrap(graded) if record.tier in {'screen', 'confirmation'} else component_bootstrap(graded)
     scores = {b: float(np.mean([i['score'] for i in graded if i['benchmark'] == b])) * 100 for b in expected}
-    categories = {'reasoning': (scores['gpqa'] + scores['livebench']) / 2 if 'gpqa' in scores else scores['livebench'],
-                  'coding': scores['livecodebench']}
+    categories = ({'coding':scores['bigcodebench']} if record.tier=='coding' else
+                  {'reasoning': (scores['gpqa'] + scores['livebench']) / 2 if 'gpqa' in scores else scores['livebench'],
+                   'coding': scores['livecodebench']})
     intervals, notes = {}, {}
     for category in categories:
-        key = category if 'gpqa' in scores else {'reasoning': 'livebench', 'coding': 'livecodebench'}[category]
+        key = ('bigcodebench' if record.tier=='coding' else category if 'gpqa' in scores else
+               {'reasoning': 'livebench', 'coding': 'livecodebench'}[category])
         bounds = np.quantile(draws[key], [.025, .975]).tolist()
         if record.tier == 'lightweight' and bounds[0] == bounds[1]:
             notes[category] = 'Unresolved six-question interval'
@@ -244,8 +246,9 @@ def export_submission(db, checkout: Path, model_id: str, contributor: str, tier:
     matching = next((m for m in manifests if m['validated'] and fingerprint(m, tier) == fingerprint(source, tier)), None)
     if matching is None:
         raise ValueError('Frozen panel is not published; propose a season change separately')
-    if tier != 'lightweight' and not db.one("SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind='pilot' AND completed_at IS NOT NULL",
-                                          (model_id, model['epoch'], cycle['season'])):
+    pilot_kind = 'coding_pilot' if tier=='coding' else 'pilot'
+    if tier != 'lightweight' and not db.one("SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind=? AND completed_at IS NOT NULL",
+                                          (model_id, model['epoch'], cycle['season'],pilot_kind)):
         raise ValueError('A completed matching pilot is required')
     panel_tier = {'public-screen': 'screen'}.get(tier, tier)
     jobs = db.rows("""SELECT j.*,i.question_hash FROM jobs j JOIN items i ON i.id=j.item_id

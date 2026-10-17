@@ -39,7 +39,7 @@ def parser() -> argparse.ArgumentParser:
     submission = commands.add_parser('submit-results', help='Export a sanitized completed evaluation for a results PR')
     submission.add_argument('--model', required=True)
     submission.add_argument('--contributor', required=True, help='Your GitHub username')
-    submission.add_argument('--tier', choices=['screen', 'confirmation', 'public-screen', 'lightweight'], default='screen')
+    submission.add_argument('--tier', choices=['screen', 'confirmation', 'public-screen', 'lightweight', 'coding'], default='screen')
     submission.add_argument('--season')
     submission.add_argument('--output', type=Path, help='Output directory; defaults to results/ for a PR')
     discovery = commands.add_parser('discover')
@@ -48,6 +48,10 @@ def parser() -> argparse.ArgumentParser:
     lightweight = commands.add_parser('lightweight', help='Run a fixed 12-question public subset on new free models')
     lightweight.add_argument('--model', action='append')
     lightweight.add_argument('--limit', type=int)
+    coding = commands.add_parser('coding', help='Prepare or run the frozen 24-question BigCodeBench CPU expansion')
+    coding.add_argument('--prepare-only', action='store_true')
+    coding.add_argument('--model', action='append')
+    coding.add_argument('--limit', type=int)
     for name in ["pilot", "run"]:
         sub = commands.add_parser(name)
         sub.add_argument("--limit", type=int, help="Maximum jobs processed in this invocation")
@@ -109,6 +113,10 @@ def daily_work(runner: Runner) -> dict:
                             (m['id'], m['epoch'], public['id']))]
             if runnable:
                 result['public_screen'] = attempt(lambda: run_public(runner, public, runnable))
+    expansion = runner.db.one("SELECT * FROM seasons WHERE validated=1 AND json_extract(manifest,'$.coding_promoted_at') IS NOT NULL ORDER BY created_at DESC LIMIT 1")
+    if expansion:
+        from .coding import run_coding
+        result['coding_expansion'] = attempt(lambda: run_coding(runner,expansion))
     return result
 
 
@@ -156,6 +164,11 @@ def main() -> None:
             elif args.command == 'lightweight':
                 from .lightweight import run_lightweight
                 result = run_lightweight(runner, args.model, args.limit)
+            elif args.command == 'coding':
+                from .coding import prepare_coding, run_coding
+                season = prepare_coding(runner)
+                result = ({'season':season['id'], 'validated':bool(season['validated'])}
+                          if args.prepare_only else run_coding(runner,season,args.model,args.limit))
             elif args.command == "status":
                 refresh_publications(db, settings, checkout)
                 report = snapshot(db, settings)
@@ -165,6 +178,8 @@ def main() -> None:
                           'pilots': [p.model_dump() for p in report.pilots],
                           'public_screens': [p.model_dump() for p in report.public_screens],
                           'lightweight': [p.model_dump() for p in report.lightweight],
+                          'coding_evaluations': [p.model_dump() for p in report.coding_evaluations],
+                          'coding_weights': report.coding_weights,
                           "publication": db.one("SELECT snapshot_id,created_at,commit_sha,deployment_status FROM publications ORDER BY id DESC LIMIT 1"),
                           "models": [{"id": r.model_id, "status": r.availability, "cap_verified": r.cap_verified,
                                       "reasoning_setting": r.reasoning_setting, "reasoning_variant": r.reasoning_variant}

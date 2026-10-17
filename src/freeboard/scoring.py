@@ -149,10 +149,10 @@ class PublicProtocol(Strict):
     temperature: float | None = None
     tools: bool | None = None
     completions: int | None = None
-    panel: Literal['lightweight-v1'] | None = None
+    panel: Literal['lightweight-v1', 'bigcodebench-cpu-v1'] | None = None
     source_season: str | None = None
-    strata: dict[Literal['livebench', 'livecodebench'], dict[Literal['spatial', 'zebra_puzzle', 'easy', 'medium', 'hard'], int]] = {}
-    purpose: Literal['Public subset; no headline or overall ranking'] | None = None
+    strata: dict[Literal['livebench', 'livecodebench', 'bigcodebench'], dict[Literal['spatial', 'zebra_puzzle', 'easy', 'medium', 'hard', 'stdlib', 'scientific'], int]] = {}
+    purpose: Literal['Public subset; no headline or overall ranking', 'CPU library-use subset; equal-weight coding expansion'] | None = None
 
 
 class PublicManifest(Strict):
@@ -170,6 +170,7 @@ class PublicManifest(Strict):
     grader_image: str | None
     protocol: PublicProtocol = Field(default_factory=PublicProtocol)
     grading_files: dict[str, str] = {}
+    coding_promoted_at: str | None = None
 
 
 class CapabilityResult(Strict):
@@ -187,6 +188,26 @@ class CapabilityResult(Strict):
     rank: int | None = None
     stale: bool = False
     refresh_pending: bool = False
+    benchmark_weights: dict[str, float] = {}
+    benchmark_evaluated_at: dict[str, str | None] = {}
+    source_seasons: dict[str, str] = {}
+
+
+class CodingEvaluation(Strict):
+    model_id: str
+    epoch: str
+    season: str
+    status: Literal['pending', 'complete']
+    progress: int
+    expected: Literal[24] = 24
+    score: float | None = None
+    interval: list[float] | None = None
+    evaluated_at: str | None = None
+    started_at: str
+    pending_reasons: dict[str, int] = {}
+    accounted_tokens: int = 0
+    reported_tokens: int = 0
+    truncation_rate: float | None = None
 
 
 class Snapshot(Strict):
@@ -206,6 +227,8 @@ class Snapshot(Strict):
     lightweight: list[Lightweight] = []
     capabilities: list[CapabilityResult] = []
     community_results: list[CommunityResult] = []
+    coding_evaluations: list[CodingEvaluation] = []
+    coding_weights: dict[str, float] = {'livecodebench': 1.0}
     seasons: list[PublicManifest]
     budget: dict[str, int | str | None]
     queue_size: int
@@ -485,7 +508,8 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
                             "livecodebench_release", "language", "counts", "panels"]},
                         validated=bool(season["validated"]), active=bool(season["active"]), grader_image=data.get("grader_image"),
                         partial=data.get('partial', False),
-                        protocol=data.get('protocol', {}), grading_files=data.get('grading_files', {})))
+                        protocol=data.get('protocol', {}), grading_files=data.get('grading_files', {}),
+                        coding_promoted_at=data.get('coding_promoted_at')))
     discovery = db.one("SELECT * FROM discovery ORDER BY id DESC LIMIT 1")
     blockers = []
     if not credential("hf"):
@@ -498,7 +522,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         blockers.append(discovery["error"])
     queue = db.one(f"""SELECT COUNT(*) AS n FROM jobs j JOIN cycles c ON c.id=j.cycle_id
         JOIN models m ON m.id=c.model_id AND m.epoch=c.epoch
-        WHERE j.status!='graded' AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen','lightweight')
+        WHERE j.status!='graded' AND c.kind IN ('health','cap_calibration','pilot','screen','public_screen','lightweight','coding','coding_pilot')
         AND m.id NOT IN ({','.join('?' for _ in OMITTED_MODELS)})
         AND json_extract(c.profile,'$.transport')='local-opencode'
         AND json_extract(c.profile,'$.protocol_revision')={REVISION}""", tuple(sorted(OMITTED_MODELS)))["n"]
@@ -595,16 +619,145 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             truncation_rate=sum(r['truncated'] for r in generated_items) / len(generated_items) if generated_items else None,
             **manual_recoveries(db, cycle['id'])))
     lightweight = lightweight_results(db, settings)
+    coding = coding_results(db, settings)
+    capabilities = merged_capabilities(rows, public_screens, lightweight, history)
+    capabilities, coding_weights = expand_coding(db, settings, capabilities, rows, coding)
+    comparisons += expanded_comparisons(db,settings,capabilities)
     generated = now()
     return Snapshot(snapshot_id=digest([generated, [r.model_dump() for r in rows],
                                        [r.model_dump() for r in public_screens], [r.model_dump() for r in pilots],
-                                       [r.model_dump() for r in lightweight]])[:20],
+                                       [r.model_dump() for r in lightweight], [r.model_dump() for r in coding]])[:20],
                     repository=settings.repository, generated_at=generated, discovery_at=(discovery or {}).get("observed_at"),
                     discovery_ok=bool((discovery or {}).get("ok")), discovery_error=(discovery or {}).get("error"),
                     rows=rows, history=history, comparisons=comparisons, pilots=pilots, public_screens=public_screens,
-                    lightweight=lightweight, capabilities=merged_capabilities(rows, public_screens, lightweight, history), seasons=manifests,
+                    lightweight=lightweight, capabilities=capabilities, seasons=manifests,
+                    coding_evaluations=coding, coding_weights=coding_weights,
                     budget=Budget(db, settings).summary(), queue_size=queue,
                     missed_deadlines=sum(r.deadline_missed for r in rows if r.tier == 'screen'), blockers=blockers)
+
+
+def coding_results(db: DB, settings: Settings) -> list[CodingEvaluation]:
+    result = []
+    for cycle in db.rows("SELECT * FROM cycles WHERE kind='coding' ORDER BY started_at,model_id"):
+        profile = json.loads(cycle['profile'])
+        if (cycle['model_id'] in OMITTED_MODELS or profile.get('version') != VERSION
+                or profile.get('protocol_revision') != REVISION or profile.get('transport') != 'local-opencode'):
+            continue
+        season = db.one('SELECT * FROM seasons WHERE id=?', (cycle['season'],))
+        manifest = json.loads(season['manifest'])
+        items = records(db,cycle,'coding')
+        pilot = db.one("SELECT id FROM cycles WHERE kind='coding_pilot' AND model_id=? AND epoch=? AND season=? AND completed_at IS NOT NULL",
+                       (cycle['model_id'],cycle['epoch'],cycle['season']))
+        complete = (season['validated'] and manifest.get('protocol',{}).get('panel') == 'bigcodebench-cpu-v1'
+            and len(items) == 24 and sum(i['status']=='graded' for i in items)==24 and pilot
+            and profile.get('cap_verified') and all(i['score'] in {0,1} for i in items)
+            and all(sum(i['stratum']==key for i in items)==12 for key in ['stdlib','scientific']))
+        usage = db.one('SELECT COALESCE(SUM(accounted_tokens),0) accounted,COALESCE(SUM(reported_tokens),0) reported,MAX(finished_at) stamp FROM attempts WHERE job_id IN (SELECT id FROM jobs WHERE cycle_id=?)', (cycle['id'],))
+        generated = [i for i in items if i['latency'] is not None]
+        intervals = component_bootstrap(items,settings.bootstrap_samples) if complete else {}
+        result.append(CodingEvaluation(model_id=cycle['model_id'],epoch=cycle['epoch'],season=cycle['season'],
+            status='complete' if complete else 'pending',progress=sum(i['status']=='graded' for i in items),
+            score=float(np.mean([i['score'] for i in items]))*100 if complete else None,
+            interval=np.quantile(intervals['bigcodebench'],[.025,.975]).tolist() if complete else None,
+            evaluated_at=usage['stamp'] if complete else None, started_at=cycle['started_at'],
+            pending_reasons={s:sum(i['status']==s for i in items) for s in {i['status'] for i in items if i['status']!='graded'}},
+            accounted_tokens=usage['accounted'],reported_tokens=usage['reported'],
+            truncation_rate=sum(i['truncated'] for i in generated)/len(generated) if generated else None))
+    return result
+
+
+def coding_records(db: DB, model_id: str, epoch: str, season: str, kind: str, tier: str, benchmark: str) -> list[dict]:
+    for cycle in db.rows('SELECT * FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind=? AND completed_at IS NOT NULL ORDER BY started_at DESC',
+                         (model_id,epoch,season,kind)):
+        selected = [r for r in records(db,cycle,tier) if r['benchmark']==benchmark]
+        if selected and all(r['status']=='graded' for r in selected):
+            return selected
+    return []
+
+
+def expand_coding(db: DB, settings: Settings, capabilities: list[CapabilityResult], models: list[PublicRow],
+                  evaluations: list[CodingEvaluation]) -> tuple[list[CapabilityResult], dict[str, float]]:
+    eligible = {m.model_id for m in models if m.tier=='screen' and m.availability=='eligible' and m.cap_verified}
+    bases = [c for c in capabilities if c.category=='coding'
+             and c.score is not None and c.sample_counts == {'livecodebench':40}]
+    promoted = db.one("SELECT id FROM seasons WHERE validated=1 AND json_extract(manifest,'$.coding_promoted_at') IS NOT NULL ORDER BY created_at DESC LIMIT 1")
+    latest = {}
+    for evaluation in evaluations:
+        if evaluation.status=='complete' and (not promoted or evaluation.season==promoted['id']):
+            latest[(evaluation.model_id,evaluation.epoch)] = evaluation
+    # Promotion is atomic across currently runnable models with full coding
+    # coverage. Incomplete expansions never become zeros or mixed rankings.
+    required = [b for b in bases if b.model_id in eligible]
+    if not promoted and (not required or any((b.model_id,b.epoch) not in latest for b in required)):
+        return capabilities, {'livecodebench':1.0}
+    seasons = {latest[(b.model_id,b.epoch)].season for b in bases if (b.model_id,b.epoch) in latest}
+    if promoted:
+        seasons = {promoted['id']}
+    if len(seasons)!=1:
+        return capabilities, {'livecodebench':1.0}
+    replacements, groups = {}, {}
+    for base in bases:
+        if (base.model_id,base.epoch) not in latest:
+            continue
+        extension = latest[(base.model_id,base.epoch)]
+        stale = (datetime.now(timezone.utc)-datetime.fromisoformat(extension.started_at)).days >= 28 or base.stale
+        if not promoted and stale:
+            return capabilities, {'livecodebench':1.0}
+        kind = {'screen':'screen','public-screen':'public_screen'}.get(base.source_tier)
+        if not kind:
+            return capabilities, {'livecodebench':1.0}
+        lcb = coding_records(db,base.model_id,base.epoch,base.season,kind,'screen','livecodebench')
+        bcb = coding_records(db,base.model_id,base.epoch,extension.season,'coding','coding','bigcodebench')
+        if len(lcb)!=40 or len(bcb)!=24:
+            return capabilities, {'livecodebench':1.0}
+        draws = component_bootstrap(lcb+bcb,settings.bootstrap_samples)
+        combined = (draws['livecodebench']+draws['bigcodebench'])/2
+        dates = {'livecodebench':base.evaluated_at,'bigcodebench':extension.evaluated_at}
+        result = base.model_copy(update={'source_tier':'coding-expanded','season':extension.season,
+            'score':(base.score+extension.score)/2,'interval':np.quantile(combined,[.025,.975]).tolist(),
+            'interval_note':None,'sample_counts':{'livecodebench':40,'bigcodebench':24},
+            'benchmark_scores':{'livecodebench':base.score,'bigcodebench':extension.score},
+            'benchmark_weights':{'livecodebench':0.5,'bigcodebench':0.5}, 'benchmark_evaluated_at':dates,
+            'source_seasons':{'livecodebench':base.season,'bigcodebench':extension.season},
+            'evaluated_at':max(d for d in dates.values() if d),'rank':None,'stale':stale,
+            'refresh_pending':base.refresh_pending or any(e.model_id==base.model_id and e.epoch==base.epoch
+                and e.status=='pending' and e.started_at>extension.started_at for e in evaluations)})
+        # Rank only identical question panels. GPQA access is irrelevant to an
+        # entirely public coding panel, including for public-only models.
+        manifest = json.loads(db.one('SELECT manifest FROM seasons WHERE id=?',(base.season,))['manifest'])
+        signature = digest(sorted((i['id'].split(':',1)[1] if i['id'].startswith(('s1-','public-pilot-')) else i['id'], i['hash'])
+            for i in manifest['panels']['screen'] if i['benchmark']=='livecodebench'))
+        if result.model_id in eligible:
+            groups.setdefault(signature,[]).append(result)
+        replacements[base.model_id] = result
+    common = max(groups.values(),key=lambda group:(len(group),sorted(r.model_id for r in group))) if groups else []
+    rank, prior = 0, None
+    for position,row in enumerate(sorted(common,key=lambda r:(-r.score,r.model_id)),1):
+        if row.score!=prior:
+            rank,prior = position,row.score
+        row.rank=rank
+    return [replacements.get(c.model_id,c.model_copy(update={'score':None,'interval':None,'rank':None,'refresh_pending':True}))
+            if c.category=='coding' else c for c in capabilities], {'livecodebench':0.5,'bigcodebench':0.5}
+
+
+def expanded_comparisons(db: DB, settings: Settings, capabilities: list[CapabilityResult]) -> list[Comparison]:
+    results = [r for r in capabilities if r.category=='coding' and r.source_tier=='coding-expanded' and r.rank is not None]
+    draws = {}
+    for row in results:
+        lcb=[]
+        for kind in ['screen','public_screen']:
+            lcb=coding_records(db,row.model_id,row.epoch,row.source_seasons['livecodebench'],kind,'screen','livecodebench')
+            if lcb:
+                break
+        bcb=coding_records(db,row.model_id,row.epoch,row.season,'coding','coding','bigcodebench')
+        values=component_bootstrap(lcb+bcb,settings.bootstrap_samples)
+        draws[row.model_id]=(values['livecodebench']+values['bigcodebench'])/2
+    comparisons=[]
+    for a,b in itertools.combinations(results,2):
+        interval=np.quantile(draws[a.model_id]-draws[b.model_id],[.025,.975]).tolist()
+        comparisons.append(Comparison(a=a.model_id,b=b.model_id,tier='coding-expanded',season=a.season,view='coding',
+            difference=a.score-b.score,interval=interval,unresolved=interval[0]<=0<=interval[1]))
+    return comparisons
 
 
 def lightweight_results(db: DB, settings: Settings) -> list[Lightweight]:

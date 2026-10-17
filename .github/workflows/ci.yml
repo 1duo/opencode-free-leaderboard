@@ -21,10 +21,10 @@ jobs:
         run: uv sync --frozen --no-editable
       - name: Static checks
         run: |
-          uv run --frozen --no-editable ruff check src tests grading/worker.py
+          uv run --frozen --no-editable ruff check src tests grading/worker.py grading/coding_worker.py
           node --check web/app.js
       - name: Production and privacy regressions (no provider calls)
-        run: uv run --frozen --no-editable pytest -q tests/test_production.py tests/test_privacy.py tests/test_contributions.py
+        run: uv run --frozen --no-editable pytest -q tests/test_production.py tests/test_privacy.py tests/test_contributions.py tests/test_coding.py
       - name: Bind new result records to the pull request author
         if: github.event_name == 'pull_request'
         env:
