@@ -131,16 +131,20 @@ function renderPicks() {
   for (const category of ["reasoning", "coding"]) {
     const leaders = categoryResults(category).filter(r => r.rank === 1 && !r.stale && currentModels().find(m => m.model_id === r.model_id)?.availability === "eligible");
     if (!eligibilityFresh() || !leaders.length) continue;
-    const card = node("article", null, "pick-card");
+    const card = node("article", null, "pick-card"), main = node("div", null, "pick-main"), models = node("div", null, "pick-models");
     card.append(node("p", `Top ${category} score${leaders.length > 1 ? " · tied" : ""}`, "eyebrow"));
     for (const result of leaders) {
       const model = currentModels().find(m => m.model_id === result.model_id);
       const heading = node("h3"), link = node("a", model.name);
       link.href = "#headline"; link.addEventListener("click", () => selectView(category));
       heading.append(link);
-      card.append(heading, node("code", model.model_id, "model-id"), node("p", `Reasoning: ${reasoningSetting(model)}`, "fine"));
+      const detail = node("div", null, "pick-model");
+      detail.append(heading, node("code", model.model_id, "model-id"), node("p", `Reasoning: ${reasoningSetting(model)}`, "fine"));
+      models.append(detail);
     }
-    card.append(node("strong", `${leaders[0].score.toFixed(1)} / 100`, "pick-score"));
+    const score = node("div", null, "pick-result");
+    score.append(node("strong", leaders[0].score.toFixed(1), "pick-score"), node("span", "/ 100", "score-unit"));
+    main.append(models, score); card.append(main);
     list.append(card);
   }
   byId("pick-note").hidden = !list.children.length;

@@ -6,32 +6,31 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="Choose a free OpenCode model for reasoning or Python coding. Compare scores, reasoning settings, and benchmark coverage.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23153a36'/%3E%3Ctext x='3' y='22' font-family='monospace' font-size='18' fill='%23fffefa'%3Eo/f%3C/text%3E%3C/svg%3E">
-<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css?v=0d8e59b9fedee99cbf87"><script src="app.js?v=0d8e59b9fedee99cbf87" defer></script>
+<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css?v=92cfa2b4ecb657117010"><script src="app.js?v=92cfa2b4ecb657117010" defer></script>
 </head>
-<body data-snapshot="0d8e59b9fedee99cbf87">
+<body data-snapshot="92cfa2b4ecb657117010">
 <a class="skip-link" href="#main-content">Skip to content</a>
-<header><a class="brand" href="./"><span class="mark">o/f</span> OPEN / FREE</a><nav aria-label="Page navigation"><a href="#methodology">Method</a><a href="leaderboard.csv">CSV ↗</a><a href="snapshot.json">JSON ↗</a></nav></header>
+<header><a class="brand" href="./"><span class="mark" aria-hidden="true">o/f</span><span>OpenCode <span class="brand-divider">/</span> Free</span></a><nav aria-label="Page navigation"><a href="#methodology">Method</a><a href="leaderboard.csv">CSV ↗</a><a href="snapshot.json">JSON ↗</a></nav></header>
 <main id="main-content" tabindex="-1">
-<section class="hero"><div class="eyebrow">FREE ON OPENCODE</div><h1>Which model should you use?</h1><p>Compare reasoning and Python coding at each model’s highest available reasoning setting.</p></section>
+<section class="hero"><div class="eyebrow">THE FREE MODEL LEADERBOARD</div><h1>Free models, compared.</h1><p>Reasoning and Python coding, tested at each model’s highest available reasoning setting.</p></section>
 <div id="notice" class="notice" role="status">Loading results…</div>
 <noscript><p>Enable JavaScript to view results, or download the <a href="snapshot.json">JSON</a> and <a href="leaderboard.csv">CSV</a>.</p></noscript>
 <section id="picks" class="pick-grid" aria-label="Highest observed scores"></section>
-<p id="pick-note" class="fine" hidden>Highest observed scores on matching full screens. Overlapping uncertainty means the lead may be inconclusive.</p>
+<p id="pick-note" class="fine" hidden>Highest scores on matching full screens. Overlapping intervals can make the lead inconclusive.</p>
 <section id="headline" class="section">
-<div class="section-heading"><h2>Compare models</h2></div>
-<div class="controls"><div role="group" aria-label="Capability view" id="views"><button class="selected" data-view="reasoning" aria-pressed="true" disabled>Reasoning</button><button data-view="coding" aria-pressed="false" disabled>Coding</button></div></div>
+<div class="section-heading"><h2>Compare models</h2><div role="group" aria-label="Capability view" id="views"><button class="selected" data-view="reasoning" aria-pressed="true" disabled>Reasoning</button><button data-view="coding" aria-pressed="false" disabled>Coding</button></div></div>
 <div class="table-scroll"><table aria-live="polite" aria-busy="true" id="results-table"><caption class="sr-only">Current capability scores and benchmark coverage</caption><thead><tr><th scope="col">Rank</th><th scope="col">Model</th><th scope="col" id="score-heading">Reasoning / 100</th><th scope="col">95% interval</th><th scope="col">Coverage</th><th scope="col">Evaluated</th></tr></thead><tbody id="ranking"></tbody></table></div>
 <p class="fine">Ranks compare matching full screens. Other coverage and community submissions are unranked.</p>
 </section>
 <section id="benchmark-results" class="section">
-<div class="section-heading"><h2>Scores & uncertainty</h2></div><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>
+<div class="section-heading"><h2>Score ranges</h2><p class="plot-key"><span class="key-mark" aria-hidden="true"></span>Score & 95% interval</p></div>
 <div id="benchmark-list" class="chart-grid"></div>
 </section>
 <section id="supporting" class="section supporting" hidden>
 <details id="availability"><summary id="availability-summary">Other catalog models</summary><div id="availability-list"></div></details>
 </section>
 <section id="methodology" class="section method">
-<h2>How to read the scores</h2>
+<h2>Behind the scores</h2>
 <div class="method-grid"><div><h3>Reasoning</h3><p>Equal average of GPQA and LiveBench. Models tested only on LiveBench are labeled accordingly.</p></div><div><h3>Coding</h3><p>LiveCodeBench Python pass@1: the share of problems solved with one accepted answer.</p></div></div>
 <p>Each score uses the largest complete current panel. Question counts, evaluation dates, and 95% sampling intervals show how much evidence supports it. These benchmarks do not measure everyday agent performance.</p>
 <details><summary>Benchmark details</summary><p>Full screens use 20 GPQA Diamond, 20 LiveBench spatial / zebra questions (2024-11-25), and 40 LiveCodeBench Python problems (release_v6). These are custom subsets. Intervals use 10,000 stratified bootstrap resamples and measure question sampling, not variation between repeated answers.</p><p>All models use their highest selectable reasoning effort, subject to a 4,096-token combined cap. “Provider-managed” means no selectable level. Answers are generated through OpenCode without permitted tools or repair turns. Client versions, earlier evaluations, and execution records are available in the exports and source.</p><p>Community submissions are labeled with their contributor and linked audit file. CI checks complete panel coverage and recomputes scores; private answers and provider behavior have not been independently reproduced.</p></details>
