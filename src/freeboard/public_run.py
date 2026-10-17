@@ -23,7 +23,9 @@ def validate_public_screen(runner, season: dict) -> None:
 
 def plan_public_screen(runner, cycle: dict) -> dict:
     items = runner.db.rows(f"""SELECT i.content,c.model_id FROM jobs j JOIN items i ON i.id=j.item_id JOIN cycles c ON c.id=j.cycle_id
+        JOIN models m ON m.id=c.model_id AND m.epoch=c.epoch
         WHERE c.season=? AND c.kind='public_screen' AND j.status IN ('pending','deferred')
+        AND m.status='eligible'
         AND json_extract(c.profile,'$.transport')='local-opencode'
         AND json_extract(c.profile,'$.protocol_revision')={REVISION}""",
                            (cycle['season'],))

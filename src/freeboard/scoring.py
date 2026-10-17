@@ -11,9 +11,10 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict
 
 from .budget import Budget
-from .config import CONTRIBUTOR_MODEL, CONTRIBUTOR_REASON, COUNTS, OMITTED_MODELS, Settings, credential, digest, now
+from .config import COUNTS, OMITTED_MODELS, Settings, credential, digest, now
 from .db import DB
 from .opencode import REVISION, VERSION, interruption_status
+from .privacy import gpqa_allowed, public_only_reason
 
 
 class Strict(BaseModel):
@@ -290,7 +291,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
         AND j.error='Verified quota rejection; awaiting retry window'""", (model['id'], model['epoch']))
     return PublicRow(model_id=model["id"], name=model["name"], epoch=cycle["epoch"] if cycle else model["epoch"],
                      client_version=profile.get('version'),
-                     public_only_reason=CONTRIBUTOR_REASON if model['id'] == CONTRIBUTOR_MODEL else None,
+                     public_only_reason=public_only_reason(db, model),
                      tier=tier, season=cycle["season"] if cycle else None, status=status,
                      availability=availability, free_eligible=model['status'] in {'eligible','authentication_failed','quota_limited',
                          'model_unavailable','configuration_error','cap_violation','cap_unverified','client_access_restricted','provider_error'},
@@ -335,7 +336,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             cycle = matching[0] if matching else None
             public, draws = make_row(db, settings, model, cycle, tier)
             rows.append(public)
-            if draws and public.availability == 'eligible':
+            if draws and public.availability == 'eligible' and gpqa_allowed(db, model):
                 draws_by_model[(tier, model["id"])] = (public, draws, {r["item_id"] for r in records(db, cycle, tier)})
             for old in cycles:
                 if old["id"] == (cycle or {}).get("id"):
@@ -390,6 +391,10 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         ORDER BY started_at,model_id"""):
         if cycle['model_id'] in OMITTED_MODELS:
             continue
+        model = db.one('SELECT * FROM models WHERE id=?', (cycle['model_id'],))
+        season = db.one('SELECT manifest FROM seasons WHERE id=?', (cycle['season'],))
+        if not json.loads(season['manifest']).get('partial') and not gpqa_allowed(db, model):
+            continue
         items = records(db, cycle, 'pilot')
         panel = db.rows("SELECT i.benchmark FROM panels p JOIN items i ON i.id=p.item_id WHERE p.season=? AND p.tier='pilot'", (cycle['season'],))
         expected = {b: sum(r['benchmark'] == b for r in panel) for b in COUNTS['pilot']}
@@ -413,7 +418,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         complete = (sum(expected.values()) in {4, 6} and len(items) == sum(expected.values())
                     and (health == 6 or replacement_cap) and all(progress[b] == expected[b] for b in expected))
         pilots.append(PublicPilot(model_id=cycle['model_id'],
-            public_only_reason=CONTRIBUTOR_REASON if cycle['model_id'] == CONTRIBUTOR_MODEL else None,
+            public_only_reason=public_only_reason(db, model),
             reasoning_setting=reasoning_label(json.loads(cycle['profile'])),
             reasoning_variant=json.loads(cycle['profile']).get('reasoning', {}).get('variant'),
             season=cycle['season'], status='complete' if complete else 'pending',
@@ -453,7 +458,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         profile = json.loads(cycle['profile'])
         public_screens.append(PublicScreen(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
             client_version=profile['version'],
-            public_only_reason=CONTRIBUTOR_REASON if cycle['model_id'] == CONTRIBUTOR_MODEL else None,
+            public_only_reason=public_only_reason(db, db.one('SELECT * FROM models WHERE id=?', (cycle['model_id'],))),
             reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
             cap_verified=profile.get('cap_verified', False) and not any(
                 r['status'] == 'cap_unverified' or 'output cap' in (r.get('error') or '').lower() for r in items),
@@ -514,6 +519,7 @@ def lightweight_results(db: DB, settings: Settings) -> list[Lightweight]:
         manual = db.one("""SELECT COUNT(*) attempted,COALESCE(SUM(j.status='graded'),0) recovered
             FROM manual_retries r JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?""", (cycle['id'],))
         result.append(Lightweight(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
+            public_only_reason=public_only_reason(db, model),
             client_version=profile['version'], protocol_revision=profile['protocol_revision'],
             reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning',{}).get('variant'),
             availability=model['status'] if current else 'historical', cap_verified=cap,

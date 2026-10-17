@@ -17,6 +17,7 @@ from .publication import export, publish, refresh_publications
 from .runner import Runner
 from .scheduling import install
 from .scoring import snapshot
+from .privacy import gpqa_allowed
 
 
 def parser() -> argparse.ArgumentParser:
@@ -68,7 +69,7 @@ def daily_work(runner: Runner) -> dict:
     public = runner.db.one("SELECT * FROM seasons WHERE validated=1 AND json_extract(manifest,'$.partial')=1 AND json_type(manifest,'$.counts.screen')='object' ORDER BY created_at DESC LIMIT 1")
     if full and any(not runner.db.one("""SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=?
             AND kind='pilot' AND completed_at IS NOT NULL""",
-            (m['id'], m['epoch'], full['id'])) for m in runner.models()):
+            (m['id'], m['epoch'], full['id'])) for m in runner.models() if gpqa_allowed(runner.db, m)):
         pilot = runner.run(pilot=True, all_models=True)
         result = {**runner.run(), 'pilot': pilot}
     if result.get('blocked') and not full and public:
@@ -76,6 +77,18 @@ def daily_work(runner: Runner) -> dict:
         runner.active_season = lambda: public
         result['public_pilot'] = runner.run(pilot=True, all_models=True)
         result['public_screen'] = run_public(runner, public)
+    elif full and public:
+        from .public_run import run_public
+        restricted = [m['id'] for m in runner.models() if not gpqa_allowed(runner.db, m)]
+        if restricted:
+            runner.active_season = lambda: public
+            result['public_pilot'] = runner.run(pilot=True, pilot_models=restricted)
+            runnable = [m['id'] for m in runner.models() if m['id'] in restricted
+                        and json.loads(m['profile']).get('cap_verified') and runner.db.one(
+                            "SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind='pilot' AND completed_at IS NOT NULL",
+                            (m['id'], m['epoch'], public['id']))]
+            if runnable:
+                result['public_screen'] = run_public(runner, public, runnable)
     return result
 
 
@@ -142,7 +155,7 @@ def main() -> None:
                 if not manifest.get('partial') and (not active or args.promote):
                     if active and active["id"] != season["id"]:
                         for model in runner.models():
-                            if not json.loads(model["profile"]).get("cap_verified"):
+                            if not json.loads(model["profile"]).get("cap_verified") or not gpqa_allowed(db, model):
                                 continue
                             if not db.one("SELECT id FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind='screen' AND completed_at IS NOT NULL",
                                           (model["id"], model["epoch"], season["id"])):

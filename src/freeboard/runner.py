@@ -16,6 +16,7 @@ from .discovery import discover, excluded
 from .grading import DockerGrader, GradingUnavailable, gpqa_score
 from .opencode import OpenCode, REVISION, completion_events, failure_status, interruption_status, prompt_body, retry_is_safe
 from .recovery import manual_retry_reason, recover_quota_rejections
+from .privacy import gpqa_allowed
 
 PROBES = [
     {"stratum": "format", "prompt": "Return a JSON array of all integers from 1 to 10000, without omitting any. No prose.", "check": "cap"},
@@ -88,8 +89,8 @@ class Runner:
         dt = datetime.now(timezone.utc)
         cohort = (dt.date().toordinal() // 7) % 4
         for model in self.models():
-            if model['id'] == CONTRIBUTOR_MODEL:
-                continue  # Explicit public-only work never joins the full refresh queue.
+            if not gpqa_allowed(self.db, model):
+                continue
             self.health(model, season)
             if not json.loads(model["profile"]).get("cap_verified"):
                 continue
@@ -115,7 +116,7 @@ class Runner:
 
     def capacity(self) -> dict:
         # Headline obligations alone set the scalable budget; confirmations consume slack.
-        jobs = self.db.rows("""SELECT i.content,i.benchmark FROM jobs j JOIN items i ON j.item_id=i.id
+        jobs = self.db.rows("""SELECT i.content,i.benchmark,c.model_id FROM jobs j JOIN items i ON j.item_id=i.id
             JOIN cycles c ON c.id=j.cycle_id JOIN models m ON m.id=c.model_id
             WHERE c.kind='screen' AND c.epoch=m.epoch AND m.status='eligible'
             AND j.status NOT IN ('graded','ambiguous','failed') AND EXISTS
@@ -123,7 +124,9 @@ class Runner:
         health_jobs = self.db.one("""SELECT COUNT(*) AS n FROM jobs j JOIN cycles c ON c.id=j.cycle_id
             JOIN models m ON m.id=c.model_id WHERE c.kind='health' AND c.epoch=m.epoch
             AND m.status='eligible' AND c.started_at>=? AND j.status!='graded'""", (week(),))["n"]
-        amounts = [estimate(json.loads(j["content"])["messages"], self.settings.max_output_tokens) for j in jobs]
+        permitted = {m['id'] for m in self.models() if gpqa_allowed(self.db, m)}
+        amounts = [estimate(json.loads(j["content"])["messages"], self.settings.max_output_tokens)
+                   for j in jobs if j['model_id'] in permitted]
         # Already accounted attempts are included when a daily resume recalculates capacity.
         used = self.budget.summary()
         planned = self.budget.plan(amounts, health_jobs, 2)
@@ -133,8 +136,8 @@ class Runner:
         return self.budget.summary()
 
     def generate(self, job: dict, model: dict, item: dict, cap: int, manual_retry: bool = False) -> None:
-        if model['id'] == CONTRIBUTOR_MODEL and item['benchmark'] == 'gpqa':
-            raise ValueError('Contributor training policy prevents sending private GPQA questions')
+        if item['benchmark'] == 'gpqa' and not gpqa_allowed(self.db, model):
+            raise ValueError('Provider privacy evidence prevents sending private GPQA questions')
         if job.get('response_path'):
             raise RuntimeError('A durable answer exists; this job must not be regenerated')
         prompt_body(model, item['messages'])
@@ -167,7 +170,7 @@ class Runner:
             attempts.append(self.budget.reserve('opencode_generation', amount, job['id'], model['id']))
         try:
             result = self.opencode.generate(model, item['messages'], cap, on_retry)
-        except (RuntimeError, httpx.HTTPError, ValueError, KeyError):
+        except (RuntimeError, httpx.HTTPError, ValueError, KeyError, KeyboardInterrupt, SystemExit) as exc:
             evidence = self.db.one('SELECT response_path FROM attempts WHERE id=?', (attempts[-1],))['response_path']
             self.budget.finish(attempts[-1], 'ambiguous', response_path=self.opencode.failure_path or evidence)
             status = 'provider_error'
@@ -181,6 +184,8 @@ class Runner:
             self.db.execute('UPDATE models SET status=? WHERE id=?', (status, model['id']))
             self.db.execute("UPDATE jobs SET status='ambiguous',error='OpenCode outcome unknown; no automatic replay' WHERE id=?", (job['id'],))
             self.opencode.close()
+            if isinstance(exc, (KeyboardInterrupt, SystemExit)):
+                raise
             return
         attempt = attempts[-1]
         path = self.settings.state / 'responses' / f'{attempt}.json'
@@ -325,6 +330,7 @@ class Runner:
     def drain(self, season: dict, kind: str | None = None, limit: int | None = None, model_ids: set[str] | None = None) -> dict:
         manifest = json.loads(season["manifest"])
         image = manifest["grader_image"]
+        private_ids = None if manifest.get('partial') else {m['id'] for m in self.models() if gpqa_allowed(self.db, m)}
         processed = 0
         while limit is None or processed < limit:
             jobs = self.db.rows(f"""SELECT j.*,c.model_id,c.epoch,c.kind,c.profile AS cycle_profile,i.content
@@ -347,6 +353,8 @@ class Runner:
                     WHEN c.kind='health' THEN 2 ELSE 3 END,
                 c.due_at,j.id""", (season["id"], week(), now(), now()))
             jobs = [j for j in jobs if not excluded(j['model_id'])]
+            if private_ids is not None:
+                jobs = [j for j in jobs if j['status'] == 'generated' or j['model_id'] in private_ids]
             if kind:
                 jobs = [j for j in jobs if j["kind"] == kind or (kind in {'pilot','lightweight'} and j["kind"] in {'health','cap_calibration'})]
             if model_ids is not None:
@@ -453,12 +461,12 @@ class Runner:
         if pilot:
             available = {m['id']: m for m in self.models()}
             if not json.loads(season['manifest']).get('partial'):
-                available.pop(CONTRIBUTOR_MODEL, None)
+                available = {ident: m for ident, m in available.items() if gpqa_allowed(self.db, m)}
             if all_models and pilot_models:
                 raise ValueError('Select all models or explicit IDs, not both')
             selected = sorted(available) if all_models else sorted(pilot_models) if pilot_models else sorted(available)[:3]
             if any(m not in available for m in selected):
-                raise ValueError('Pilot model lacks current free eligibility')
+                raise ValueError('Pilot model lacks current free eligibility or private-dataset permission')
             for model in [available[m] for m in selected]:
                 health = self.health(model, season)
                 self.finish_cycle(health['id'])
@@ -485,7 +493,7 @@ class Runner:
         # Fresh zero pricing alone cannot prove that a catalog endpoint runs.
         # Use completed matching pilots, so an unavailable earlier ID cannot
         # block three other successfully validated endpoints.
-        eligible = [m for m in self.models() if m['id'] != CONTRIBUTOR_MODEL]
+        eligible = [m for m in self.models() if gpqa_allowed(self.db, m)]
         targets = [m for m in eligible if json.loads(m['profile']).get('cap_verified') and self.db.one(
             "SELECT id FROM cycles WHERE kind='pilot' AND model_id=? AND epoch=? AND season=? AND completed_at IS NOT NULL",
             (m['id'], m['epoch'], season['id']))]
@@ -505,6 +513,8 @@ class Runner:
         model = self.db.one("SELECT * FROM models WHERE id=? AND status='eligible'", (model_id,))
         if not model or excluded(model_id):
             raise ValueError("Model is not currently eligible")
+        if not gpqa_allowed(self.db, model):
+            raise ValueError('Provider privacy evidence prevents full confirmations')
         cycle = self.db.one("""SELECT * FROM cycles WHERE model_id=? AND epoch=? AND season=? AND kind='screen'
             AND completed_at IS NOT NULL ORDER BY started_at DESC LIMIT 1""", (model_id, model["epoch"], season["id"]))
         if not cycle or (datetime.now(timezone.utc) - datetime.fromisoformat(cycle["started_at"])).days >= 28:

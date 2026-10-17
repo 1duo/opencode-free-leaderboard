@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from .budget import Budget
 from .config import CONTRIBUTOR_MODEL, OMITTED_MODELS, ZEN_BASE, ZEN_CATALOG, ZEN_DOCS, contributor_authorization, credential, digest, now, week
 from .db import DB
+from .privacy import privacy_evidence
 
 
 def parse_evidence(html: str) -> dict[str, dict]:
@@ -41,7 +42,8 @@ def parse_evidence(html: str) -> dict[str, dict]:
                                      and p[1].lower() == "free"
                                      and all(x.lower() in {"free", "-", "—"} for x in p)
                                      for p in evidence)
-        result[ident] = {**entry, "prices": evidence, "free": free}
+        result[ident] = {**entry, "prices": evidence, "free": free,
+                         **privacy_evidence(soup, entry['name'])}
     return result
 
 

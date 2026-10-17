@@ -28,7 +28,10 @@ def context(tmp_path):
 
 def model(db, name="test-free"):
     settings_profile = {**profile("chat", {'mode':'provider-managed','variant':None,'options':{},'available_variants':[]}), "cap_verified": True}
-    db.execute("INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?)", (name, name, "https://opencode.ai/inference/openai/v1/chat/completions", "chat", "eligible", "epoch", 0, json.dumps(settings_profile), now(), None))
+    proof = {'pricing': {name: {'free': True, 'gpqa_allowed': True}}}
+    evidence_id = db.execute('INSERT INTO discovery(observed_at,week,ok,evidence) VALUES(?,?,?,?)',
+                             (now(), 'fixture', 1, json.dumps(proof))).lastrowid
+    db.execute("INSERT INTO models VALUES(?,?,?,?,?,?,?,?,?,?)", (name, name, "https://opencode.ai/inference/openai/v1/chat/completions", "chat", "eligible", "epoch", 0, json.dumps(settings_profile), now(), evidence_id))
     return db.one("SELECT * FROM models WHERE id=?", (name,))
 
 
@@ -75,6 +78,28 @@ def native_result(tokens=10, text='FINAL: A', reason='stop', missing_usage=False
 
 def native_error(code, message):
     return {'info': {'error': {'name': 'APIError', 'data': {'statusCode': code, 'message': message}}}}
+
+
+@pytest.mark.parametrize('signal', [KeyboardInterrupt, SystemExit])
+def test_interrupt_retains_journal_and_conservative_charge(context, monkeypatch, signal):
+    runner, job, item_model, item = job_context(context)
+    journal = runner.settings.state / 'logs' / 'interrupted.json'
+    journal.write_text(json.dumps({'model_id': item_model['id'], 'error_type': signal.__name__,
+                                  'observed_retries': [], 'assistant_turns_observed': 1}))
+    runner.opencode.failure_path = str(journal)
+
+    def interrupted(*_):
+        raise signal()
+
+    monkeypatch.setattr(runner.opencode, 'generate', interrupted)
+    with pytest.raises(signal):
+        runner.generate(job, item_model, item, 4096)
+    attempt = runner.db.one('SELECT * FROM attempts')
+    saved = runner.db.one('SELECT * FROM jobs')
+    assert attempt['status'] == saved['status'] == 'ambiguous'
+    assert attempt['response_path'] == str(journal) and saved['response_path'] is None
+    assert attempt['accounted_tokens'] == attempt['reserved_tokens'] > 0
+    assert runner.db.one('SELECT COUNT(*) AS n FROM attempts')['n'] == 1
 
 
 def unanswered_fixture(context, monkeypatch, prior_count=3):
