@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import subprocess
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -39,6 +40,8 @@ class Runner:
         self.grader = DockerGrader(settings)
         self.client = client or httpx.Client(timeout=settings.request_timeout, follow_redirects=False)
         self.opencode = OpenCode(settings)
+        self._revision_checked = False
+        self._runner_revision = None
 
     def close(self) -> None:
         self.opencode.close()
@@ -55,8 +58,21 @@ class Runner:
                 if not excluded(m['id'])]
 
     def cycle(self, model: dict, season: dict, kind: str, ident: str) -> dict:
+        if existing := self.db.one('SELECT * FROM cycles WHERE id=?', (ident,)):
+            return existing
+        if not self._revision_checked:
+            self._revision_checked = True
+            try:
+                clean = subprocess.run(['git', 'status', '--porcelain', '--untracked-files=all', '--', 'src', 'grading'],
+                                       cwd=self.checkout, capture_output=True, text=True, timeout=15)
+                revision = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=self.checkout,
+                                          capture_output=True, text=True, timeout=15)
+                if clean.returncode == revision.returncode == 0 and not clean.stdout.strip():
+                    self._runner_revision = revision.stdout.strip()
+            except (OSError, subprocess.TimeoutExpired):
+                pass
         started = now()
-        profile = {**json.loads(model['profile']), 'endpoint': model['endpoint']}
+        profile = {**json.loads(model['profile']), 'endpoint': model['endpoint'], 'runner_revision': self._runner_revision}
         self.db.execute("""INSERT OR IGNORE INTO cycles
             (id,model_id,epoch,season,kind,started_at,due_at,profile) VALUES(?,?,?,?,?,?,?,?)""",
                         (ident, model["id"], model["epoch"], season["id"], kind, started,

@@ -68,18 +68,33 @@ function sampleLabel(result) {
 }
 function categoryResults(category) {
   const visible = new Set(currentModels().map(m => m.model_id));
-  return (report.capabilities || []).filter(r => r.category === category && r.score != null && visible.has(r.model_id))
+  const community = (report.community_results || []).filter(r => r.scores[category] != null && !report.rows.some(m =>
+    m.model_id === r.model_id && ["removed", "paid", "excluded"].includes(m.availability))).map(r => {
+    const benchmarks = category === "coding" ? ["livecodebench"] : ["gpqa", "livebench"].filter(b => r.sample_counts[b]);
+    return {...r, category, score:r.scores[category], interval:r.intervals[category], interval_note:r.interval_notes[category], rank:null,
+      name:report.rows.find(m => m.model_id === r.model_id)?.name || r.model_id, availability:"community",
+      sample_counts:Object.fromEntries(benchmarks.map(b => [b, r.sample_counts[b]])),
+      stale:Date.now() - Date.parse(r.started_at) >= 28 * 86400000};
+  });
+  return [...(report.capabilities || []).filter(r => r.category === category && r.score != null && visible.has(r.model_id)), ...community]
     .sort((a, b) => Number(b.rank != null) - Number(a.rank != null) || b.score - a.score || a.model_id.localeCompare(b.model_id));
+}
+function modelFor(result) { return result.submission_id ? result : currentModels().find(m => m.model_id === result.model_id); }
+function provenance(result) {
+  if (!result.submission_id) return node("span", "Unranked", "sub");
+  const link = node("a", `Community · @${result.contributor} · unranked`, "sub");
+  link.href = `https://github.com/${report.repository}/blob/main/results/${result.submission_id}.json`;
+  return link;
 }
 function categoryChart(category) {
   const card = node("article", null, "chart-card"), heading = node("div", null, "chart-heading");
   heading.append(node("h3", category === "reasoning" ? "Reasoning" : "Coding"), node("span", "Score / 100", "fine"));
   card.append(heading);
   for (const result of categoryResults(category)) {
-    const model = currentModels().find(m => m.model_id === result.model_id);
+    const model = modelFor(result);
     const row = node("div", null, "chart-row"), title = node("div", null, "chart-row-title"), name = node("div");
     name.append(node("strong", model.name), node("span", sampleLabel(result), "sub"));
-    if (result.rank == null) name.append(node("span", "Unranked", "sub"));
+    if (result.rank == null) name.append(provenance(result));
     if (result.stale) name.append(node("span", "Refresh overdue", "sub"));
     title.append(name, node("strong", pct(result.score), "chart-score"));
     row.append(title, intervalPlot(result.score, result.interval));
@@ -95,12 +110,12 @@ function categoryChart(category) {
 function renderRankings() {
   const rows = categoryResults(view), body = byId("ranking"); body.replaceChildren();
   for (const result of rows) {
-    const model = currentModels().find(m => m.model_id === result.model_id);
+    const model = modelFor(result);
     const row = node("tr"), name = node("td"), evidence = node("td"), date = node("td");
     name.append(node("strong", model.name), node("span", `Reasoning: ${reasoningSetting(model)}`, "sub"));
     evidence.append(node("span", sampleLabel(result)));
-    if (result.rank == null) evidence.append(node("span", "Unranked", "sub"));
-    if (model.availability !== "eligible") evidence.append(node("span", statusLabel(model.availability), "sub"));
+    if (result.rank == null) evidence.append(provenance(result));
+    if (model.availability !== "eligible" && !result.submission_id) evidence.append(node("span", statusLabel(model.availability), "sub"));
     const interval = result.interval ? `${result.interval[0].toFixed(1)}–${result.interval[1].toFixed(1)}` : result.interval_note ? "Unresolved" : "—";
     date.append(dateNode(result.evaluated_at));
     if (result.stale) date.append(node("span", "Refresh overdue", "sub"));

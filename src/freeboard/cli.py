@@ -23,13 +23,25 @@ from .privacy import gpqa_allowed
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Resumable benchmarks through the installed OpenCode client")
     root.add_argument("--state", type=Path, default=Settings().state)
+    root.add_argument('--repository', default=Settings().repository, help='Publication repository OWNER/REPO (or FREEBOARD_REPOSITORY)')
     root.add_argument('--allow-contributor-today', action='store_true',
                       help='Authorize Muse Spark 1.3 Contributor Free for public-only evaluation today')
     source_checkout = Path(__file__).resolve().parents[2]
     root.add_argument("--checkout", type=Path, default=source_checkout if (source_checkout / "web").is_dir() else Path.cwd())
     commands = root.add_subparsers(dest="command", required=True)
-    for name in ["export", "status", "daily", "doctor"]:
+    for name in ["export", "status", "daily", "install-client"]:
         commands.add_parser(name)
+    doctor = commands.add_parser('doctor')
+    doctor.add_argument('--publication', action='store_true', help='Also require GitHub publication access')
+    doctor.add_argument('--scheduled', action='store_true', help='Also require the installed macOS launch agent')
+    build = commands.add_parser('build-site', help='Render the public site and PR submissions without private state or credentials')
+    build.add_argument('--output', type=Path, default=Path('.pages-site'))
+    submission = commands.add_parser('submit-results', help='Export a sanitized completed evaluation for a results PR')
+    submission.add_argument('--model', required=True)
+    submission.add_argument('--contributor', required=True, help='Your GitHub username')
+    submission.add_argument('--tier', choices=['screen', 'confirmation', 'public-screen', 'lightweight'], default='screen')
+    submission.add_argument('--season')
+    submission.add_argument('--output', type=Path, help='Output directory; defaults to results/ for a PR')
     discovery = commands.add_parser('discover')
     discovery.add_argument('--catalog-only', action='store_true',
                            help='Refresh official catalog/pricing without inspecting or changing frozen native settings')
@@ -102,16 +114,26 @@ def daily_work(runner: Runner) -> dict:
 
 def main() -> None:
     args = parser().parse_args()
-    settings = Settings(state=args.state)
+    settings = Settings(state=args.state, repository=args.repository)
     checkout = args.checkout.resolve()
     db = runner = None
     try:
+        if args.command == 'build-site':
+            from .publication import build_site
+            print(json.dumps(build_site(checkout, args.output, args.repository), indent=2))
+            return
         settings.initialize(checkout)
+        if args.command == 'install-client':
+            from .setup import install_client
+            print(json.dumps(install_client(settings.state), indent=2))
+            return
         if args.allow_contributor_today:
             if args.command not in {'discover', 'pilot', 'run'} or (args.command == 'run' and not args.public_only):
                 raise ValueError('Contributor authorization supports discovery and public-only pilots/screens')
             os.environ['FREEBOARD_CONTRIBUTOR_DATE'] = datetime.now().astimezone().date().isoformat()
         if args.command == "auth":
+            if sys.platform != 'darwin':
+                raise RuntimeError('Use HF_TOKEN / OPENCODE_API_KEY or your existing local login on Linux/WSL2; Keychain auth is macOS-only')
             save_credential(args.provider, getpass.getpass(f"{args.provider} credential (stored in Keychain): "))
             print("Credential saved in macOS Keychain")
             return
@@ -125,7 +147,10 @@ def main() -> None:
             runner = Runner(db, settings, checkout)
             if args.command == 'doctor':
                 from .diagnostics import doctor
-                result = doctor(db, settings, checkout)
+                result = doctor(db, settings, checkout, publication=args.publication, scheduled=args.scheduled)
+            elif args.command == 'submit-results':
+                from .submissions import export_submission
+                result = export_submission(db, checkout, args.model, args.contributor, args.tier, args.season, args.output)
             elif args.command == "discover":
                 result = discover(db, runner.budget, runner.client, catalog_only=args.catalog_only)
             elif args.command == 'lightweight':
@@ -212,7 +237,7 @@ def main() -> None:
                         result["publication"] = publish(db, settings, checkout)
                 else:
                     result["publication"] = publish(db, settings, checkout)
-            if args.command not in {'doctor', 'status', 'export'}:
+            if args.command not in {'doctor', 'status', 'export', 'submit-results'}:
                 db.backup()
             print(json.dumps(result, indent=2, default=str))
             if args.command == 'doctor' and not result['ready']:

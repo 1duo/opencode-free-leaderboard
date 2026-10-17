@@ -15,6 +15,7 @@ from .config import COUNTS, OMITTED_MODELS, Settings, credential, digest, now
 from .db import DB
 from .opencode import REVISION, VERSION, interruption_status
 from .privacy import gpqa_allowed, public_only_reason
+from .submissions import CommunityResult
 
 
 class Strict(BaseModel):
@@ -191,6 +192,7 @@ class CapabilityResult(Strict):
 class Snapshot(Strict):
     schema_version: int = 2
     snapshot_id: str
+    repository: str = Field(default='1duo/opencode-free-leaderboard', pattern=r'^[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9][A-Za-z0-9_.-]*$')
     generated_at: str
     published_at: str | None = None
     discovery_at: str | None
@@ -203,6 +205,7 @@ class Snapshot(Strict):
     public_screens: list[PublicScreen] = []
     lightweight: list[Lightweight] = []
     capabilities: list[CapabilityResult] = []
+    community_results: list[CommunityResult] = []
     seasons: list[PublicManifest]
     budget: dict[str, int | str | None]
     queue_size: int
@@ -404,7 +407,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                          'model_unavailable','configuration_error','cap_violation','cap_unverified','client_access_restricted','provider_error'},
                      protocol=profile['protocol'], endpoint=profile.get('endpoint', model['endpoint']),
                      cap_verified=profile.get("cap_verified", False) and not (cycle and cycle['epoch'] == model['epoch']
-                         and not json.loads(model['profile']).get('cap_verified', False)), observed_at=model["observed_at"],
+                         and model['status'] in {'cap_violation', 'cap_unverified'}), observed_at=model["observed_at"],
                      cap_failure=cap_failure,
                      next_retry_at=retry['at'] if availability == 'quota_limited' else None,
                      reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
@@ -596,7 +599,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
     return Snapshot(snapshot_id=digest([generated, [r.model_dump() for r in rows],
                                        [r.model_dump() for r in public_screens], [r.model_dump() for r in pilots],
                                        [r.model_dump() for r in lightweight]])[:20],
-                    generated_at=generated, discovery_at=(discovery or {}).get("observed_at"),
+                    repository=settings.repository, generated_at=generated, discovery_at=(discovery or {}).get("observed_at"),
                     discovery_ok=bool((discovery or {}).get("ok")), discovery_error=(discovery or {}).get("error"),
                     rows=rows, history=history, comparisons=comparisons, pilots=pilots, public_screens=public_screens,
                     lightweight=lightweight, capabilities=merged_capabilities(rows, public_screens, lightweight, history), seasons=manifests,

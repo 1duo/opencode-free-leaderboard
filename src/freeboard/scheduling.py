@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import plistlib
 import os
+import sys
 import subprocess
 from pathlib import Path
 
@@ -36,6 +37,8 @@ def scheduler_checkout(settings: Settings) -> Path:
 
 
 def install(settings: Settings, checkout: Path) -> Path:
+    if sys.platform != 'darwin':
+        raise RuntimeError('Built-in scheduling uses macOS launchd; run daily manually or from your Linux/WSL2 scheduler')
     private_runtime = settings.state / 'runtime/bin/python'
     binary = private_runtime if private_runtime.exists() else checkout / '.venv/bin/python'
     if not binary.exists():
@@ -48,7 +51,7 @@ def install(settings: Settings, checkout: Path) -> Path:
     scheduled = scheduler_checkout(settings)
     data = {"Label": "ai.opencode.free-leaderboard",
             "ProgramArguments": [str(binary), '-m', 'freeboard.cli',
-                                 "--state", str(settings.state), "daily"],
+                                 "--state", str(settings.state), '--repository', settings.repository, "daily"],
             "WorkingDirectory": str(scheduled), "StartCalendarInterval": {"Hour": 9, "Minute": 15},
             "RunAtLoad": True, "ProcessType": "Background",
             "EnvironmentVariables": {"PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:" + str(Path.home() / ".docker/bin"),

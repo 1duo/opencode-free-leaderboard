@@ -9,4 +9,5 @@ __pycache__/
 *.db
 *.log
 .staging-*/
+.pages-site/
 

@@ -1,7 +1,8 @@
 {
   "schema_version": 2,
-  "snapshot_id": "194fe5008b73805a163f",
-  "generated_at": "2026-10-17T17:24:10+00:00",
+  "snapshot_id": "30add6056839c8b3285e",
+  "repository": "1duo/opencode-free-leaderboard",
+  "generated_at": "2026-10-17T17:48:09+00:00",
   "published_at": null,
   "discovery_at": "2026-10-17T16:47:50+00:00",
   "discovery_ok": true,
@@ -2791,6 +2792,7 @@
       "refresh_pending": false
     }
   ],
+  "community_results": [],
   "seasons": [
     {
       "id": "public-pilot-c818b85f16b42bf9",

@@ -7,7 +7,7 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 ZEN_BASE = "https://opencode.ai/inference/openai/v1"
 ZEN_DOCS = "https://opencode.ai/v2/docs/console/models/"
@@ -50,10 +50,17 @@ def digest(value: object) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
+def default_state() -> Path:
+    if sys.platform == 'darwin':
+        return Path.home() / 'Library/Application Support/OpenCodeFreeLeaderboard'
+    return Path(os.environ.get('XDG_STATE_HOME', str(Path.home() / '.local/state'))) / 'opencode-free-leaderboard'
+
+
 class Settings(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    state: Path = Path.home() / "Library/Application Support/OpenCodeFreeLeaderboard"
-    repository: str = "1duo/opencode-free-leaderboard"
+    state: Path = Field(default_factory=default_state)
+    repository: str = Field(default_factory=lambda: os.environ.get('FREEBOARD_REPOSITORY', '1duo/opencode-free-leaderboard'),
+                            pattern=r'^[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9][A-Za-z0-9_.-]*$')
     max_output_tokens: int = 4096
     probe_tokens: int = 256
     bootstrap_samples: int = 10000
@@ -129,6 +136,8 @@ def credential(name: str) -> str | None:
 
 
 def save_credential(name: str, secret: str) -> None:
+    if sys.platform != 'darwin':
+        raise RuntimeError('Keychain authentication requires macOS; use HF_TOKEN / OPENCODE_API_KEY or your existing local login on Linux/WSL2')
     if not secret.strip():
         raise ValueError("Empty credential")
     # Call Security.framework directly so credentials never appear in process arguments.

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import shutil
 import subprocess
 import tempfile
@@ -9,22 +10,26 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from .config import Settings, now
+from .config import Settings, digest, now
 from .db import DB
 from .scoring import Snapshot, snapshot
 
 SITE_FILES = {"index.html", "app.js", "style.css", "snapshot.json", "leaderboard.csv", "manifest.json", ".nojekyll"}
-SOURCE_ROOTS = {"src", "tests", "grading", "web", "docs", ".github"}
+SOURCE_ROOTS = {"src", "tests", "grading", "web", "docs", ".github", "results"}
 SOURCE_FILES = {"pyproject.toml", "uv.lock", ".gitignore", "README.md", "LICENSE", "AGENTS.md", "SECURITY.md", "CONTRIBUTING.md"}
 
 
 def public_source(path: str) -> bool:
     if path in SOURCE_FILES:
         return True
+    if path == '.github/pull_request_template.md':
+        return True
     part = Path(path)
     root = part.parts[0]
     if root == 'site':
         return len(part.parts) == 2 and part.name in SITE_FILES
+    if root == 'results':
+        return len(part.parts) == 2 and bool(re.fullmatch(r'[0-9a-f]{32}\.json', part.name))
     extensions = {'src': {'.py'}, 'tests': {'.py'}, 'docs': {'.md'},
                   '.github': {'.yml', '.yaml'}, 'web': {'.html', '.css', '.js'}}
     if root == 'grading':
@@ -57,8 +62,40 @@ def validate_site(folder: Path) -> Snapshot:
 
 def export(db: DB, settings: Settings, checkout: Path) -> dict:
     report = snapshot(db, settings)
+    return render_site(with_community(report, checkout), checkout, checkout / 'site')
+
+
+def with_community(report: Snapshot, checkout: Path) -> Snapshot:
+    from .submissions import load_submissions
+    results = load_submissions(checkout, [m.model_dump() for m in report.seasons])
+    data = report.model_copy(update={'community_results': results, 'published_at': None})
+    if results or report.community_results:
+        data.snapshot_id = digest(data.model_dump(mode='json', exclude={'snapshot_id', 'published_at'}))[:20]
+    return data
+
+
+def build_site(checkout: Path, output: Path, repository: str | None = None) -> dict:
+    # Public-only rendering works in a fresh clone and PR CI without private DB,
+    # credentials, Docker, model access or benchmark datasets.
+    report = Snapshot.model_validate_json((checkout / 'site/snapshot.json').read_text())
+    if repository and repository != report.repository:
+        report.snapshot_id = digest([report.snapshot_id, repository])[:20]
+        report.repository = repository
+    return render_site(with_community(report, checkout), checkout, output)
+
+
+def render_site(report: Snapshot, checkout: Path, target: Path) -> dict:
+    if target.is_symlink():
+        raise ValueError('Build output must not be a symlink')
+    target = target.resolve()
+    root = checkout.resolve()
+    if target.is_relative_to(root) and target not in {root / 'site', root / '.pages-site'}:
+        raise ValueError('Inside the checkout, build output must be site/ or .pages-site/')
+    if target.exists() and (not target.is_dir() or {p.name for p in target.iterdir()} != SITE_FILES):
+        raise ValueError('Refusing to replace a directory that is not a complete site artifact')
+    target.parent.mkdir(parents=True, exist_ok=True)
     environment = Environment(loader=FileSystemLoader(checkout / "web"), autoescape=select_autoescape(["html"]))
-    with tempfile.TemporaryDirectory(prefix=".staging-", dir=checkout) as temp:
+    with tempfile.TemporaryDirectory(prefix=".staging-", dir=target.parent) as temp:
         stage = Path(temp) / "site"
         stage.mkdir()
         (stage / "snapshot.json").write_text(report.model_dump_json(indent=2))
@@ -70,7 +107,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
         fields = ["model_id", "tier", "transport", "client_version", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench",
                   "gpqa_n", "livebench_n", "livecodebench_n", "gpqa_evaluated_at", "livebench_evaluated_at", "livecodebench_evaluated_at",
                   "accounted_tokens", "reported_tokens", "truncation_rate", "manual_retry_count", "manual_recovered_questions", "public_only_reason",
-                  "cap_limit", "cap_observed", "category", "category_score", "sample_n", "source_tier", "rank", "basis", "category_interval_note", "stale", "refresh_pending"]
+                  "cap_limit", "cap_observed", "category", "category_score", "sample_n", "source_tier", "rank", "basis", "category_interval_note", "stale", "refresh_pending", "verification", "contributor", "submission_id"]
         fields += [f'{metric}_ci_{bound}' for metric in ['reasoning','coding','overall','gpqa','livebench','livecodebench'] for bound in ['low','high']]
         fields += ['livebench_interval_note', 'livecodebench_interval_note']
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
@@ -89,6 +126,20 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
                 data.update({f"{k}_n": row.progress.get(k, 0) for k in ["gpqa", "livebench", "livecodebench"]})
                 # Keep spreadsheet programs from executing formula-like model names.
                 writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})
+            for result in report.community_results:
+                for category, score in result.scores.items():
+                    benchmarks = ['livecodebench'] if category == 'coding' else [b for b in ['gpqa', 'livebench'] if b in result.sample_counts]
+                    data = {'model_id': result.model_id, 'tier': 'community', 'transport': 'local-opencode',
+                        'client_version': '1.19.3', 'season': result.season, 'source_tier': result.tier,
+                        'status': 'complete', 'verification': result.verification, 'contributor': result.contributor,
+                        'submission_id': result.submission_id, 'evaluated_at': result.evaluated_at,
+                        'reasoning_setting': result.reasoning_setting, 'reasoning_variant': result.reasoning_variant,
+                        'category': category, 'category_score': score, category: score,
+                        'sample_n': sum(result.sample_counts[b] for b in benchmarks),
+                        **{f'{b}_n': n for b, n in result.sample_counts.items()}, **result.benchmark_scores}
+                    if category in result.intervals:
+                        data.update({f'{category}_ci_{bound}': result.intervals[category][index] for index, bound in enumerate(['low', 'high'])})
+                    writer.writerow(data)
             models = {r.model_id: r for r in report.rows if r.tier == 'screen'}
             for result in report.capabilities:
                 model = models[result.model_id]
@@ -119,7 +170,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
                 data.update({f'{k}_evaluated_at': v for k, v in row.benchmark_evaluated_at.items()})
                 writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})
         validate_site(stage)
-        target, backup = checkout / "site", Path(temp) / "previous"
+        backup = Path(temp) / "previous"
         if target.exists():
             if target.is_symlink():
                 raise ValueError("Public site directory must not be a symlink")
@@ -130,7 +181,8 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
             if backup.exists():
                 backup.rename(target)
             raise
-    return {"snapshot": report.snapshot_id, "site": str(checkout / "site"), "ranked": sum(r.scores is not None for r in report.rows)}
+    return {"snapshot": report.snapshot_id, "site": str(target), "ranked": sum(r.scores is not None for r in report.rows),
+            'community_submissions': len(report.community_results)}
 
 
 def command(args: list[str], checkout: Path) -> str:

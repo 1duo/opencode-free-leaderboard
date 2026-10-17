@@ -34,3 +34,9 @@ An interrupted attempt without a response remains ambiguous until an operator ca
 An error after partial response content or usage remains ambiguous. Native usage totals must reconcile before grading. Completed matching screens survive unfinished refreshes with original dates; both full and public screens can renew after 28 days, with stale/pending flags and preserved prior cycles. Public protocol metadata rejects unknown fields.
 
 Reusable offline release checks gate Pages deployment, including production/privacy regressions, selected evaluation safety checks and strict renderer/artifact consistency. The browser rejects mismatched snapshots, bounds loading time and hides recommendations when eligibility evidence is stale. See [operations](operations.md) for installation, rollback and recovery.
+
+## External contributions
+
+Manual execution supports macOS, Linux and WSL2 with platform-specific private state and checksum-pinned client installation. GitHub and launchd checks are opt-in. Evaluation cycles capture a clean runner revision at creation without modifying existing cycles; the submission format distinguishes this from the exporter revision and permits explicitly unknown legacy provenance.
+
+`submit-results → results/<id>.json → author-bound PR validation → maintainer merge → public build → Pages` adds results without sharing private state or replacing the baseline. Complete panel hashes and protocol/accounting constraints are validated and statistics recomputed from typed grades. Community rows carry their contributor and submitted-record link in the existing two category views, remain unranked and cannot become recommendations. Public builds read only public data and do not require benchmark credentials, datasets, SQLite or Docker. Their output preserves existing local results and includes accepted community files.

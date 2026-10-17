@@ -2,7 +2,7 @@
 
 ## Preflight
 
-Run commands from the repository root. Use `uv run --frozen --no-editable leaderboard doctor` for bounded local prerequisite checks: SQLite integrity, disk capacity, pinned client, Docker, frozen panels, GitHub access and launch agent. It exits nonzero when a prerequisite is missing and never sends inference requests or reads credentials. Provider access is established separately by the compatibility pilot.
+Run commands from the repository root. Use `uv run --frozen --no-editable leaderboard doctor` for bounded local execution checks: SQLite integrity, disk capacity, pinned client, Docker and frozen panels. `doctor --publication` additionally checks GitHub access; `--scheduled` checks the macOS launch agent. GitHub access and scheduling are not needed for manual evaluation. It exits nonzero when a requested prerequisite is missing and never sends inference requests or reads credentials. Provider access is established separately by the compatibility pilot.
 
 `leaderboard status` reports model availability, queue, usage and publication status. `export` and `status` do not rewrite large backups. `--state /absolute/private/path` and `--checkout /path/to/repository` are root options before the command. Private state must stay outside the public checkout.
 
@@ -10,7 +10,7 @@ The generation adapter deliberately requires OpenCode 1.19.3. Do not change the 
 
 ## Pinned client
 
-Download the executable for your machine from the official [OpenCode v1.19.3 release](https://github.com/anomalyco/opencode/releases/tag/v1.19.3), verify its release asset SHA-256, then extract the executable to `state/bin/opencode-1.19.3` with mode `0700`. The runner checks this path before looking at the interactive executable. The Apple Silicon archive `opencode-darwin-arm64.zip` has SHA-256 `c2d0fecd27acf6e08be02c1f5d384614d07495587766bcc4a6bff3971749bb64`. Keep the archive provenance alongside the private binary. Use `leaderboard doctor` afterward; installing a binary is not a successful provider pilot.
+Run `leaderboard install-client` to install a platform-specific, checksum-pinned executable from the official [OpenCode v1.19.3 release](https://github.com/anomalyco/opencode/releases/tag/v1.19.3). macOS/Linux ARM64 and x86-64 are supported; Windows uses WSL2. The installer checks the SHA-256 before execution and the version before atomically installing `state/bin/opencode-1.19.3` with mode `0700`. The runner checks this path before looking at the interactive executable. Existing valid binaries are reused; invalid ones require explicit preservation/removal. Use `leaderboard doctor` afterward; installing a binary is not a successful provider pilot.
 
 Docker commands respect explicit `DOCKER_HOST`, `DOCKER_CONTEXT` and `DOCKER_CONFIG`. If none selects a host/context, an existing `state/colima/freeboard/docker.sock` is used for the private benchmark engine. This does not change the interactive Docker context or start a new VM.
 
@@ -26,6 +26,8 @@ uv run --frozen --no-editable leaderboard doctor
 ```
 
 All work holds a nonblocking process lock. A second invocation exits rather than dispatching concurrently. Wake the computer and keep Docker running for scheduled work. Inference has a ten-minute overall deadline. Provider quotas defer work; rejections and infrastructure failures do not lower capability scores.
+
+Manual evaluation and result export work on Linux/WSL2 without launchd. Use your own scheduler for repeated `run` invocations. `daily` includes publication and requires an explicitly configured writable repository. Root `--repository OWNER/REPO` (or `FREEBOARD_REPOSITORY`) controls fork publication, generated links and the installed launch agent's repository argument.
 
 ## Interrupted work
 
@@ -56,3 +58,11 @@ To restore, stop the launch agent, preserve the existing private state, and rest
 A failed export preserves the previous local site; a failed deployment preserves the live site. A failed push can leave a local commit: fix GitHub access, inspect `git status` and remote history, then rerun `publish`. Do not force-push away published history. `status` reconciles pushed publication records with their exact workflow commit. A successful push alone is not a successful deployment.
 
 The site rejects a mismatched snapshot rather than mixing cached HTML/assets and new data. Reload resolves a deployment-boundary cache mismatch. The page labels overdue scores, hides recommendations when eligibility evidence is older than seven days, and retains original evaluation dates.
+
+## Result pull requests
+
+`submit-results` exports only completed, currently eligible evaluations matching a published frozen panel. Public result files contain grades and accounting, not answers, prompts, response text or private paths. A new cycle records its clean generation-source commit; legacy cycles explicitly retain an unknown commit, separately from the exporter revision. The evaluation's native client, highest reasoning variant, platform and immutable grader image remain reviewable.
+
+Result PRs append records bound to the GitHub PR author; accepted files cannot be edited through the ordinary result-PR path. Maintainers review source/provenance and merge. The public build recomputes community scores and intervals from these files without accessing SQLite or credentials. Community rows are labeled, unranked and never replace the baseline or supply recommendations. CI consistency checks are not independent reproduction of submitted grades.
+
+`leaderboard build-site` creates ignored `.pages-site/` using the committed public baseline, accepted result files and current renderer. Pages uses this path too, so merging a results or UI PR publishes without needing the maintainer's local runner. A local `export` keeps merged community records alongside the private runner's baseline. Full contributor instructions are in [CONTRIBUTING.md](../CONTRIBUTING.md).

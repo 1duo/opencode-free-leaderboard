@@ -11,6 +11,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
         with:
           version: '0.12.9'
@@ -22,23 +24,41 @@ jobs:
           uv run --frozen --no-editable ruff check src tests grading/worker.py
           node --check web/app.js
       - name: Production and privacy regressions (no provider calls)
-        run: uv run --frozen --no-editable pytest -q tests/test_production.py tests/test_privacy.py
+        run: uv run --frozen --no-editable pytest -q tests/test_production.py tests/test_privacy.py tests/test_contributions.py
+      - name: Bind new result records to the pull request author
+        if: github.event_name == 'pull_request'
+        env:
+          FREEBOARD_PR_BASE: ${{ github.event.pull_request.base.sha }}
+          FREEBOARD_PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          uv run --frozen --no-editable python - <<'PY'
+          import os
+          from pathlib import Path
+          from freeboard.submissions import validate_pr_submissions
+          validate_pr_submissions(Path.cwd(), os.environ['FREEBOARD_PR_BASE'], os.environ['FREEBOARD_PR_AUTHOR'])
+          PY
+      - name: Fresh Linux client setup (version check only)
+        run: uv run --frozen --no-editable leaderboard --state "$RUNNER_TEMP/client-smoke" install-client
       - name: Evaluation safety regressions (no provider calls)
         run: >-
           uv run --frozen --no-editable pytest -q tests/test_core.py
           -k 'fail_closed or generation_endpoint or reservation_reconciliation or ambiguous_request
           or saved_response_recovery or explicit_retries or missing_cap_usage or complete_panels_and_paired
           or merged_capabilities or confirmation_reuses or public_export_omits or failed_export_preserves
-          or container_isolation or highest_reasoning or cap_revoked'
-      - name: Validate public artifact and renderer consistency
+          or container_isolation or highest_reasoning or cap_revoked or historical_profile_is_immutable'
+      - name: Build and validate public artifact and result submissions without private state
+        run: uv run --frozen --no-editable leaderboard --repository "$GITHUB_REPOSITORY" build-site --output "$RUNNER_TEMP/public-site"
+      - name: Verify rendered assets
         run: |
           uv run --frozen --no-editable python - <<'PY'
           from pathlib import Path
           from jinja2 import Environment, FileSystemLoader, select_autoescape
           from freeboard.publication import validate_site
-          report = validate_site(Path('site'))
+          import os
+          target = Path(os.environ['RUNNER_TEMP'])/'public-site'
+          report = validate_site(target)
           environment = Environment(loader=FileSystemLoader('web'), autoescape=select_autoescape(['html']))
-          assert Path('site/index.html').read_text() == environment.get_template('index.html').render(report=report)
+          assert (target/'index.html').read_text() == environment.get_template('index.html').render(report=report)
           for name in ['app.js', 'style.css']:
-              assert (Path('web')/name).read_bytes() == (Path('site')/name).read_bytes()
+              assert (Path('web')/name).read_bytes() == (target/name).read_bytes()
           PY

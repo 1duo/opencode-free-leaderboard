@@ -13,7 +13,7 @@ from .grading import docker_environment
 from .opencode import VERSION, client_version
 
 
-def doctor(db: DB, settings: Settings, checkout: Path) -> dict:
+def doctor(db: DB, settings: Settings, checkout: Path, *, publication=False, scheduled=False) -> dict:
     checks = []
     def add(name, ready, detail):
         checks.append({'check': name, 'ready': ready, 'detail': detail})
@@ -44,10 +44,12 @@ def doctor(db: DB, settings: Settings, checkout: Path) -> dict:
     add('graders', docker_ready and bool(images) and None not in images and all(
         succeeds(['docker', 'image', 'inspect', image]) for image in sorted(images)),
         'Immutable grader images referenced by validated seasons are present')
-    add('github', succeeds(['gh', 'repo', 'view', settings.repository, '--json', 'name']),
-        f'Authenticated access to {settings.repository}')
-    plist = Path.home() / 'Library/LaunchAgents/ai.opencode.free-leaderboard.plist'
-    add('schedule', plist.is_file() and succeeds(['launchctl', 'print', f'gui/{os.getuid()}/ai.opencode.free-leaderboard']),
-        'macOS launch agent installed and loaded; deadlines require the machine to run')
+    if publication:
+        add('github', succeeds(['gh', 'repo', 'view', settings.repository, '--json', 'name']),
+            f'Authenticated access to {settings.repository}')
+    if scheduled:
+        plist = Path.home() / 'Library/LaunchAgents/ai.opencode.free-leaderboard.plist'
+        add('schedule', plist.is_file() and succeeds(['launchctl', 'print', f'gui/{os.getuid()}/ai.opencode.free-leaderboard']),
+            'macOS launch agent installed and loaded; deadlines require the machine to run')
     return {'ready': all(c['ready'] for c in checks), 'checks': checks,
             'note': 'Local prerequisites only; provider access is established by the compatibility pilot.'}

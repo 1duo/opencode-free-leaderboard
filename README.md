@@ -4,25 +4,27 @@ Compare free OpenCode models for reasoning and Python coding on fixed benchmark 
 
 **[Live leaderboard](https://1duo.github.io/opencode-free-leaderboard/)** · [JSON](https://1duo.github.io/opencode-free-leaderboard/snapshot.json) · [CSV](https://1duo.github.io/opencode-free-leaderboard/leaderboard.csv) · [Operations](docs/operations.md)
 
+**[Run your own evaluations and contribute results by PR](CONTRIBUTING.md).** No maintainer credentials or private state are needed. Clone, install the pinned client, run a complete panel and export a sanitized `results/<id>.json`. Merged submissions appear as labeled community results in the Reasoning and Coding views.
+
 The local runner keeps datasets, answers, responses, credentials and SQLite state private. GitHub Actions validates and publishes a sanitized static snapshot; it never runs model requests.
 
 ## Setup
 
-Use macOS, Python 3.11 managed by [uv](https://docs.astral.sh/uv/), authenticated `gh`, and a running Docker Desktop or Colima engine. Allow roughly 15 GB for initial datasets, the grader and seven backups. Accept the [GPQA access terms](https://huggingface.co/datasets/Idavidrein/gpqa) before preparing full panels.
+Use macOS or Linux (Windows through WSL2), Python 3.11 managed by [uv](https://docs.astral.sh/uv/), and a running Docker engine. GitHub authentication is needed only for PRs or publication. Built-in scheduling is macOS-only; manual evaluation works without a scheduler. Allow roughly 15 GB for initial datasets, the grader and seven backups. Accept the [GPQA access terms](https://huggingface.co/datasets/Idavidrein/gpqa) before preparing full panels.
 
 ```sh
 uv sync --frozen --no-editable
+uv run --frozen --no-editable leaderboard install-client
+uv run --frozen --no-editable hf auth login
+# doctor reports missing panels until prepare-panels succeeds:
 uv run --frozen --no-editable leaderboard doctor
-uv run --frozen --no-editable leaderboard auth hf
-# Optional: reuse an existing native OpenCode API credential, or store one:
-uv run --frozen --no-editable leaderboard auth zen
 ```
 
 The validated generation client is **OpenCode 1.19.3, protocol revision 6**. A different version is blocked before inference. OpenCode v2 has a different API and has not passed the benchmark compatibility protocol. Updating your interactive client does not authorize a changed benchmark configuration. Existing evaluations retain their original client versions and epochs.
 
 To keep an independent benchmark client, install the official executable at `state/bin/opencode-1.19.3`. The runner prefers that file and verifies its version before use. See [the pinned client setup](docs/operations.md#pinned-client).
 
-Credentials go into macOS Keychain. `HF_TOKEN`, `OPENCODE_API_KEY`, an existing OpenCode API credential and the standard Hugging Face token file are also supported. The native public free-model credential is used if no Zen key is configured; official zero-price evidence is still required. Never put secrets into a command argument, issue or commit.
+`HF_TOKEN`, `OPENCODE_API_KEY`, an existing OpenCode API credential and the standard Hugging Face token file are supported. On macOS, `leaderboard auth hf` / `auth zen` can also store credentials in Keychain. The native public free-model credential is used if no Zen key is configured; official zero-price evidence is still required. Never put secrets into a command argument, issue or commit.
 
 ## Run locally
 
@@ -63,6 +65,8 @@ GPQA dispatch requires current, exact no-training evidence for the model. Routes
 
 These are small, older public benchmark subsets, potentially present in model training. They measure benchmark capability and do not establish everyday agent suitability. Scores, coverage, dates and uncertainty should be read together.
 
+Community result files must cover a complete published panel. CI recomputes scores and intervals from typed grades and validates IDs/hashes, settings, caps and accounting. The page labels these rows with the contributor and audit link; they remain unranked and never replace local scores or recommendations. CI cannot independently verify private answers or provider behavior.
+
 ## Publish and operate
 
 ```sh
@@ -73,11 +77,13 @@ uv run --frozen --no-editable leaderboard schedule install
 
 The default public repository is `1duo/opencode-free-leaderboard`. Publication stages only allowed source and public files. Offline production/privacy checks and artifact validation must pass before Pages deployment; a failed check or deployment preserves the last live site. Evaluation dates and deployment time are separate.
 
+To contribute upstream, use `leaderboard submit-results --model MODEL_ID --contributor YOUR_GITHUB_USERNAME` and open a PR containing the generated result file. Do not replace `site/` with your own state. Pages builds public data plus merged submissions without credentials. To self-host, set `--repository YOUR_USERNAME/YOUR_REPO` before the command (or `FREEBOARD_REPOSITORY`). See the [complete fork/PR workflow](CONTRIBUTING.md).
+
 The launch agent runs at **09:15 local time daily and at login**, using a managed source checkout outside Documents. Do not reinstall it just to resume work: installation starts it immediately. Full screens target a 28-day refresh in four cohorts. Deadlines depend on provider availability, Docker and the computer running; missed deadlines are retained explicitly.
 
 The weekly plan scales above minimums of 300 attempts and one million accounted tokens. Requests reserve conservative usage before dispatch. Unknown usage retains that reservation. Explicit retries are bounded; unknown or partially answered requests are never automatically replayed. Confirmations use spare capacity.
 
-Private state is under `~/Library/Application Support/OpenCodeFreeLeaderboard/`. Every command uses a process lock. Daily SQLite backups are validated and atomically replaced; seven successful daily copies rotate only after a new copy succeeds. Keep an independent encrypted backup for disk failure recovery.
+Private state is under `~/Library/Application Support/OpenCodeFreeLeaderboard/` on macOS and `$XDG_STATE_HOME/opencode-free-leaderboard` (default `~/.local/state/`) on Linux/WSL2. State commands use a process lock. Daily SQLite backups are validated and atomically replaced; seven successful daily copies rotate only after a new copy succeeds. Keep an independent encrypted backup for disk failure recovery.
 
 See [operations and recovery](docs/operations.md), [architecture](docs/architecture.md), [security](SECURITY.md), and the [evaluation audit](docs/review-2026-10-08.md).
 
@@ -85,8 +91,9 @@ See [operations and recovery](docs/operations.md), [architecture](docs/architect
 
 ```sh
 uv run --frozen --no-editable ruff check src tests grading/worker.py
-uv run --frozen --no-editable pytest -q tests/test_production.py tests/test_privacy.py
+uv run --frozen --no-editable pytest -q tests/test_contributions.py
 node --check web/app.js
+uv run --frozen --no-editable leaderboard build-site
 ```
 
-These checks do not call models or need credentials. CI also runs selected evaluation safety regressions and checks the committed site against its renderer. Follow [CONTRIBUTING.md](CONTRIBUTING.md); do not change frozen prompts, grading limits or accepted answers to improve results.
+These checks do not call models or need credentials. The public build is written to ignored `.pages-site/`. CI also runs production/privacy and selected evaluation-safety regressions, a fresh pinned-client setup on Linux, and public artifact validation. Follow [CONTRIBUTING.md](CONTRIBUTING.md); do not change frozen prompts, grading limits or accepted answers to improve results.
