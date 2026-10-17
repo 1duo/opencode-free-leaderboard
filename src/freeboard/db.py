@@ -60,6 +60,8 @@ CREATE TABLE IF NOT EXISTS manual_retries (
  attempt_id INTEGER NOT NULL UNIQUE REFERENCES attempts(id), original_state TEXT NOT NULL);
 """
 
+EXTRA_RETRY_SCHEMA = MANUAL_RETRIES_SCHEMA.replace('manual_retries', 'manual_retry_extensions')
+
 
 class DB:
     def __init__(self, state: Path):
@@ -70,10 +72,10 @@ class DB:
         self.conn.execute('PRAGMA foreign_keys=ON')
         version = self.conn.execute('PRAGMA user_version').fetchone()[0]
         if version == 0:
-            self.conn.executescript(SCHEMA + MANUAL_RETRIES_SCHEMA + 'PRAGMA user_version=2;')
-        elif version == 1:
-            self.conn.executescript('BEGIN IMMEDIATE;' + MANUAL_RETRIES_SCHEMA + 'PRAGMA user_version=2; COMMIT;')
-        elif version != 2:
+            self.conn.executescript(SCHEMA + MANUAL_RETRIES_SCHEMA + EXTRA_RETRY_SCHEMA + 'PRAGMA user_version=3;')
+        elif version in {1, 2}:
+            self.conn.executescript('BEGIN IMMEDIATE;' + MANUAL_RETRIES_SCHEMA + EXTRA_RETRY_SCHEMA + 'PRAGMA user_version=3; COMMIT;')
+        elif version != 3:
             raise RuntimeError('Unsupported state schema version')
         self.path.chmod(0o600)
 

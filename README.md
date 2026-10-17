@@ -88,6 +88,10 @@ For explicitly authorized recovery of unanswered unknown requests, use `leaderbo
 
 An unanswered stream may contain unfinished reasoning. A broken SDK continuation qualifies only when the first turn has no answer text or tools, ends with an unknown finish and zero usage, and the second turn is empty. Such unknown attempts retain their conservative token charges. Answer text, a normal completion, nonzero token usage, or second-turn content blocks this recovery path.
 
+A separately authorized further recovery is recorded in `manual_retry_extensions`, without resetting or replacing the original manual-retry audit. It permits at most one additional attempt for that unanswered job and applies the same native-evidence, eligibility and cap guards. It is never granted by the CLI's normal recovery command or daily scheduling. Counts distinguish recovery attempts from distinct recovered questions.
+
+The model-coverage table reconciles the current catalog with complete full screens, current public screens, pilots and explicit blockers. Old endpoint/configuration epochs appear under earlier public screens. Public-only routes and unsupported structured-decision endpoints are labeled explicitly, rather than represented as missing full-screen scores. JSON and CSV include numeric evidence for observed cap failures.
+
 ## Protocol and statistics
 
 | Benchmark | Screen | Confirmation |

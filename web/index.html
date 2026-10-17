@@ -26,12 +26,12 @@
 <div class="section-heading"><h2>Benchmarks</h2><span id="benchmark-panel" class="badge">Screen sections · unranked</span></div><p class="section-note">Complete sections only. Dot: score · line: 95% interval · scale: 0–100%.</p>
 <div id="benchmark-list" class="chart-grid benchmark-grid"></div>
 </section>
-<section id="lightweight-results" class="section" hidden>
-<div class="section-heading"><h2>New model checks</h2><span class="badge">12-question subset · unranked</span></div>
+<details id="lightweight-results" class="section" hidden>
+<summary id="lightweight-heading">Lightweight checks · 12 questions · unranked</summary>
 <p id="lightweight-summary" class="section-note"></p>
 <div id="lightweight-list" class="chart-grid"></div>
 <details><summary>Protocol & run details</summary><p class="fine">Six LiveBench questions (three spatial, three zebra; 2024-11-25) and six LiveCodeBench Python problems (two per difficulty; release_v6). Fixed seed 20261008. One answer per question, combined 4,096-token cap. Six separate synthetic compatibility probes use 256 tokens. Scores appear after all 12 benchmark questions finish. Six questions per component offer limited evidence; collapsed bootstrap intervals are withheld as unresolved. These results do not enter full rankings.</p><div id="lightweight-details" class="detail-grid"></div></details>
-</section>
+</details>
 <section id="contributor-results" class="section" hidden>
 <div class="section-heading"><h2>Public-only evaluation</h2><span class="badge">60-question subset · unranked</span></div>
 <p id="contributor-policy" class="section-note"></p><p id="contributor-progress" class="fine"></p>
@@ -43,14 +43,14 @@
 <details id="run-details"><summary>Run details</summary><div id="run-detail-list" class="detail-grid"></div></details>
 </details>
 <section id="supporting" class="section supporting" hidden>
-<details id="availability"><summary id="availability-summary">Model availability</summary><p id="discovery-date" class="fine"></p><div class="table-scroll"><table><caption class="sr-only">Discovered model availability</caption><thead><tr><th scope="col">Model</th><th scope="col">Status</th></tr></thead><tbody id="availability-list"></tbody></table></div></details>
+<details id="availability"><summary id="availability-summary">Model coverage</summary><p id="discovery-date" class="fine"></p><div class="table-scroll"><table><caption class="sr-only">Current model coverage; counts are graded screen questions</caption><thead><tr><th scope="col">Model</th><th scope="col">GPQA</th><th scope="col">LiveBench</th><th scope="col">Coding</th><th scope="col">Status</th></tr></thead><tbody id="availability-list"></tbody></table></div></details>
 <details id="execution"><summary id="execution-summary">Execution details</summary><dl id="budget" class="facts"></dl><p id="prior-budget" class="fine" hidden></p><p class="fine">Tokens are reported by OpenCode. Attempts include reservations and retries observed in its event stream; they are not a provider HTTP audit. Missing usage is conservatively accounted.</p><p class="fine">Full panels target a 28-day refresh. Completion depends on provider access and the local machine.</p></details>
 <details id="pilots" hidden><summary>Compatibility pilots</summary><p class="fine">Held-out checks, excluded from benchmark scores. Counts show answers graded, not checks passed.</p><div id="pilot-list" class="detail-grid"></div></details>
 <details id="archive" hidden><summary>Previous evaluations</summary><div id="history-list"></div></details>
 </section>
 <section id="methodology" class="section method">
 <h2>Method</h2><p>Custom subsets, not official benchmark leaderboard scores. Intervals use 10,000 stratified bootstrap resamples and reflect question sampling, not repeated-generation variability.</p>
-<p>Unknown requests stay pending unless explicitly retried once. Manual recoveries are labeled; original attempts and token charges are retained.</p>
+<p>Unanswered requests remain unscored. Authorized recoveries are labeled; original attempts and token charges are retained.</p>
 <p>GPQA requires explicit current no-training terms for the exact endpoint. Other routes use public benchmarks only.</p>
 <div class="method-grid"><div><h3>Panels</h3><p>LiveBench spatial / zebra: 20 questions, dated 2024-11-25. LiveCodeBench Python: 40 problems, release_v6. Full screens also require 20 GPQA Diamond questions.</p></div><div><h3>Protocol</h3><p>OpenCode version is recorded per run (current: 1.19.3). A fixed benchmark agent includes OpenCode's environment context. Native tool schemas are present; every permission request is rejected, and tool attempts score zero. No plugins or repair turns. Original benchmark roles; temperature zero where supported; 4,096-token combined cap. Frozen graders; isolated grading.</p></div></div>
 <details><summary>Full rankings & confirmations</summary><p>Full screens contain 80 questions. Reasoning equally averages GPQA and LiveBench; coding uses LiveCodeBench pass@1. Overall defaults to 40% reasoning / 60% coding. Manual 240-question confirmations reuse the screen's 80 answers and stay in a separate ranking. Only complete panels receive ranks.</p></details>

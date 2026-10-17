@@ -38,11 +38,14 @@ def unanswered_continuation(journal: dict, answers: list[dict], model: dict) -> 
             and second['info'].get('finish') is None and not second['parts'])
 
 
-def manual_retry_reason(db, job: dict, model: dict) -> str | None:
+def manual_retry_reason(db, job: dict, model: dict, additional_retry: bool = False) -> str | None:
     """Inspect unanswered evidence only; never select a retry by answer quality."""
     if job['status'] != 'ambiguous' or job['response_path']:
         return 'Request is not an unanswered unknown outcome'
-    if db.one('SELECT job_id FROM manual_retries WHERE job_id=?', (job['id'],)):
+    original = db.one('SELECT job_id FROM manual_retries WHERE job_id=?', (job['id'],))
+    if additional_retry and not original:
+        return 'Additional recovery requires an existing original manual retry'
+    if (original and not additional_retry) or db.one('SELECT job_id FROM manual_retry_extensions WHERE job_id=?', (job['id'],)):
         return 'One-time manual retry already consumed'
     cycle = db.one('SELECT * FROM cycles WHERE id=?', (job['cycle_id'],))
     if excluded(model['id']) or model['status'] != 'eligible' or not json.loads(model['profile']).get('cap_verified'):

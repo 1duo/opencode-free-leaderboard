@@ -67,7 +67,8 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
         (stage / ".nojekyll").write_text("")
         fields = ["model_id", "tier", "transport", "client_version", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench",
                   "gpqa_n", "livebench_n", "livecodebench_n", "gpqa_evaluated_at", "livebench_evaluated_at", "livecodebench_evaluated_at",
-                  "accounted_tokens", "reported_tokens", "truncation_rate", "manual_retry_count", "manual_recovered_questions", "public_only_reason"]
+                  "accounted_tokens", "reported_tokens", "truncation_rate", "manual_retry_count", "manual_recovered_questions", "public_only_reason",
+                  "cap_limit", "cap_observed"]
         fields += [f'{metric}_ci_{bound}' for metric in ['reasoning','coding','overall','gpqa','livebench','livecodebench'] for bound in ['low','high']]
         fields += ['livebench_interval_note', 'livecodebench_interval_note']
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
@@ -76,6 +77,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
             for row in report.rows + report.history:
                 data = {k: getattr(row, k) for k in fields if hasattr(row, k)}
                 data['transport'] = 'local-opencode'
+                data.update({f'cap_{k}': v for k, v in (row.cap_failure or {}).items()})
                 data.update({k: (row.scores or {}).get(k) for k in ["reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench"]})
                 data.update(row.benchmark_scores)
                 data.update({f'{metric}_ci_{bound}': limits[index]

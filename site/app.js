@@ -23,6 +23,36 @@ function reasoningSetting(row) {
   return variant ? `${label} · highest exposed` : row.reasoning_setting;
 }
 function total(values) { return Object.values(values || {}).reduce((a, b) => a + b, 0); }
+function currentModels() {
+  return report.rows.filter(r => r.tier === "screen" && !["removed", "excluded", "paid"].includes(r.availability));
+}
+function currentPublicRun(run) {
+  return currentModels().some(m => m.model_id === run.model_id && m.epoch === run.epoch);
+}
+function coverage(model) {
+  const run = (report.public_screens || []).find(r => r.model_id === model.model_id && r.epoch === model.epoch);
+  const pilot = (report.pilots || []).find(r => r.model_id === model.model_id && r.epoch === model.epoch);
+  const full = Boolean(model.scores);
+  const complete = full || run?.status === "complete";
+  const progress = full || model.cycle_started_at ? model.progress : run?.progress;
+  let state = complete ? (full ? "Full screen complete" : "Public screen complete") : statusLabel(model.availability);
+  let note = "";
+  if (model.cap_failure) note = `${num(model.cap_failure.observed)} reported output tokens / ${num(model.cap_failure.limit)} cap`;
+  else if (model.availability === "unsupported") note = model.model_id.startsWith("jev-")
+    ? "Structured-decision endpoint; no text or code generation" : "Unsupported benchmark endpoint";
+  else if (!complete && pilot?.status !== "complete" && pilot) {
+    const progress = `Pilot ${total(pilot.progress)}/${total(pilot.expected)}`;
+    if (["eligible", "provider_error", "protocol_violation"].includes(model.availability)) state = progress;
+    note = [state === progress ? "" : progress, pilot.unanswered_retries_used ? `${pilot.unanswered_retries_used} unanswered after manual retries` : pendingText(pilot.pending_reasons)].filter(Boolean).join(" · ");
+  } else if (!complete && run) note = pendingText(run.pending_reasons);
+  const counts = {};
+  for (const [benchmark, expected] of Object.entries({gpqa:20, livebench:20, livecodebench:40})) {
+    counts[benchmark] = model.availability === "unsupported" ? "Not applicable"
+      : benchmark === "gpqa" && model.public_only_reason ? "Withheld"
+      : progress ? `${progress[benchmark] || 0}/${expected}` : "Not started";
+  }
+  return {complete, state, note, counts};
+}
 function recoveryLabel(run) {
   return run?.manual_retry_count ? `${run.manual_retry_count} logged manual ${run.manual_retry_count === 1 ? "retry" : "retries"} · ${run.manual_recovered_questions} recovered` : "";
 }
@@ -95,6 +125,11 @@ function renderLightweight() {
   const runs = report.lightweight || [];
   byId("lightweight-results").hidden = !runs.length;
   if (!runs.length) return;
+  const hasNew = runs.some(r => r.availability === "eligible"
+    && !report.rows.some(m => m.model_id === r.model_id && m.epoch === r.epoch && m.scores)
+    && !(report.public_screens || []).some(p => p.model_id === r.model_id && p.epoch === r.epoch && p.status === "complete"));
+  byId("lightweight-results").open = hasNew;
+  byId("lightweight-heading").textContent = `${hasNew ? "New model checks" : "Earlier lightweight checks"} · 12 questions · unranked`;
   byId("lightweight-summary").textContent = `${runs.filter(r => r.status === "complete").length}/${runs.length} models complete · OpenCode 1.19.3 · 6 reasoning + 6 coding questions per model. Dots show scores; lines show 95% question-sampling intervals.`;
   byId("lightweight-list").replaceChildren(
     benchmarkChart(runs, "livebench", "LiveBench reasoning", "6 questions · 2024-11-25"),
@@ -117,7 +152,7 @@ function renderLightweight() {
   }
 }
 function renderPublicScreens() {
-  const screens = (report.public_screens || []).filter(r => !r.public_only_reason);
+  const screens = (report.public_screens || []).filter(r => !(r.public_only_reason && currentPublicRun(r)));
   byId("results").hidden = !screens.length;
   const hasFullSeason = report.seasons.some(s => s.active && !s.partial);
   byId("results").open = !hasFullSeason;
@@ -150,9 +185,9 @@ function renderPublicScreens() {
   }
 }
 function renderContributorResults() {
-  const models = report.rows.filter(r => r.tier === "screen" && r.public_only_reason);
-  const runs = (report.public_screens || []).filter(r => r.public_only_reason);
-  const pilots = (report.pilots || []).filter(r => r.public_only_reason && !r.expected.gpqa);
+  const models = currentModels().filter(r => r.public_only_reason);
+  const runs = (report.public_screens || []).filter(r => r.public_only_reason && currentPublicRun(r));
+  const pilots = (report.pilots || []).filter(r => r.public_only_reason && !r.expected.gpqa && currentPublicRun(r));
   byId("contributor-results").hidden = !runs.length && !pilots.length;
   byId("contributor-policy").textContent = "Public benchmarks only. GPQA is withheld where current provider terms do not establish a no-training route.";
   const list = byId("contributor-list"); list.replaceChildren();
@@ -165,6 +200,7 @@ function renderContributorResults() {
     const availability = model.availability === "eligible" ? "" : ` · ${statusLabel(model.availability)}`;
     progress.append(node("span", `${model.name} · Reasoning: ${reasoningSetting(run || pilot || model)} · ${state}${availability}`, "sub"));
     if (recoveryLabel(pilot)) progress.append(node("span", `Pilot: ${recoveryLabel(pilot)}`, "sub"));
+    if (!run && pilot?.unanswered_retries_used) progress.append(node("span", `${pilot.unanswered_retries_used} unanswered after manual retries`, "sub"));
     if (recoveryLabel(run)) progress.append(node("span", recoveryLabel(run), "sub"));
     if (model.public_only_reason.includes("Meta")) progress.append(node("span", model.public_only_reason, "sub"));
     if (run) {
@@ -225,20 +261,25 @@ function renderRankings() {
 }
 function renderSupporting() {
   byId("supporting").hidden = false;
-  const models = report.rows.filter(r => r.tier === "screen");
-  const runnable = models.filter(r => r.availability === "eligible" && r.cap_verified).length;
-  const restricted = models.filter(r => r.free_eligible && r.protocol === "opencode" && !(r.availability === "eligible" && r.cap_verified)).length;
-  byId("availability-summary").textContent = `Model availability · ${runnable} runnable${restricted ? `, ${restricted} awaiting access or verification` : ""}`;
+  const models = currentModels();
+  const completed = models.filter(m => coverage(m).complete).length;
+  const unsupported = models.filter(m => m.availability === "unsupported").length;
+  byId("availability-summary").textContent = `Model coverage · ${models.length} models · ${completed} complete · ${models.length - completed - unsupported} incomplete${unsupported ? ` · ${unsupported} unsupported` : ""}`;
   byId("discovery-date").textContent = `Catalog checked ${fmtDate(report.discovery_at)}${report.discovery_ok ? "" : " · verification failed"}. Free pricing does not guarantee access.`;
   const list = byId("availability-list"); list.replaceChildren();
   for (const model of models) {
+    const result = coverage(model);
     const row = node("tr"), name = node("td");
     name.append(node("strong", model.name), node("span", `Reasoning: ${reasoningSetting(model)}`, "sub"), node("span", model.model_id, "sub"));
-    const state = model.availability === "eligible" && !model.cap_verified ? "cap_unverified" : model.availability;
-    const availability = node("td", statusLabel(state));
-    if (model.public_only_reason) availability.append(node("span", "Public benchmarks only", "sub"));
+    const availability = node("td", result.state);
+    if (result.note) availability.append(node("span", result.note, "sub"));
     if (model.next_retry_at) availability.append(node("span", `Retry after ${new Date(model.next_retry_at).toLocaleString()}`, "sub"));
-    row.append(name, availability); list.append(row);
+    const counts = ["gpqa", "livebench", "livecodebench"].map(b => {
+      const cell = node("td", result.counts[b], "coverage-count");
+      cell.dataset.label = {gpqa:"GPQA", livebench:"LiveBench", livecodebench:"Coding"}[b];
+      return cell;
+    });
+    row.append(name, ...counts, availability); list.append(row);
   }
   byId("execution-summary").textContent = `Execution details · week of ${fmtDate(`${report.budget.week}T12:00:00`)}`;
   byId("budget").replaceChildren(...facts([["Recorded client attempts", num(report.budget.opencode_attempts)], ["Discovery requests", num(report.budget.discovery_attempts)], ["Client accounted / recorded tokens", `${num(report.budget.opencode_accounted_tokens)} / ${num(report.budget.opencode_reported_tokens)}`], ["Dispatches with estimated usage", num(report.budget.opencode_estimated_attempts)], ["Total attempts / limit", `${num(report.budget.attempts_used)} / ${num(report.budget.attempts_limit)}`], ["Total accounted tokens / limit", `${num(report.budget.accounted_tokens)} / ${num(report.budget.tokens_limit)}`], ["Planned requests / tokens", `${num(report.budget.planned_attempts)} / ${num(report.budget.planned_tokens)}`], ["Queued OpenCode jobs (includes blocked)", num(report.queue_size)], ["Missed refresh deadlines", num(report.missed_deadlines)]]).childNodes);

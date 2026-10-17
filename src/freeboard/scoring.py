@@ -45,6 +45,7 @@ class PublicRow(Strict):
     protocol: str | None
     endpoint: str | None
     cap_verified: bool
+    cap_failure: dict[str, int] | None = None
     reasoning_setting: str = 'Unverified'
     reasoning_variant: str | None = None
     observed_at: str
@@ -82,6 +83,7 @@ class Comparison(Strict):
 
 class PublicPilot(Strict):
     model_id: str
+    epoch: str
     public_only_reason: str | None = None
     transport: Literal['local-opencode'] = 'local-opencode'
     season: str
@@ -98,6 +100,7 @@ class PublicPilot(Strict):
     evaluated_at: str | None
     manual_retry_count: int = 0
     manual_recovered_questions: int = 0
+    unanswered_retries_used: int = 0
 
 
 class PublicScreen(Strict):
@@ -256,8 +259,9 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
         WHERE j.cycle_id=? AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)""",
                      (cycle["id"], cycle["season"], tier)) if cycle else {"accounted": 0, "reported": 0}
     generated = [r for r in items if r["latency"] is not None]
-    manual = db.one("""SELECT COUNT(*) AS attempted,COALESCE(SUM(j.status='graded'),0) AS recovered
-        FROM manual_retries r JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?
+    manual = db.one("""SELECT COUNT(*) AS attempted,COUNT(DISTINCT CASE WHEN j.status='graded' THEN j.id END) AS recovered
+        FROM (SELECT * FROM manual_retries UNION ALL SELECT * FROM manual_retry_extensions) r
+        JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?
         AND j.item_id IN (SELECT item_id FROM panels WHERE season=? AND tier=?)""",
                     (cycle['id'], cycle['season'], tier)) if cycle else {'attempted': 0, 'recovered': 0}
     stamp = max((r["finished_at"] for r in db.rows("""SELECT a.finished_at FROM attempts a
@@ -287,10 +291,20 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
             except (OSError, TypeError, ValueError):
                 pass
     if not cycle:
-        status = "cap_unverified" if model["status"] == "eligible" and not profile.get("cap_verified") else "pending"
+        status = ("not_applicable" if availability == 'unsupported' else
+                  "blocked" if availability in {'cap_violation', 'cap_unverified', 'client_access_restricted'} else
+                  "public_only" if not gpqa_allowed(db, model) else
+                  "cap_unverified" if model["status"] == "eligible" and not profile.get("cap_verified") else "pending")
     retry = db.one("""SELECT MIN(j.next_after) AS at FROM jobs j JOIN cycles c ON c.id=j.cycle_id
         WHERE c.model_id=? AND c.epoch=? AND j.status='deferred'
         AND j.error='Verified quota rejection; awaiting retry window'""", (model['id'], model['epoch']))
+    failure = db.one("""SELECT a.usage,c.kind FROM attempts a JOIN jobs j ON j.id=a.job_id
+        JOIN cycles c ON c.id=j.cycle_id WHERE c.model_id=? AND c.epoch=?
+        AND j.status='failed' AND j.error LIKE '%output cap%' ORDER BY a.id DESC LIMIT 1""",
+        (model['id'], model['epoch'])) if availability == 'cap_violation' and (not cycle or cycle['epoch'] == model['epoch']) else None
+    output = json.loads(failure['usage'] or '{}').get('completion_tokens') if failure else None
+    cap_failure = {'limit': 256 if failure['kind'] in {'health', 'cap_calibration'} else 4096,
+                   'observed': output} if type(output) is int else None
     return PublicRow(model_id=model["id"], name=model["name"], epoch=cycle["epoch"] if cycle else model["epoch"],
                      client_version=profile.get('version'),
                      public_only_reason=public_only_reason(db, model),
@@ -300,6 +314,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
                      protocol=profile['protocol'], endpoint=profile.get('endpoint', model['endpoint']),
                      cap_verified=profile.get("cap_verified", False) and not (cycle and cycle['epoch'] == model['epoch']
                          and availability in {'cap_violation', 'cap_unverified'}), observed_at=model["observed_at"],
+                     cap_failure=cap_failure,
                      next_retry_at=retry['at'] if availability == 'quota_limited' else None,
                      reasoning_setting=reasoning_label(profile), reasoning_variant=profile.get('reasoning', {}).get('variant'),
                      evaluated_at=stamp,
@@ -318,8 +333,10 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
 
 
 def manual_recoveries(db: DB, cycle_id: str) -> dict:
-    row = db.one("""SELECT COUNT(*) AS attempted,COALESCE(SUM(j.status='graded'),0) AS recovered
-        FROM manual_retries r JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?""", (cycle_id,))
+    row = db.one("""SELECT COUNT(*) AS attempted,
+        COUNT(DISTINCT CASE WHEN j.status='graded' THEN j.id END) AS recovered
+        FROM (SELECT * FROM manual_retries UNION ALL SELECT * FROM manual_retry_extensions) r
+        JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?""", (cycle_id,))
     return {'manual_retry_count': row['attempted'], 'manual_recovered_questions': row['recovered']}
 
 
@@ -425,7 +442,10 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
             and json.loads(j['content']).get('check') == 'cap' for j in cap_checks))
         complete = (sum(expected.values()) in {4, 6} and len(items) == sum(expected.values())
                     and (health == 6 or replacement_cap) and all(progress[b] == expected[b] for b in expected))
-        pilots.append(PublicPilot(model_id=cycle['model_id'],
+        retries_used = db.one("""SELECT COUNT(*) n FROM jobs j WHERE j.cycle_id=? AND j.status='ambiguous'
+            AND EXISTS(SELECT 1 FROM manual_retries r WHERE r.job_id=j.id)""", (cycle['id'],))['n']
+        pilots.append(PublicPilot(model_id=cycle['model_id'], epoch=cycle['epoch'],
+            unanswered_retries_used=retries_used,
             public_only_reason=public_only_reason(db, model),
             reasoning_setting=reasoning_label(json.loads(cycle['profile'])),
             reasoning_variant=json.loads(cycle['profile']).get('reasoning', {}).get('variant'),
@@ -442,6 +462,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
         AND json_extract(profile,'$.protocol_revision')={REVISION}
         AND started_at=(SELECT MAX(c2.started_at) FROM cycles c2 WHERE c2.kind='public_screen'
             AND c2.model_id=cycles.model_id AND c2.season=cycles.season
+            AND c2.epoch=cycles.epoch
             AND json_extract(c2.profile,'$.protocol_revision')={REVISION}) ORDER BY started_at,model_id"""):
         if cycle['model_id'] in OMITTED_MODELS:
             continue
@@ -526,8 +547,7 @@ def lightweight_results(db: DB, settings: Settings) -> list[Lightweight]:
         cap = bool(json.loads(model['profile']).get('cap_verified')) if current else bool(complete)
         cap = cap and not any(r['status'] in {'failed','cap_unverified'} for r in items)
         reasons = {s: sum(r['status'] == s for r in items) for s in sorted({r['status'] for r in items if r['status'] != 'graded'})}
-        manual = db.one("""SELECT COUNT(*) attempted,COALESCE(SUM(j.status='graded'),0) recovered
-            FROM manual_retries r JOIN jobs j ON j.id=r.job_id WHERE j.cycle_id=?""", (cycle['id'],))
+        manual = manual_recoveries(db, cycle['id'])
         result.append(Lightweight(model_id=cycle['model_id'], epoch=cycle['epoch'], season=cycle['season'],
             public_only_reason=public_only_reason(db, model),
             client_version=profile['version'], protocol_revision=profile['protocol_revision'],
@@ -535,7 +555,7 @@ def lightweight_results(db: DB, settings: Settings) -> list[Lightweight]:
             availability=model['status'] if current else 'historical', cap_verified=cap,
             status='complete' if complete else 'pending', progress=progress, expected=expected,
             health_graded=health['graded'], health_passed=int(health['passed']), tool_rejections=rejections, pending_reasons=reasons,
-            manual_retry_count=manual['attempted'], manual_recovered_questions=manual['recovered'],
+            **manual,
             benchmark_scores=scores, intervals=intervals, interval_warnings=warnings, benchmark_evaluated_at=dates,
             evaluated_at=cycle['completed_at'] if complete else None,
             latency_seconds=float(np.median([r['latency'] for r in generated_items])) if generated_items else None,

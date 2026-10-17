@@ -231,9 +231,60 @@ def test_manual_retry_schema_upgrade_preserves_existing_state(context):
     db.conn.executescript('DROP TABLE manual_retries; PRAGMA user_version=1;')
     db.conn.close()
     upgraded = DB(settings.state)
-    assert upgraded.conn.execute('PRAGMA user_version').fetchone()[0] == 2
+    assert upgraded.conn.execute('PRAGMA user_version').fetchone()[0] == 3
     assert upgraded.one('SELECT id FROM models')['id'] == 'test-free'
     assert upgraded.rows('SELECT * FROM manual_retries') == []
+
+
+def test_additional_manual_recovery_preserves_first_allowance_and_counts_distinct_questions(context, monkeypatch):
+    from freeboard.scoring import manual_recoveries
+    runner, job, item_model, item, _ = unanswered_fixture(context, monkeypatch)
+    with pytest.raises(ValueError, match='existing original'):
+        runner.generate(job, item_model, item, 4096, manual_retry=True, additional_retry=True)
+    first = runner.budget.reserve('opencode_generation', 100, job['id'], item_model['id'], manual_retry=True)
+    journal = runner.settings.state / 'logs/unknown.json'
+    runner.budget.finish(first, 'ambiguous', response_path=str(journal))
+    runner.db.execute("UPDATE jobs SET status='ambiguous' WHERE id=?", (job['id'],))
+    job = runner.db.one('SELECT * FROM jobs')
+    before = runner.db.rows('SELECT * FROM attempts ORDER BY id')
+    original = runner.db.one('SELECT * FROM manual_retries')
+    with pytest.raises(ValueError, match='already consumed'):
+        runner.generate(job, item_model, item, 4096, manual_retry=True)
+    calls = []
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *args: calls.append(args) or native_result())
+    runner.generate(job, item_model, item, 4096, manual_retry=True, additional_retry=True)
+    saved = runner.db.one('SELECT * FROM jobs')
+    runner.grade(saved, item, 'unused')
+    assert len(calls) == 1
+    assert runner.db.rows('SELECT * FROM attempts ORDER BY id')[:-1] == before
+    assert runner.db.one('SELECT * FROM manual_retries') == original
+    extension = runner.db.one('SELECT * FROM manual_retry_extensions')
+    assert extension['prior_attempt_id'] == first
+    assert json.loads(extension['original_state'])['attempt_ids'] == [a['id'] for a in before]
+    assert json.loads(Path(saved['response_path']).read_text())['additional_manual_retry']
+    assert manual_recoveries(runner.db, job['cycle_id']) == {'manual_retry_count': 2, 'manual_recovered_questions': 1}
+    row, _ = make_row(runner.db, runner.settings, item_model, runner.db.one('SELECT * FROM cycles'), 'screen')
+    assert row.manual_retry_count == 2 and row.manual_recovered_questions == 1
+
+
+def test_additional_retry_reservation_is_once_only_and_schema_upgrade_preserves_audit(context, monkeypatch):
+    runner, job, item_model, _, _ = unanswered_fixture(context, monkeypatch)
+    first = runner.budget.reserve('opencode_generation', 100, job['id'], item_model['id'], manual_retry=True)
+    runner.budget.finish(first, 'ambiguous')
+    runner.db.execute("UPDATE jobs SET status='ambiguous' WHERE id=?", (job['id'],))
+    original = runner.db.one('SELECT * FROM manual_retries')
+    runner.db.conn.executescript('DROP TABLE manual_retry_extensions; PRAGMA user_version=2;')
+    runner.db.conn.close()
+    upgraded = DB(runner.settings.state)
+    assert upgraded.one('SELECT * FROM manual_retries') == original
+    assert upgraded.rows('SELECT * FROM manual_retry_extensions') == []
+    budget = Budget(upgraded, runner.settings)
+    extra = budget.reserve('opencode_generation', 100, job['id'], item_model['id'], manual_retry=True, additional_retry=True)
+    budget.finish(extra, 'ambiguous')
+    upgraded.execute("UPDATE jobs SET status='ambiguous' WHERE id=?", (job['id'],))
+    with pytest.raises(ValueError, match='unused allowance'):
+        budget.reserve('opencode_generation', 100, job['id'], item_model['id'], manual_retry=True, additional_retry=True)
+    assert len(upgraded.rows('SELECT * FROM manual_retry_extensions')) == 1
 
 @pytest.mark.parametrize('mode', ['complete', 'unicode_prompt', 'deadline', 'closed_stream', 'partial_retry', 'unowned_retry', 'pre_response_retry'])
 def test_native_listener_allows_slow_completion_but_deadline_never_replays(context, monkeypatch, mode):
@@ -1123,6 +1174,37 @@ def public_screen_fixture(context):
         for i in range(n):
             add_item(db, f'{benchmark}:{i}', benchmark=benchmark)
     return Runner(db, settings, checkout), item_model, active
+
+
+def test_public_screen_history_retains_each_epoch(context, monkeypatch):
+    from freeboard.scoring import snapshot
+    runner, item_model, active = public_screen_fixture(context)
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    previous = {**item_model, 'epoch': 'previous-epoch'}
+    for m, ident in [(previous, 'prior-public'), (item_model, 'current-public')]:
+        cycle = runner.cycle(m, active, 'public_screen', ident)
+        runner.add_panel(cycle, 'screen')
+    rows = snapshot(runner.db, runner.settings).public_screens
+    assert {r.epoch for r in rows} == {'previous-epoch', item_model['epoch']}
+    assert all(sum(r.progress.values()) == 0 and not r.benchmark_scores for r in rows)
+
+
+def test_cap_failure_exports_only_numeric_evidence(context, monkeypatch):
+    import csv
+    import shutil
+    runner, job, item_model, item = job_context(context)
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *_: native_result(tokens=4097))
+    runner.generate(job, item_model, item, 4096)
+    fresh = runner.db.one('SELECT * FROM models')
+    row, _ = make_row(runner.db, runner.settings, fresh, runner.db.one('SELECT * FROM cycles'), 'screen')
+    assert row.availability == 'cap_violation'
+    assert row.cap_failure == {'limit': 4096, 'observed': 4097}
+    assert row.scores is None and not row.cap_verified
+    target = runner.settings.state.parent / 'cap-export'
+    shutil.copytree(runner.checkout / 'web', target / 'web')
+    export(runner.db, runner.settings, target)
+    rows = list(csv.DictReader((target / 'site/leaderboard.csv').open()))
+    assert rows[0]['cap_limit'] == '4096' and rows[0]['cap_observed'] == '4097'
 
 
 @pytest.mark.parametrize('kind', ['pilot', 'public_screen'])

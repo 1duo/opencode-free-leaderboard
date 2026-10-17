@@ -135,14 +135,17 @@ class Runner:
                          used["accounted_tokens"] + planned["planned_tokens"], week()))
         return self.budget.summary()
 
-    def generate(self, job: dict, model: dict, item: dict, cap: int, manual_retry: bool = False) -> None:
+    def generate(self, job: dict, model: dict, item: dict, cap: int, manual_retry: bool = False,
+                 additional_retry: bool = False) -> None:
+        if additional_retry and not manual_retry:
+            raise ValueError('An additional recovery requires explicit manual invocation')
         if item['benchmark'] == 'gpqa' and not gpqa_allowed(self.db, model):
             raise ValueError('Provider privacy evidence prevents sending private GPQA questions')
         if job.get('response_path'):
             raise RuntimeError('A durable answer exists; this job must not be regenerated')
         prompt_body(model, item['messages'])
         if manual_retry:
-            reason = manual_retry_reason(self.db, job, model)
+            reason = manual_retry_reason(self.db, job, model, additional_retry=additional_retry)
             if reason:
                 raise ValueError(reason)
         elif self.db.one('SELECT job_id FROM manual_retries WHERE job_id=?', (job['id'],)):
@@ -152,7 +155,8 @@ class Runner:
             self.db.execute("UPDATE jobs SET status='failed',error='Retry allowance exhausted' WHERE id=?", (job['id'],))
             return
         amount = estimate(item['messages'], cap)
-        attempts = [self.budget.reserve('opencode_generation', amount, job['id'], model['id'], manual_retry=manual_retry)]
+        attempts = [self.budget.reserve('opencode_generation', amount, job['id'], model['id'],
+                                       manual_retry=manual_retry, additional_retry=additional_retry)]
         started = time.monotonic()
         def on_retry(status):
             # OpenCode emits this before its backoff and next provider dispatch.
@@ -193,6 +197,8 @@ class Runner:
                   'client_result': result, 'protocol_revision': REVISION}
         if manual_retry:
             record['manual_retry'] = True
+        if additional_retry:
+            record['additional_manual_retry'] = True
         try:
             record['body'] = json.dumps({'events': completion_events(result, model['id'])})
             if any(p['type'] == 'tool' for p in result['parts']):
