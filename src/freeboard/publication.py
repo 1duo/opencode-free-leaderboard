@@ -68,7 +68,7 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
         fields = ["model_id", "tier", "transport", "client_version", "season", "epoch", "status", "availability", "evaluated_at", "reasoning_setting", "reasoning_variant", "reasoning", "coding", "overall", "gpqa", "livebench", "livecodebench",
                   "gpqa_n", "livebench_n", "livecodebench_n", "gpqa_evaluated_at", "livebench_evaluated_at", "livecodebench_evaluated_at",
                   "accounted_tokens", "reported_tokens", "truncation_rate", "manual_retry_count", "manual_recovered_questions", "public_only_reason",
-                  "cap_limit", "cap_observed"]
+                  "cap_limit", "cap_observed", "category", "category_score", "sample_n", "source_tier", "rank", "basis", "category_interval_note"]
         fields += [f'{metric}_ci_{bound}' for metric in ['reasoning','coding','overall','gpqa','livebench','livecodebench'] for bound in ['low','high']]
         fields += ['livebench_interval_note', 'livecodebench_interval_note']
         with (stage / "leaderboard.csv").open("w", newline="") as handle:
@@ -86,6 +86,25 @@ def export(db: DB, settings: Settings, checkout: Path) -> dict:
                 data.update({f'{k}_evaluated_at': v for k, v in row.benchmark_evaluated_at.items()})
                 data.update({f"{k}_n": row.progress.get(k, 0) for k in ["gpqa", "livebench", "livecodebench"]})
                 # Keep spreadsheet programs from executing formula-like model names.
+                writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})
+            models = {r.model_id: r for r in report.rows if r.tier == 'screen'}
+            for result in report.capabilities:
+                model = models[result.model_id]
+                data = {'model_id': result.model_id, 'epoch': result.epoch, 'tier': 'capability',
+                        'transport': 'local-opencode', 'client_version': model.client_version,
+                        'availability': model.availability, 'reasoning_setting': model.reasoning_setting,
+                        'reasoning_variant': model.reasoning_variant, 'season': result.season,
+                        'status': 'complete' if result.score is not None else model.status,
+                        'category': result.category, 'category_score': result.score,
+                        result.category: result.score, 'source_tier': result.source_tier,
+                        'sample_n': sum(result.sample_counts.values()), 'rank': result.rank,
+                        'basis': ' + '.join({'gpqa':'GPQA', 'livebench':'LiveBench', 'livecodebench':'LiveCodeBench'}[b]
+                                            for b in result.sample_counts),
+                        'evaluated_at': result.evaluated_at, 'category_interval_note': result.interval_note,
+                        **result.benchmark_scores, **{f'{b}_n': n for b, n in result.sample_counts.items()}}
+                if result.interval:
+                    data.update({f'{result.category}_ci_{bound}': result.interval[index]
+                                 for index, bound in enumerate(['low', 'high'])})
                 writer.writerow({k: "'" + v if isinstance(v, str) and v.startswith(("=", "+", "-", "@")) else v for k, v in data.items()})
             for row in report.public_screens + report.lightweight:
                 data = {k: getattr(row, k) for k in fields if hasattr(row, k)}

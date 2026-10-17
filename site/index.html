@@ -4,44 +4,27 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Benchmark subsets for free OpenCode Zen models, with scores, uncertainty, and evaluation dates.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23153a36'/%3E%3Ctext x='3' y='22' font-family='monospace' font-size='18' fill='%23fffefa'%3Eo/f%3C/text%3E%3C/svg%3E">
-<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css?v=5b2ef5d4a9bc3ed8cdcb"><script src="app.js?v=5b2ef5d4a9bc3ed8cdcb" defer></script>
+<title>OpenCode Free Model Leaderboard</title><link rel="stylesheet" href="style.css?v=7b9684e813915ea7dd58"><script src="app.js?v=7b9684e813915ea7dd58" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to content</a>
 <header><a class="brand" href="./"><span class="mark">o/f</span> OPEN / FREE</a><nav aria-label="Page navigation"><a href="#methodology">Method</a><a href="leaderboard.csv">CSV ↗</a><a href="snapshot.json">JSON ↗</a></nav></header>
 <main id="main-content" tabindex="-1">
 <section class="hero"><div class="eyebrow">OPENCODE CLIENT</div><h1>Free model benchmarks.</h1><p>Fixed questions. One accepted answer per question.</p></section>
-<section class="metrics" aria-label="Evaluation overview"><div><span id="started-label">Full screens started</span><strong id="evaluated-models">—</strong></div><div><span id="completed-label">Full screens complete</span><strong id="completed-runs">—</strong></div><div><span id="graded-label">Graded full-screen answers</span><strong id="graded-answers">—</strong></div><div><span>Published</span><strong class="date" id="published">—</strong></div></section>
+<section class="metrics" aria-label="Evaluation overview"><div><span>Models in catalog</span><strong id="evaluated-models">—</strong></div><div><span>With completed results</span><strong id="completed-runs">—</strong></div><div><span>Graded benchmark answers</span><strong id="graded-answers">—</strong></div><div><span>Published</span><strong class="date" id="published">—</strong></div></section>
 <div id="notice" class="notice" role="status">Loading results…</div>
 <noscript><p>Enable JavaScript to view results, or download the <a href="snapshot.json">JSON</a> and <a href="leaderboard.csv">CSV</a>.</p></noscript>
-<section id="headline" class="section" hidden>
-<div class="section-heading"><h2>Leaderboard</h2><span class="badge">Complete panels only</span></div>
-<div class="controls"><div role="group" aria-label="Capability view" id="views"><button class="selected" data-view="reasoning" aria-pressed="true">Reasoning</button><button data-view="coding" aria-pressed="false">Coding</button><button data-view="overall" aria-pressed="false">Overall</button></div><div class="panel-control"><label for="tier">Panel</label><select id="tier"><option value="screen">Screen · 80 questions</option><option value="confirmation">Confirmation · 240 questions</option></select></div></div>
-<div id="weight-control" hidden><label>Reasoning weight <input id="weight" type="range" min="0" max="100" value="40"><output id="weight-value">40% reasoning / 60% coding</output></label><p>Exports use the default 40% / 60% weights.</p></div>
-<div class="table-scroll"><table><caption class="sr-only">Model rankings and evaluation progress</caption><thead><tr><th scope="col">Rank</th><th scope="col">Model</th><th scope="col" id="score-heading">Reasoning / 100</th><th scope="col">95% interval</th><th scope="col">Evaluated</th><th scope="col">Status</th></tr></thead><tbody id="ranking"></tbody></table></div>
-<p class="fine">Ranks follow point estimates. A paired difference interval containing zero is unresolved.</p>
+<section id="headline" class="section">
+<div class="section-heading"><h2>Leaderboard</h2><span class="badge">One score per model</span></div>
+<div class="controls"><div role="group" aria-label="Capability view" id="views"><button class="selected" data-view="reasoning" aria-pressed="true">Reasoning</button><button data-view="coding" aria-pressed="false">Coding</button></div></div>
+<div class="table-scroll"><table><caption class="sr-only">Current capability scores and benchmark coverage</caption><thead><tr><th scope="col">Rank</th><th scope="col">Model</th><th scope="col" id="score-heading">Reasoning / 100</th><th scope="col">95% interval</th><th scope="col">Evidence</th><th scope="col">Evaluated</th></tr></thead><tbody id="ranking"></tbody></table></div>
+<p class="fine">Ranks compare matching full screens. Other benchmark coverage appears here unranked. Question counts and benchmark coverage are shown for every score.</p>
 <details id="comparisons" hidden><summary>Pairwise comparisons</summary><div id="comparison-list"></div></details>
 </section>
-<section id="benchmark-results" class="section" hidden>
-<div class="section-heading"><h2>Benchmarks</h2><span id="benchmark-panel" class="badge">Screen sections · unranked</span></div><p class="section-note">Complete sections only. Dot: score · line: 95% interval · scale: 0–100%.</p>
-<div id="benchmark-list" class="chart-grid benchmark-grid"></div>
+<section id="benchmark-results" class="section">
+<div class="section-heading"><h2>Reasoning & coding</h2><span class="badge">Best current evidence</span></div><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>
+<div id="benchmark-list" class="chart-grid"></div>
 </section>
-<details id="lightweight-results" class="section" hidden>
-<summary id="lightweight-heading">Lightweight checks · 12 questions · unranked</summary>
-<p id="lightweight-summary" class="section-note"></p>
-<div id="lightweight-list" class="chart-grid"></div>
-<details><summary>Protocol & run details</summary><p class="fine">Six LiveBench questions (three spatial, three zebra; 2024-11-25) and six LiveCodeBench Python problems (two per difficulty; release_v6). Fixed seed 20261008. One answer per question, combined 4,096-token cap. Six separate synthetic compatibility probes use 256 tokens. Scores appear after all 12 benchmark questions finish. Six questions per component offer limited evidence; collapsed bootstrap intervals are withheld as unresolved. These results do not enter full rankings.</p><div id="lightweight-details" class="detail-grid"></div></details>
-</details>
-<section id="contributor-results" class="section" hidden>
-<div class="section-heading"><h2>Public-only evaluation</h2><span class="badge">60-question subset · unranked</span></div>
-<p id="contributor-policy" class="section-note"></p><p id="contributor-progress" class="fine"></p>
-<div id="contributor-list" class="chart-grid"></div>
-</section>
-<details id="results" class="section" hidden>
-<summary id="results-heading">Earlier public screens · 60-question subsets · unranked</summary><p class="section-note">Dot: score · line: 95% interval · scale: 0–100%.</p>
-<div id="public-screen-list"></div>
-<details id="run-details"><summary>Run details</summary><div id="run-detail-list" class="detail-grid"></div></details>
-</details>
 <section id="supporting" class="section supporting" hidden>
 <details id="availability"><summary id="availability-summary">Model coverage</summary><p id="discovery-date" class="fine"></p><div class="table-scroll"><table><caption class="sr-only">Current model coverage; counts are graded screen questions</caption><thead><tr><th scope="col">Model</th><th scope="col">GPQA</th><th scope="col">LiveBench</th><th scope="col">Coding</th><th scope="col">Status</th></tr></thead><tbody id="availability-list"></tbody></table></div></details>
 <details id="execution"><summary id="execution-summary">Execution details</summary><dl id="budget" class="facts"></dl><p id="prior-budget" class="fine" hidden></p><p class="fine">Tokens are reported by OpenCode. Attempts include reservations and retries observed in its event stream; they are not a provider HTTP audit. Missing usage is conservatively accounted.</p><p class="fine">Full panels target a 28-day refresh. Completion depends on provider access and the local machine.</p></details>
@@ -52,8 +35,8 @@
 <h2>Method</h2><p>Custom subsets, not official benchmark leaderboard scores. Intervals use 10,000 stratified bootstrap resamples and reflect question sampling, not repeated-generation variability.</p>
 <p>Unanswered requests remain unscored. Authorized recoveries are labeled; original attempts and token charges are retained.</p>
 <p>GPQA requires explicit current no-training terms for the exact endpoint. Other routes use public benchmarks only.</p>
-<div class="method-grid"><div><h3>Panels</h3><p>LiveBench spatial / zebra: 20 questions, dated 2024-11-25. LiveCodeBench Python: 40 problems, release_v6. Full screens also require 20 GPQA Diamond questions.</p></div><div><h3>Protocol</h3><p>OpenCode version is recorded per run (current: 1.19.3). A fixed benchmark agent includes OpenCode's environment context. Native tool schemas are present; every permission request is rejected, and tool attempts score zero. No plugins or repair turns. Original benchmark roles; temperature zero where supported; 4,096-token combined cap. Frozen graders; isolated grading.</p></div></div>
-<details><summary>Full rankings & confirmations</summary><p>Full screens contain 80 questions. Reasoning equally averages GPQA and LiveBench; coding uses LiveCodeBench pass@1. Overall defaults to 40% reasoning / 60% coding. Manual 240-question confirmations reuse the screen's 80 answers and stay in a separate ranking. Only complete panels receive ranks.</p></details>
+<div class="method-grid"><div><h3>Reasoning</h3><p>GPQA and LiveBench contribute equally when both are present. LiveBench-only results use their LiveBench score and show that coverage explicitly.</p></div><div><h3>Coding</h3><p>LiveCodeBench Python pass@1. Each category uses the largest complete current panel for the model. Larger panels replace nested quick checks in this view.</p></div></div>
+<details><summary>Panels & protocol</summary><p>Full screens use 20 GPQA Diamond, 20 LiveBench spatial / zebra questions (2024-11-25), and 40 LiveCodeBench Python problems (release_v6). Public screens use 20 LiveBench and 40 coding questions; quick checks use six per category. Sample sizes stay visible; partial panels and pilot answers have no category score. Historical runs and manual 240-question confirmations remain in the exports.</p><p>OpenCode version and highest exposed reasoning effort are recorded per model. One accepted completion per question, temperature zero where supported, a 4,096-token combined cap, frozen graders, and isolated grading. Native tool schemas are present; permissions are rejected and tool attempts score zero. No plugins or repair turns.</p></details>
 <p class="fine">“Highest exposed” is the maximum selectable reasoning level in OpenCode. “Provider-managed” has no selectable level. The combined token cap applies; provider internals are unverified.</p>
 <p class="source-links"><a href="manifest.json">Manifests ↗</a><a href="https://github.com/1duo/opencode-free-leaderboard#protocol-and-statistics">Protocol & source ↗</a><a href="https://opencode.ai/v2/docs/console/models/">Pricing evidence ↗</a></p>
 </section>

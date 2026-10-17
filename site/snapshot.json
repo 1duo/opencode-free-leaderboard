@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
-  "snapshot_id": "5b2ef5d4a9bc3ed8cdcb",
-  "generated_at": "2026-10-17T14:48:43+00:00",
+  "snapshot_id": "7b9684e813915ea7dd58",
+  "generated_at": "2026-10-17T15:15:57+00:00",
   "published_at": null,
   "discovery_at": "2026-10-17T14:35:02+00:00",
   "discovery_ok": true,
@@ -2717,6 +2717,338 @@
       "health_passed": 6,
       "tool_rejections": 2,
       "interval_warnings": {}
+    }
+  ],
+  "capabilities": [
+    {
+      "model_id": "beam-free",
+      "epoch": "a7b17df894482a44",
+      "category": "reasoning",
+      "source_tier": "screen",
+      "season": "s1-eb8afe28e8eafc97",
+      "score": 47.5,
+      "interval": [
+        32.5,
+        62.5
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "gpqa": 20,
+        "livebench": 20
+      },
+      "benchmark_scores": {
+        "gpqa": 60.0,
+        "livebench": 35.0
+      },
+      "evaluated_at": "2026-10-17T04:06:24+00:00",
+      "rank": 3
+    },
+    {
+      "model_id": "beam-free",
+      "epoch": "a7b17df894482a44",
+      "category": "coding",
+      "source_tier": "screen",
+      "season": "s1-eb8afe28e8eafc97",
+      "score": 35.0,
+      "interval": [
+        27.500000000000004,
+        42.5
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "livecodebench": 40
+      },
+      "benchmark_scores": {
+        "livecodebench": 35.0
+      },
+      "evaluated_at": "2026-10-17T04:03:46+00:00",
+      "rank": 4
+    },
+    {
+      "model_id": "big-pickle",
+      "epoch": "1296050486f5eb8b",
+      "category": "reasoning",
+      "source_tier": null,
+      "season": null,
+      "score": null,
+      "interval": null,
+      "interval_note": null,
+      "sample_counts": {},
+      "benchmark_scores": {},
+      "evaluated_at": null,
+      "rank": null
+    },
+    {
+      "model_id": "big-pickle",
+      "epoch": "1296050486f5eb8b",
+      "category": "coding",
+      "source_tier": null,
+      "season": null,
+      "score": null,
+      "interval": null,
+      "interval_note": null,
+      "sample_counts": {},
+      "benchmark_scores": {},
+      "evaluated_at": null,
+      "rank": null
+    },
+    {
+      "model_id": "deepseek-v4.1-flash-free",
+      "epoch": "7e3433bc4b2ed1b1",
+      "category": "reasoning",
+      "source_tier": "screen",
+      "season": "s1-eb8afe28e8eafc97",
+      "score": 35.0,
+      "interval": [
+        22.5,
+        50.0
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "gpqa": 20,
+        "livebench": 20
+      },
+      "benchmark_scores": {
+        "gpqa": 40.0,
+        "livebench": 30.0
+      },
+      "evaluated_at": "2026-10-17T05:30:24+00:00",
+      "rank": 4
+    },
+    {
+      "model_id": "deepseek-v4.1-flash-free",
+      "epoch": "7e3433bc4b2ed1b1",
+      "category": "coding",
+      "source_tier": "screen",
+      "season": "s1-eb8afe28e8eafc97",
+      "score": 67.5,
+      "interval": [
+        57.49999999999999,
+        77.5
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "livecodebench": 40
+      },
+      "benchmark_scores": {
+        "livecodebench": 67.5
+      },
+      "evaluated_at": "2026-10-17T04:27:43+00:00",
+      "rank": 1
+    },
+    {
+      "model_id": "jev-1.13-free",
+      "epoch": "c054cea8d43e7d73",
+      "category": "reasoning",
+      "source_tier": null,
+      "season": null,
+      "score": null,
+      "interval": null,
+      "interval_note": null,
+      "sample_counts": {},
+      "benchmark_scores": {},
+      "evaluated_at": null,
+      "rank": null
+    },
+    {
+      "model_id": "jev-1.13-free",
+      "epoch": "c054cea8d43e7d73",
+      "category": "coding",
+      "source_tier": null,
+      "season": null,
+      "score": null,
+      "interval": null,
+      "interval_note": null,
+      "sample_counts": {},
+      "benchmark_scores": {},
+      "evaluated_at": null,
+      "rank": null
+    },
+    {
+      "model_id": "longcat-2.5-preview-free",
+      "epoch": "a1987085381087f0",
+      "category": "reasoning",
+      "source_tier": "screen",
+      "season": "s1-eb8afe28e8eafc97",
+      "score": 60.0,
+      "interval": [
+        45.0,
+        75.0
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "gpqa": 20,
+        "livebench": 20
+      },
+      "benchmark_scores": {
+        "gpqa": 65.0,
+        "livebench": 55.00000000000001
+      },
+      "evaluated_at": "2026-10-17T06:50:35+00:00",
+      "rank": 2
+    },
+    {
+      "model_id": "longcat-2.5-preview-free",
+      "epoch": "a1987085381087f0",
+      "category": "coding",
+      "source_tier": "screen",
+      "season": "s1-eb8afe28e8eafc97",
+      "score": 60.0,
+      "interval": [
+        47.5,
+        72.5
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "livecodebench": 40
+      },
+      "benchmark_scores": {
+        "livecodebench": 60.0
+      },
+      "evaluated_at": "2026-10-17T06:32:06+00:00",
+      "rank": 2
+    },
+    {
+      "model_id": "mimo-v2.6-flash-free",
+      "epoch": "25112189b92c9fdc",
+      "category": "reasoning",
+      "source_tier": null,
+      "season": null,
+      "score": null,
+      "interval": null,
+      "interval_note": null,
+      "sample_counts": {},
+      "benchmark_scores": {},
+      "evaluated_at": null,
+      "rank": null
+    },
+    {
+      "model_id": "mimo-v2.6-flash-free",
+      "epoch": "25112189b92c9fdc",
+      "category": "coding",
+      "source_tier": null,
+      "season": null,
+      "score": null,
+      "interval": null,
+      "interval_note": null,
+      "sample_counts": {},
+      "benchmark_scores": {},
+      "evaluated_at": null,
+      "rank": null
+    },
+    {
+      "model_id": "nemotron-3.5-lightning-free",
+      "epoch": "7bb93ae680f18e34",
+      "category": "reasoning",
+      "source_tier": null,
+      "season": null,
+      "score": null,
+      "interval": null,
+      "interval_note": null,
+      "sample_counts": {},
+      "benchmark_scores": {},
+      "evaluated_at": null,
+      "rank": null
+    },
+    {
+      "model_id": "nemotron-3.5-lightning-free",
+      "epoch": "7bb93ae680f18e34",
+      "category": "coding",
+      "source_tier": null,
+      "season": null,
+      "score": null,
+      "interval": null,
+      "interval_note": null,
+      "sample_counts": {},
+      "benchmark_scores": {},
+      "evaluated_at": null,
+      "rank": null
+    },
+    {
+      "model_id": "nemotron-3.5-super-vl-free",
+      "epoch": "32021e5737032959",
+      "category": "reasoning",
+      "source_tier": "public-screen",
+      "season": "public-pilot-424b7a865093c836",
+      "score": 20.0,
+      "interval": [
+        5.0,
+        35.0
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "livebench": 20
+      },
+      "benchmark_scores": {
+        "livebench": 20.0
+      },
+      "evaluated_at": "2026-10-17T08:34:29+00:00",
+      "rank": null
+    },
+    {
+      "model_id": "nemotron-3.5-super-vl-free",
+      "epoch": "32021e5737032959",
+      "category": "coding",
+      "source_tier": "public-screen",
+      "season": "public-pilot-424b7a865093c836",
+      "score": 30.0,
+      "interval": [
+        17.5,
+        45.0
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "livecodebench": 40
+      },
+      "benchmark_scores": {
+        "livecodebench": 30.0
+      },
+      "evaluated_at": "2026-10-17T09:12:16+00:00",
+      "rank": null
+    },
+    {
+      "model_id": "space-bunny-free",
+      "epoch": "08dc1bee6a9afd25",
+      "category": "reasoning",
+      "source_tier": "screen",
+      "season": "s1-eb8afe28e8eafc97",
+      "score": 75.0,
+      "interval": [
+        62.5,
+        85.0
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "gpqa": 20,
+        "livebench": 20
+      },
+      "benchmark_scores": {
+        "gpqa": 70.0,
+        "livebench": 80.0
+      },
+      "evaluated_at": "2026-10-17T07:08:17+00:00",
+      "rank": 1
+    },
+    {
+      "model_id": "space-bunny-free",
+      "epoch": "08dc1bee6a9afd25",
+      "category": "coding",
+      "source_tier": "screen",
+      "season": "s1-eb8afe28e8eafc97",
+      "score": 50.0,
+      "interval": [
+        37.5,
+        62.5
+      ],
+      "interval_note": null,
+      "sample_counts": {
+        "livecodebench": 40
+      },
+      "benchmark_scores": {
+        "livecodebench": 50.0
+      },
+      "evaluated_at": "2026-10-17T07:02:30+00:00",
+      "rank": 3
     }
   ],
   "seasons": [

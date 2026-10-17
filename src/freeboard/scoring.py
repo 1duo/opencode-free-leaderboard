@@ -159,6 +159,21 @@ class PublicManifest(Strict):
     grading_files: dict[str, str] = {}
 
 
+class CapabilityResult(Strict):
+    model_id: str
+    epoch: str
+    category: Literal['reasoning', 'coding']
+    source_tier: str | None = None
+    season: str | None = None
+    score: float | None = None
+    interval: list[float] | None = None
+    interval_note: str | None = None
+    sample_counts: dict[str, int] = {}
+    benchmark_scores: dict[str, float] = {}
+    evaluated_at: str | None = None
+    rank: int | None = None
+
+
 class Snapshot(Strict):
     schema_version: int = 2
     snapshot_id: str
@@ -173,11 +188,61 @@ class Snapshot(Strict):
     pilots: list[PublicPilot] = []
     public_screens: list[PublicScreen] = []
     lightweight: list[Lightweight] = []
+    capabilities: list[CapabilityResult] = []
     seasons: list[PublicManifest]
     budget: dict[str, int | str | None]
     queue_size: int
     missed_deadlines: int
     blockers: list[str]
+
+
+def merged_capabilities(rows: list[PublicRow], public_screens: list[PublicScreen],
+                        lightweight: list[Lightweight]) -> list[CapabilityResult]:
+    """One result per current model/category; larger panels replace nested quick checks."""
+    result = []
+    priority = {'screen': 3, 'public-screen': 2, 'lightweight': 1}
+    for model in rows:
+        if model.tier != 'screen' or model.availability in {'removed', 'excluded', 'paid'}:
+            continue
+        sources = [model] if model.scores and model.cap_verified else []
+        sources += [r for r in [*public_screens, *lightweight]
+                    if r.model_id == model.model_id and r.epoch == model.epoch
+                    and r.status == 'complete' and r.cap_verified and model.cap_verified]
+        for category in ['reasoning', 'coding']:
+            choices = []
+            for source in sources:
+                full = source.tier == 'screen'
+                benchmarks = (['gpqa', 'livebench'] if full else ['livebench']) if category == 'reasoning' else ['livecodebench']
+                scores = source.scores if full else source.benchmark_scores
+                if not all(b in scores and source.progress.get(b, 0) > 0 for b in benchmarks):
+                    continue
+                counts = {b: source.progress[b] for b in benchmarks}
+                metric = category if full else benchmarks[0]
+                interval = (source.intervals or {}).get(metric)
+                dates = [source.benchmark_evaluated_at.get(b) for b in benchmarks]
+                candidate = CapabilityResult(model_id=model.model_id, epoch=model.epoch, category=category,
+                    source_tier=source.tier, season=source.season,
+                    score=sum(scores[b] for b in benchmarks) / len(benchmarks), interval=interval,
+                    interval_note=getattr(source, 'interval_warnings', {}).get(metric),
+                    sample_counts=counts, benchmark_scores={b: scores[b] for b in benchmarks},
+                    evaluated_at=max((d for d in dates if d), default=source.evaluated_at))
+                choices.append((sum(counts.values()), priority[source.tier], candidate.evaluated_at or '', source.season or '', candidate))
+            result.append(max(choices, key=lambda c: c[:4])[4] if choices else CapabilityResult(
+                model_id=model.model_id, epoch=model.epoch, category=category))
+    models = {r.model_id: r for r in rows if r.tier == 'screen'}
+    groups = {}
+    for row in result:
+        if (row.source_tier == 'screen' and models[row.model_id].availability == 'eligible'
+                and not models[row.model_id].public_only_reason):
+            groups.setdefault((row.category, row.season), []).append(row)
+    for group in groups.values():
+        position, last_score, rank = 0, None, None
+        for row in sorted(group, key=lambda r: (-r.score, r.model_id)):
+            position += 1
+            if row.score != last_score:
+                rank, last_score = position, row.score
+            row.rank = rank
+    return result
 
 
 def component_bootstrap(records: list[dict], samples: int = 10000) -> dict[str, np.ndarray]:
@@ -510,7 +575,7 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
                     generated_at=generated, discovery_at=(discovery or {}).get("observed_at"),
                     discovery_ok=bool((discovery or {}).get("ok")), discovery_error=(discovery or {}).get("error"),
                     rows=rows, history=history, comparisons=comparisons, pilots=pilots, public_screens=public_screens,
-                    lightweight=lightweight, seasons=manifests,
+                    lightweight=lightweight, capabilities=merged_capabilities(rows, public_screens, lightweight), seasons=manifests,
                     budget=Budget(db, settings).summary(), queue_size=queue,
                     missed_deadlines=sum(r.deadline_missed for r in rows if r.tier == 'screen'), blockers=blockers)
 

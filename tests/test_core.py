@@ -1176,6 +1176,87 @@ def public_screen_fixture(context):
     return Runner(db, settings, checkout), item_model, active
 
 
+def capability_sources(context):
+    from freeboard.scoring import Lightweight, PublicScreen
+    db, settings, _ = context
+    m = model(db)
+    base, _ = make_row(db, settings, m, None, 'screen')
+    public = PublicScreen(model_id=m['id'], epoch=m['epoch'], season='public', status='complete', cap_verified=True,
+        progress={'gpqa': 0, 'livebench': 20, 'livecodebench': 40},
+        expected={'gpqa': 0, 'livebench': 20, 'livecodebench': 40}, pending_reasons={},
+        benchmark_scores={'livebench': 30, 'livecodebench': 70},
+        intervals={'livebench': [15, 50], 'livecodebench': [55, 85]},
+        evaluated_at=now(), latency_seconds=None, accounted_tokens=0, reported_tokens=0, truncation_rate=None)
+    small = Lightweight(**{**public.model_dump(), 'tier': 'lightweight', 'season': 'quick',
+        'availability': 'eligible', 'health_graded': 6, 'health_passed': 6,
+        'progress': {'livebench': 6, 'livecodebench': 6}, 'expected': {'livebench': 6, 'livecodebench': 6},
+        'benchmark_scores': {'livebench': 100, 'livecodebench': 100}, 'intervals': {},
+        'interval_warnings': {'livebench': 'Unresolved six-question interval', 'livecodebench': 'Unresolved six-question interval'}})
+    return base, public, small
+
+
+def test_merged_capabilities_prefer_complete_common_panel_to_better_quick_scores(context):
+    from freeboard.scoring import merged_capabilities
+    base, public, small = capability_sources(context)
+    full = base.model_copy(update={'season': 'full', 'status': 'complete',
+        'progress': {'gpqa': 20, 'livebench': 20, 'livecodebench': 40},
+        'scores': {'gpqa': 80, 'livebench': 40, 'livecodebench': 50},
+        'intervals': {'reasoning': [45, 75], 'coding': [35, 65]}})
+    rows = merged_capabilities([full], [public], [small])
+    reasoning, coding = rows
+    assert len(rows) == 2 and all(r.source_tier == 'screen' and r.rank == 1 for r in rows)
+    assert reasoning.score == 60 and reasoning.sample_counts == {'gpqa': 20, 'livebench': 20}
+    assert reasoning.interval == [45, 75] and coding.score == 50
+
+
+def test_merged_public_and_quick_scores_use_one_complete_panel_without_imputing_gpqa(context):
+    from freeboard.scoring import merged_capabilities
+    base, public, small = capability_sources(context)
+    reasoning, coding = merged_capabilities([base], [public], [small])
+    assert reasoning.score == 30 and reasoning.sample_counts == {'livebench': 20}
+    assert reasoning.interval == [15, 50] and reasoning.rank is None
+    assert coding.score == 70 and coding.sample_counts == {'livecodebench': 40}
+    quick, _ = merged_capabilities([base], [], [small])
+    assert quick.score == 100 and quick.sample_counts == {'livebench': 6}
+    assert quick.interval is None and 'Unresolved' in quick.interval_note
+
+
+@pytest.mark.parametrize('case', ['old_epoch', 'partial', 'invalid_cap'])
+def test_merged_capabilities_exclude_unmatched_or_incomplete_evidence(context, case):
+    from freeboard.scoring import merged_capabilities
+    base, public, _ = capability_sources(context)
+    if case == 'old_epoch':
+        public = public.model_copy(update={'epoch': 'old'})
+    elif case == 'partial':
+        public = public.model_copy(update={'status': 'pending', 'progress': {'gpqa': 0, 'livebench': 20, 'livecodebench': 39}})
+    else:
+        base = base.model_copy(update={'cap_verified': False})
+    rows = merged_capabilities([base], [public], [])
+    assert len(rows) == 2 and all(r.score is None and r.rank is None and not r.sample_counts for r in rows)
+
+
+def test_merged_category_csv_matches_snapshot(context, monkeypatch):
+    import csv
+    import shutil
+    from freeboard.scoring import snapshot
+    runner, m, active = public_screen_fixture(context)
+    monkeypatch.setattr('freeboard.scoring.credential', lambda _: None)
+    cycle = runner.cycle(m, active, 'public_screen', 'merged-export')
+    runner.add_panel(cycle, 'screen')
+    runner.db.execute("UPDATE jobs SET status='graded',score=1")
+    runner.db.execute('UPDATE cycles SET completed_at=?', (now(),))
+    report = snapshot(runner.db, runner.settings)
+    target = runner.settings.state.parent / 'merged-export'
+    shutil.copytree(runner.checkout / 'web', target / 'web')
+    export(runner.db, runner.settings, target)
+    rows = [r for r in csv.DictReader((target / 'site/leaderboard.csv').open()) if r['tier'] == 'capability']
+    assert len(rows) == len(report.capabilities) == 2
+    for row, result in zip(rows, report.capabilities):
+        assert row['category'] == result.category and float(row['category_score']) == result.score == 100
+        assert int(row['sample_n']) == sum(result.sample_counts.values())
+        assert row['source_tier'] == 'public-screen' and row['rank'] == ''
+
+
 def test_public_screen_history_retains_each_epoch(context, monkeypatch):
     from freeboard.scoring import snapshot
     runner, item_model, active = public_screen_fixture(context)
