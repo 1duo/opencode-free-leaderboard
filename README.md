@@ -1,99 +1,31 @@
 # OpenCode Free Model Leaderboard
 
-Compare free OpenCode models for reasoning and Python coding on fixed benchmark subsets.
+Choose a free OpenCode model for **reasoning** or **Python coding**.
 
-**[Live leaderboard](https://1duo.github.io/opencode-free-leaderboard/)** · [JSON](https://1duo.github.io/opencode-free-leaderboard/snapshot.json) · [CSV](https://1duo.github.io/opencode-free-leaderboard/leaderboard.csv) · [Operations](docs/operations.md)
+**[View leaderboard ↗](https://1duo.github.io/opencode-free-leaderboard/)** · [JSON](https://1duo.github.io/opencode-free-leaderboard/snapshot.json) · [CSV](https://1duo.github.io/opencode-free-leaderboard/leaderboard.csv)
 
-**[Run your own evaluations and contribute results by PR](CONTRIBUTING.md).** No maintainer credentials or private state are needed. Clone, install the pinned client, run a complete panel and export a sanitized `results/<id>.json`. Merged submissions appear as labeled community results in the Reasoning and Coding views.
+## Preview locally
 
-The local runner keeps datasets, answers, responses, credentials and SQLite state private. GitHub Actions validates and publishes a sanitized static snapshot; it never runs model requests.
-
-## Setup
-
-Use macOS or Linux (Windows through WSL2), Python 3.11 managed by [uv](https://docs.astral.sh/uv/), and a running Docker engine. GitHub authentication is needed only for PRs or publication. Built-in scheduling is macOS-only; manual evaluation works without a scheduler. Allow roughly 15 GB for initial datasets, the grader and seven backups. Accept the [GPQA access terms](https://huggingface.co/datasets/Idavidrein/gpqa) before preparing full panels.
+Requires [uv](https://docs.astral.sh/uv/getting-started/installation/). No credentials, datasets or Docker needed.
 
 ```sh
+git clone https://github.com/1duo/opencode-free-leaderboard.git
+cd opencode-free-leaderboard
 uv sync --frozen --no-editable
-uv run --frozen --no-editable leaderboard install-client
-uv run --frozen --no-editable hf auth login
-# doctor reports missing panels until prepare-panels succeeds:
-uv run --frozen --no-editable leaderboard doctor
+uv run --frozen --no-editable leaderboard build-site
+uv run --frozen --no-editable python -m http.server 8000 --directory .pages-site
 ```
 
-The validated generation client is **OpenCode 1.19.3, protocol revision 6**. A different version is blocked before inference. OpenCode v2 has a different API and has not passed the benchmark compatibility protocol. Updating your interactive client does not authorize a changed benchmark configuration. Existing evaluations retain their original client versions and epochs.
+Open [localhost:8000](http://localhost:8000).
 
-To keep an independent benchmark client, install the official executable at `state/bin/opencode-1.19.3`. The runner prefers that file and verifies its version before use. See [the pinned client setup](docs/operations.md#pinned-client).
+## Run benchmarks & contribute
 
-`HF_TOKEN`, `OPENCODE_API_KEY`, an existing OpenCode API credential and the standard Hugging Face token file are supported. On macOS, `leaderboard auth hf` / `auth zen` can also store credentials in Keychain. The native public free-model credential is used if no Zen key is configured; official zero-price evidence is still required. Never put secrets into a command argument, issue or commit.
-
-## Run locally
-
-```sh
-uv run --frozen --no-editable leaderboard discover
-uv run --frozen --no-editable leaderboard prepare-panels
-uv run --frozen --no-editable leaderboard pilot
-uv run --frozen --no-editable leaderboard run
-uv run --frozen --no-editable leaderboard status
-uv run --frozen --no-editable leaderboard export
-```
-
-`pilot` starts with three eligible models in lexicographic order. `pilot --all-models` checks all eligible models. A model needs its own successful held-out pilot and verified token cap before its screen. `run --limit 10` bounds an invocation; the same command resumes durable work. `confirm MODEL_ID` queues a manual 240-question confirmation, reusing that cycle's 80 screen answers and adding 160 questions.
-
-Use `prepare-panels --public-only`, then `pilot --season SEASON_ID --all-models` and `run --public-only --season SEASON_ID` for public-only evaluation. These 60-question screens contain no GPQA and remain unranked against full screens. `lightweight` checks new models on a nested 12-question public subset; larger completed panels replace those values without pooling duplicate questions.
-
-`discover --catalog-only` refreshes pricing and catalog evidence without changing frozen client settings or authorizing inference. Provider access restrictions remain a separate prerequisite. A free catalog listing does not prove that an endpoint accepts this benchmark setup.
+Use your own setup on macOS, Linux or WSL2 with Docker. [Run evaluations and submit results by PR →](CONTRIBUTING.md)
 
 ## Protocol and statistics
 
-| Component | Screen | Manual confirmation |
-|---|---:|---:|
-| GPQA Diamond | 20 | 60 |
-| LiveBench reasoning | 20 | 60 |
-| LiveCodeBench Python | 40 | 120 |
-| Total | 80 | 240 |
+80-question screens: 20 GPQA Diamond, 20 LiveBench and 40 LiveCodeBench. Highest available reasoning; one completion per question; 95% sampling intervals.
 
-Panels are deterministic and nested, with seed `20261008`. LiveBench uses spatial and zebra questions active on **2024-11-25**; LiveCodeBench uses `code_generation_lite`, `release_v6`. Data and graders are pinned by revision. Public manifests contain IDs, hashes and strata, never prompts or answer keys.
+Only complete, matching full screens are ranked. Other coverage and community submissions are labeled unranked. Benchmark scores do not establish everyday agent performance.
 
-- **Reasoning:** equal average of GPQA and LiveBench. Public-only results use LiveBench and disclose that coverage.
-- **Coding:** LiveCodeBench pass@1.
-- **Ranking:** complete, matching full screens only. Other coverage is unranked. An unfinished refresh preserves the prior completed score with its original date and refresh status.
-- **Uncertainty:** 10,000 deterministic stratified bootstrap draws; paired comparisons use identical panel draws. A difference interval containing zero is unresolved. Intervals measure question sampling, not repeated-generation variability.
-
-Each question gets one accepted completion, no permitted tools or repair turns, temperature zero where supported, and a combined 4,096-token generation cap. The highest native reasoning variant is selected explicitly; models without a selectable control are labeled provider-managed. Native tool schemas remain present for compatibility, but requests are rejected and score zero. Client environment context is part of the recorded configuration.
-
-GPQA dispatch requires current, exact no-training evidence for the model. Routes without it use public questions only. Contributor models are excluded by default. A changed endpoint, client or effective configuration creates a new epoch with a new pilot; silent changes behind an unchanged alias may be undetectable.
-
-These are small, older public benchmark subsets, potentially present in model training. They measure benchmark capability and do not establish everyday agent suitability. Scores, coverage, dates and uncertainty should be read together.
-
-Community result files must cover a complete published panel. CI recomputes scores and intervals from typed grades and validates IDs/hashes, settings, caps and accounting. The page labels these rows with the contributor and audit link; they remain unranked and never replace local scores or recommendations. CI cannot independently verify private answers or provider behavior.
-
-## Publish and operate
-
-```sh
-uv run --frozen --no-editable leaderboard publish --create-repository
-UV_PROJECT_ENVIRONMENT="$HOME/Library/Application Support/OpenCodeFreeLeaderboard/runtime" uv sync --frozen --no-editable --link-mode copy
-uv run --frozen --no-editable leaderboard schedule install
-```
-
-The default public repository is `1duo/opencode-free-leaderboard`. Publication stages only allowed source and public files. Offline production/privacy checks and artifact validation must pass before Pages deployment; a failed check or deployment preserves the last live site. Evaluation dates and deployment time are separate.
-
-To contribute upstream, use `leaderboard submit-results --model MODEL_ID --contributor YOUR_GITHUB_USERNAME` and open a PR containing the generated result file. Do not replace `site/` with your own state. Pages builds public data plus merged submissions without credentials. To self-host, set `--repository YOUR_USERNAME/YOUR_REPO` before the command (or `FREEBOARD_REPOSITORY`). See the [complete fork/PR workflow](CONTRIBUTING.md).
-
-The launch agent runs at **09:15 local time daily and at login**, using a managed source checkout outside Documents. Do not reinstall it just to resume work: installation starts it immediately. Full screens target a 28-day refresh in four cohorts. Deadlines depend on provider availability, Docker and the computer running; missed deadlines are retained explicitly.
-
-The weekly plan scales above minimums of 300 attempts and one million accounted tokens. Requests reserve conservative usage before dispatch. Unknown usage retains that reservation. Explicit retries are bounded; unknown or partially answered requests are never automatically replayed. Confirmations use spare capacity.
-
-Private state is under `~/Library/Application Support/OpenCodeFreeLeaderboard/` on macOS and `$XDG_STATE_HOME/opencode-free-leaderboard` (default `~/.local/state/`) on Linux/WSL2. State commands use a process lock. Daily SQLite backups are validated and atomically replaced; seven successful daily copies rotate only after a new copy succeeds. Keep an independent encrypted backup for disk failure recovery.
-
-See [operations and recovery](docs/operations.md), [architecture](docs/architecture.md), [security](SECURITY.md), and the [evaluation audit](docs/review-2026-10-08.md).
-
-## Development
-
-```sh
-uv run --frozen --no-editable ruff check src tests grading/worker.py
-uv run --frozen --no-editable pytest -q tests/test_contributions.py
-node --check web/app.js
-uv run --frozen --no-editable leaderboard build-site
-```
-
-These checks do not call models or need credentials. The public build is written to ignored `.pages-site/`. CI also runs production/privacy and selected evaluation-safety regressions, a fresh pinned-client setup on Linux, and public artifact validation. Follow [CONTRIBUTING.md](CONTRIBUTING.md); do not change frozen prompts, grading limits or accepted answers to improve results.
+[Methodology](docs/methodology.md) · [Operations](docs/operations.md) · [Architecture](docs/architecture.md) · [Security](SECURITY.md) · [License](LICENSE)

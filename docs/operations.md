@@ -16,6 +16,8 @@ Docker commands respect explicit `DOCKER_HOST`, `DOCKER_CONTEXT` and `DOCKER_CON
 
 ## Scheduling
 
+The macOS launch agent runs at **09:15 local time daily and at login**. Full screens target a 28-day refresh across four weekly cohorts. Deadlines depend on provider availability, Docker and the computer running; missed deadlines remain explicit.
+
 The managed scheduled checkout lives at `state/scheduler-checkout`; the private runtime lives at `state/runtime`. After publishing source updates, fast-forward the managed checkout and update its installed package with the frozen lock. Schedule installation prepares the checkout before touching the existing job and restores the old plist when bootstrap fails. Installation is an operator action, not a routine daily step, because RunAtLoad starts work immediately.
 
 The plist is `~/Library/LaunchAgents/ai.opencode.free-leaderboard.plist`. It inherits the installed Docker host/config where configured. Logs live at `state/logs/scheduler.log` and `scheduler-error.log`. Inspect without starting a job:
@@ -28,6 +30,10 @@ uv run --frozen --no-editable leaderboard doctor
 All work holds a nonblocking process lock. A second invocation exits rather than dispatching concurrently. Wake the computer and keep Docker running for scheduled work. Inference has a ten-minute overall deadline. Provider quotas defer work; rejections and infrastructure failures do not lower capability scores.
 
 Manual evaluation and result export work on Linux/WSL2 without launchd. Use your own scheduler for repeated `run` invocations. `daily` includes publication and requires an explicitly configured writable repository. Root `--repository OWNER/REPO` (or `FREEBOARD_REPOSITORY`) controls fork publication, generated links and the installed launch agent's repository argument.
+
+## Capacity
+
+The weekly capacity plan scales above minimums of 300 attempts and one million accounted tokens. Requests reserve conservative usage before dispatch; unknown usage retains that reservation. Explicit retries are bounded. Manual confirmations use spare capacity and never displace scheduled refreshes.
 
 ## Interrupted work
 
