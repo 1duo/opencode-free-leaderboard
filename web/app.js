@@ -22,7 +22,9 @@ function reasoningSetting(row) {
 }
 function total(values) { return Object.values(values || {}).reduce((a, b) => a + b, 0); }
 function currentModels() {
-  return report.rows.filter(r => r.tier === "screen" && !["removed", "excluded", "paid", "unsupported"].includes(r.availability));
+  return report.rows.filter(r => r.tier === "screen" && !["removed", "excluded", "paid", "unsupported"].includes(r.availability)
+    && (!["authentication_failed", "client_access_restricted", "model_unavailable"].includes(r.availability)
+      || (report.capabilities || []).some(c => c.model_id === r.model_id && c.score != null)));
 }
 function intervalPlot(value, interval) {
   const plot = node("div", null, "interval-plot");

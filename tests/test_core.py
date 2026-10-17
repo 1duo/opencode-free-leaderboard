@@ -60,6 +60,24 @@ def job_context(context):
     return runner, job, item_model, item
 
 
+def test_daily_backup_closes_connection_and_releases_wal(context):
+    import sqlite3
+    db, settings, _ = context
+    for index in range(3):
+        db.execute('INSERT INTO discovery(observed_at,week,ok,evidence) VALUES(?,?,?,?)',
+                   (now(), 'backup-fixture', 1, json.dumps({'iteration': index})))
+        db.backup()
+        target = settings.state / 'backups' / f'{now()[:10]}.sqlite3'
+        journal = target.with_name(target.name + '-wal')
+        assert not journal.exists() or journal.stat().st_size == 0
+    connection = sqlite3.connect(target)
+    try:
+        assert connection.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
+        assert connection.execute('SELECT COUNT(*) FROM discovery').fetchone()[0] == 3
+    finally:
+        connection.close()
+
+
 def response_body(tokens=10):
     return {"choices": [{"message": {"content": "FINAL: A"}, "finish_reason": "stop"}],
             "usage": {"prompt_tokens": 20, "completion_tokens": tokens, "total_tokens": 20 + tokens,
@@ -1255,6 +1273,29 @@ def test_unsupported_catalog_endpoint_has_no_current_category_entries(context):
     from freeboard.scoring import merged_capabilities
     base, public, small = capability_sources(context)
     assert merged_capabilities([base.model_copy(update={'availability': 'unsupported'})], [public], [small]) == []
+
+
+def test_inaccessible_models_keep_completed_results_without_empty_category_entries(context):
+    from freeboard.scoring import merged_capabilities
+    base, public, _ = capability_sources(context)
+    base = base.model_copy(update={'availability': 'client_access_restricted'})
+    assert merged_capabilities([base], [], []) == []
+    completed = merged_capabilities([base], [public], [])
+    assert len(completed) == 2 and all(r.score is not None and r.rank is None for r in completed)
+
+
+def test_access_probe_reports_restriction_without_clearing_cap_failure(context):
+    db, settings, _ = context
+    m = model(db)
+    frozen = {**json.loads(m['profile']), 'cap_verified': False}
+    db.execute("UPDATE models SET status='cap_violation',profile=? WHERE id=?", (json.dumps(frozen), m['id']))
+    budget = Budget(db, settings)
+    attempt = budget.reserve('opencode_access_diagnostic', 1000, model_id=m['id'])
+    budget.finish(attempt, 'client_access_restricted', 403)
+    observed = db.one('SELECT * FROM models WHERE id=?', (m['id'],))
+    row, _ = make_row(db, settings, observed, None, 'screen')
+    assert row.availability == 'client_access_restricted' and not row.cap_verified and row.scores is None
+    assert observed['status'] == 'cap_violation' and observed['profile'] == json.dumps(frozen)
 
 
 @pytest.mark.parametrize('case', ['old_epoch', 'partial', 'invalid_cap'])

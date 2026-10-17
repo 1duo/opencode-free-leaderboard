@@ -208,6 +208,8 @@ def merged_capabilities(rows: list[PublicRow], public_screens: list[PublicScreen
         sources += [r for r in [*public_screens, *lightweight]
                     if r.model_id == model.model_id and r.epoch == model.epoch
                     and r.status == 'complete' and r.cap_verified and model.cap_verified]
+        if model.availability in {'authentication_failed', 'client_access_restricted', 'model_unavailable'} and not sources:
+            continue
         for category in ['reasoning', 'coding']:
             choices = []
             for source in sources:
@@ -338,7 +340,7 @@ def make_row(db: DB, settings: Settings, model: dict, cycle: dict | None, tier: 
     status = "stale" if complete and stale else "complete" if complete else "pending"
     profile = json.loads(cycle['profile'] if cycle else model["profile"])
     availability = model['status']
-    if availability in {'eligible', 'provider_error'}:
+    if availability in {'eligible', 'provider_error', 'cap_violation', 'cap_unverified'}:
         last = db.one("""SELECT a.status,a.response_path FROM attempts a LEFT JOIN jobs j ON j.id=a.job_id
             LEFT JOIN cycles c ON c.id=j.cycle_id WHERE a.model_id=?
             AND (c.epoch=? OR a.kind='opencode_access_diagnostic' AND a.started_at>=COALESCE(

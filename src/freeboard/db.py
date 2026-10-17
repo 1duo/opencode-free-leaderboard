@@ -3,7 +3,7 @@ from __future__ import annotations
 import fcntl
 import json
 import sqlite3
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from pathlib import Path
 
 from .config import now
@@ -104,7 +104,8 @@ class DB:
 
     def backup(self) -> None:
         target = self.state / "backups" / f"{now()[:10]}.sqlite3"
-        with sqlite3.connect(target) as conn:
+        # A transaction context alone leaves the connection open and its WAL growing.
+        with closing(sqlite3.connect(target)) as conn:
             self.conn.backup(conn)
         target.chmod(0o600)
         for old in sorted((self.state / "backups").glob("*.sqlite3"))[:-7]:
