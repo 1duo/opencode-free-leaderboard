@@ -145,6 +145,25 @@ def test_incomplete_expansion_keeps_existing_scores_and_ranks(tmp_path):
         db.conn.close()
 
 
+def test_expansion_status_distinguishes_access_blocks_from_runnable_work(tmp_path):
+    from freeboard.scoring import coding_expansion_status
+    db, _, _, models, evaluations = expansion_fixture(tmp_path)
+    try:
+        for model in models:
+            model.epoch = 'epoch'
+            model.availability = 'client_access_restricted'
+        pending = [e.model_copy(update={'status': 'pending', 'score': None}) for e in evaluations]
+        assert coding_expansion_status(models, [], {}) == 'not-started'
+        assert coding_expansion_status(models, pending, {}) == 'access-restricted'
+        models[0].availability = 'eligible'
+        assert coding_expansion_status(models, pending, {}) == 'pending'
+        models[0].epoch = 'new-epoch'
+        assert coding_expansion_status(models, pending, {}) == 'access-restricted'
+        assert coding_expansion_status(models, pending, {'bigcodebench': .5}) == 'active'
+    finally:
+        db.conn.close()
+
+
 def test_promoted_policy_does_not_mix_legacy_scores_when_new_model_pending(tmp_path):
     db,settings,caps,models,evaluations=expansion_fixture(tmp_path)
     try:

@@ -193,7 +193,8 @@ def render_site(report: Snapshot, checkout: Path, target: Path) -> dict:
             if backup.exists():
                 backup.rename(target)
             raise
-    return {"snapshot": report.snapshot_id, "site": str(target), "ranked": sum(r.scores is not None for r in report.rows),
+    return {"snapshot": report.snapshot_id, "site": str(target),
+            "ranked": len({r.model_id for r in report.capabilities if r.rank is not None}),
             'community_submissions': len(report.community_results)}
 
 

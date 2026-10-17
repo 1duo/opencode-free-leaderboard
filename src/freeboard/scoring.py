@@ -231,6 +231,7 @@ class Snapshot(Strict):
     community_results: list[CommunityResult] = []
     coding_evaluations: list[CodingEvaluation] = []
     coding_weights: dict[str, float] = {'livecodebench': 1.0}
+    coding_expansion_status: Literal['not-started', 'pending', 'access-restricted', 'active'] = 'not-started'
     seasons: list[PublicManifest]
     budget: dict[str, int | str | None]
     queue_size: int
@@ -634,8 +635,25 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
                     rows=rows, history=history, comparisons=comparisons, pilots=pilots, public_screens=public_screens,
                     lightweight=lightweight, capabilities=capabilities, seasons=manifests,
                     coding_evaluations=coding, coding_weights=coding_weights,
+                    coding_expansion_status=coding_expansion_status(rows, coding, coding_weights),
                     budget=Budget(db, settings).summary(), queue_size=queue,
                     missed_deadlines=sum(r.deadline_missed for r in rows if r.tier == 'screen'), blockers=blockers)
+
+
+def coding_expansion_status(rows: list[PublicRow], evaluations: list[CodingEvaluation],
+                            weights: dict[str, float]) -> str:
+    if weights.get('bigcodebench') == 0.5:
+        return 'active'
+    if not evaluations:
+        return 'not-started'
+    current = {r.model_id: r for r in rows if r.tier == 'screen'}
+    pending = [e for e in evaluations if e.status == 'pending'
+               and e.model_id in current and current[e.model_id].epoch == e.epoch
+               and current[e.model_id].availability not in {'removed', 'paid', 'excluded', 'unsupported'}]
+    restricted = {'client_access_restricted', 'authentication_failed'}
+    if pending and all(current[e.model_id].availability in restricted for e in pending):
+        return 'access-restricted'
+    return 'pending'
 
 
 def coding_results(db: DB, settings: Settings) -> list[CodingEvaluation]:
