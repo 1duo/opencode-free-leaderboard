@@ -45,6 +45,8 @@ def parser() -> argparse.ArgumentParser:
     discovery = commands.add_parser('discover')
     discovery.add_argument('--catalog-only', action='store_true',
                            help='Refresh official catalog/pricing without inspecting or changing frozen native settings')
+    discovery.add_argument('--recheck-access', action='append', default=[], metavar='MODEL_ID',
+                           help='Explicitly recheck a model after fixing rejected credentials or native client access')
     lightweight = commands.add_parser('lightweight', help='Run a fixed 12-question public subset on new free models')
     lightweight.add_argument('--model', action='append')
     lightweight.add_argument('--limit', type=int)
@@ -160,7 +162,8 @@ def main() -> None:
                 from .submissions import export_submission
                 result = export_submission(db, checkout, args.model, args.contributor, args.tier, args.season, args.output)
             elif args.command == "discover":
-                result = discover(db, runner.budget, runner.client, catalog_only=args.catalog_only)
+                result = discover(db, runner.budget, runner.client, catalog_only=args.catalog_only,
+                                  recheck_access=tuple(args.recheck_access))
             elif args.command == 'lightweight':
                 from .lightweight import run_lightweight
                 result = run_lightweight(runner, args.model, args.limit)

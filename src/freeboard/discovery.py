@@ -68,11 +68,12 @@ def excluded(ident: str) -> bool:
         (ident != CONTRIBUTOR_MODEL or contributor_authorization() is None))
 
 
-def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, catalog_only: bool = False) -> dict:
+def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, catalog_only: bool = False,
+             recheck_access: tuple[str, ...] = ()) -> dict:
     from .opencode import client_version, inspect_models, reasoning_policy
     if client is None:
         with httpx.Client(timeout=30, follow_redirects=False) as owned:
-            return discover(db, budget, owned, catalog_only=catalog_only)
+            return discover(db, budget, owned, catalog_only=catalog_only, recheck_access=recheck_access)
     if catalog_only:
         used = budget.summary()
         planned = budget.plan([], 0, 2)
@@ -119,6 +120,8 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, cata
            "catalog_ids": sorted(ids), "hashes": {k: digest(v) for k, v in content.items()}}
     if catalog_only:
         raw['catalog_only'] = True
+    if recheck_access:
+        raw['recheck_access'] = sorted(set(recheck_access))
     if authorized := contributor_authorization():
         raw['contributor_authorization'] = {'model_id': CONTRIBUTOR_MODEL, 'local_date': authorized,
                                             'public_only': True}
@@ -170,6 +173,11 @@ def discover(db: DB, budget: Budget, client: httpx.Client | None = None, *, cata
         else:
             status = "eligible"
         if status == 'eligible' and same and old['status'] in {'cap_violation', 'cap_unverified'}:
+            status = old['status']
+        if (status == 'eligible' and same and model not in recheck_access
+                and old['status'] in {'authentication_failed', 'client_access_restricted'}):
+            # Catalog presence proves neither credentials nor client access.
+            # Resume only after an explicit operator recheck or a new epoch.
             status = old['status']
         if status == 'eligible' and same and model == CONTRIBUTOR_MODEL:
             failure = db.one("""SELECT j.status FROM jobs j JOIN cycles c ON c.id=j.cycle_id

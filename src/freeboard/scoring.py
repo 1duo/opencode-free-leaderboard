@@ -198,6 +198,8 @@ class CodingEvaluation(Strict):
     epoch: str
     season: str
     status: Literal['pending', 'complete']
+    phase: Literal['pilot', 'screen'] = 'screen'
+    pilot_progress: int = 0
     progress: int
     expected: Literal[24] = 24
     score: float | None = None
@@ -638,17 +640,21 @@ def snapshot(db: DB, settings: Settings) -> Snapshot:
 
 def coding_results(db: DB, settings: Settings) -> list[CodingEvaluation]:
     result = []
-    for cycle in db.rows("SELECT * FROM cycles WHERE kind='coding' ORDER BY started_at,model_id"):
+    for cycle in db.rows("SELECT * FROM cycles WHERE kind IN ('coding','coding_pilot') ORDER BY started_at,model_id"):
+        is_pilot = cycle['kind'] == 'coding_pilot'
+        if is_pilot and db.one("SELECT id FROM cycles WHERE kind='coding' AND model_id=? AND epoch=? AND season=?",
+                              (cycle['model_id'],cycle['epoch'],cycle['season'])):
+            continue
         profile = json.loads(cycle['profile'])
         if (cycle['model_id'] in OMITTED_MODELS or profile.get('version') != VERSION
                 or profile.get('protocol_revision') != REVISION or profile.get('transport') != 'local-opencode'):
             continue
         season = db.one('SELECT * FROM seasons WHERE id=?', (cycle['season'],))
         manifest = json.loads(season['manifest'])
-        items = records(db,cycle,'coding')
+        items = records(db,cycle,'coding_pilot' if is_pilot else 'coding')
         pilot = db.one("SELECT id FROM cycles WHERE kind='coding_pilot' AND model_id=? AND epoch=? AND season=? AND completed_at IS NOT NULL",
                        (cycle['model_id'],cycle['epoch'],cycle['season']))
-        complete = (season['validated'] and manifest.get('protocol',{}).get('panel') == 'bigcodebench-cpu-v1'
+        complete = (not is_pilot and season['validated'] and manifest.get('protocol',{}).get('panel') == 'bigcodebench-cpu-v1'
             and len(items) == 24 and sum(i['status']=='graded' for i in items)==24 and pilot
             and profile.get('cap_verified') and all(i['score'] in {0,1} for i in items)
             and all(sum(i['stratum']==key for i in items)==12 for key in ['stdlib','scientific']))
@@ -656,7 +662,9 @@ def coding_results(db: DB, settings: Settings) -> list[CodingEvaluation]:
         generated = [i for i in items if i['latency'] is not None]
         intervals = component_bootstrap(items,settings.bootstrap_samples) if complete else {}
         result.append(CodingEvaluation(model_id=cycle['model_id'],epoch=cycle['epoch'],season=cycle['season'],
-            status='complete' if complete else 'pending',progress=sum(i['status']=='graded' for i in items),
+            status='complete' if complete else 'pending',phase='pilot' if is_pilot else 'screen',
+            pilot_progress=sum(i['status']=='graded' for i in items) if is_pilot else (2 if pilot else 0),
+            progress=0 if is_pilot else sum(i['status']=='graded' for i in items),
             score=float(np.mean([i['score'] for i in items]))*100 if complete else None,
             interval=np.quantile(intervals['bigcodebench'],[.025,.975]).tolist() if complete else None,
             evaluated_at=usage['stamp'] if complete else None, started_at=cycle['started_at'],

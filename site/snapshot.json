@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "snapshot_id": "92cfa2b4ecb657117010",
+  "snapshot_id": "69ab44bb15b3f6955c0f",
   "repository": "1duo/opencode-free-leaderboard",
-  "generated_at": "2026-10-17T18:01:54+00:00",
+  "generated_at": "2026-10-17T19:18:06+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-17T16:47:50+00:00",
+  "discovery_at": "2026-10-17T19:08:10+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -18,7 +18,7 @@
       "tier": "screen",
       "season": "s1-eb8afe28e8eafc97",
       "status": "complete",
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -26,7 +26,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T04:06:24+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -109,8 +109,8 @@
       "client_version": "1.19.3",
       "tier": "confirmation",
       "season": null,
-      "status": "pending",
-      "availability": "eligible",
+      "status": "blocked",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -118,7 +118,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -165,7 +165,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -212,7 +212,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -251,7 +251,7 @@
       "tier": "screen",
       "season": "s1-eb8afe28e8eafc97",
       "status": "complete",
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -259,7 +259,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T05:30:24+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -342,8 +342,8 @@
       "client_version": "1.19.3",
       "tier": "confirmation",
       "season": null,
-      "status": "pending",
-      "availability": "eligible",
+      "status": "blocked",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -351,7 +351,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -398,7 +398,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -445,7 +445,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -492,7 +492,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -539,7 +539,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -586,7 +586,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -633,7 +633,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -672,7 +672,7 @@
       "tier": "screen",
       "season": "s1-eb8afe28e8eafc97",
       "status": "complete",
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -680,7 +680,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T06:50:35+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -763,8 +763,8 @@
       "client_version": "1.19.3",
       "tier": "confirmation",
       "season": null,
-      "status": "pending",
-      "availability": "eligible",
+      "status": "blocked",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -772,7 +772,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -819,7 +819,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -866,7 +866,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -913,7 +913,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -960,7 +960,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1007,7 +1007,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1054,7 +1054,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1092,8 +1092,8 @@
       "client_version": "1.19.3",
       "tier": "screen",
       "season": null,
-      "status": "public_only",
-      "availability": "eligible",
+      "status": "blocked",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -1101,7 +1101,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: xhigh",
       "reasoning_variant": "xhigh",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1139,8 +1139,8 @@
       "client_version": "1.19.3",
       "tier": "confirmation",
       "season": null,
-      "status": "public_only",
-      "availability": "eligible",
+      "status": "blocked",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -1148,7 +1148,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: xhigh",
       "reasoning_variant": "xhigh",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1187,7 +1187,7 @@
       "tier": "screen",
       "season": "s1-eb8afe28e8eafc97",
       "status": "complete",
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -1195,7 +1195,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T07:08:17+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -1278,8 +1278,8 @@
       "client_version": "1.19.3",
       "tier": "confirmation",
       "season": null,
-      "status": "pending",
-      "availability": "eligible",
+      "status": "blocked",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/inference/openai/v1/chat/completions",
@@ -1287,7 +1287,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1334,7 +1334,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1381,7 +1381,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1422,7 +1422,7 @@
       "tier": "screen",
       "season": "s1-eb8afe28e8eafc97",
       "status": "complete",
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
@@ -1430,7 +1430,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T19:02:01+00:00",
       "cycle_started_at": "2026-10-10T00:20:52+00:00",
@@ -1514,7 +1514,7 @@
       "tier": "screen",
       "season": "s1-eb8afe28e8eafc97",
       "status": "complete",
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "free_eligible": true,
       "protocol": "opencode",
       "endpoint": "https://opencode.ai/zen/v1/chat/completions",
@@ -1522,7 +1522,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T18:58:34+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
@@ -1614,7 +1614,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T16:47:50+00:00",
+      "observed_at": "2026-10-17T19:08:10+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T18:59:40+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
@@ -1689,242 +1689,7 @@
       "manual_recovered_questions": 1
     }
   ],
-  "comparisons": [
-    {
-      "a": "beam-free",
-      "b": "deepseek-v4.1-flash-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "reasoning",
-      "difference": 12.5,
-      "interval": [
-        0.0,
-        25.0
-      ],
-      "unresolved": true
-    },
-    {
-      "a": "beam-free",
-      "b": "deepseek-v4.1-flash-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "coding",
-      "difference": -32.5,
-      "interval": [
-        -45.0,
-        -20.0
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "beam-free",
-      "b": "deepseek-v4.1-flash-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "overall",
-      "difference": -14.5,
-      "interval": [
-        -23.5,
-        -5.5
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "beam-free",
-      "b": "longcat-2.5-preview-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "reasoning",
-      "difference": -12.5,
-      "interval": [
-        -25.0,
-        0.0
-      ],
-      "unresolved": true
-    },
-    {
-      "a": "beam-free",
-      "b": "longcat-2.5-preview-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "coding",
-      "difference": -25.0,
-      "interval": [
-        -37.5,
-        -12.5
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "beam-free",
-      "b": "longcat-2.5-preview-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "overall",
-      "difference": -20.0,
-      "interval": [
-        -29.0,
-        -11.0
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "beam-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "reasoning",
-      "difference": -27.5,
-      "interval": [
-        -42.5,
-        -12.5
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "beam-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "coding",
-      "difference": -15.0,
-      "interval": [
-        -30.0,
-        0.0
-      ],
-      "unresolved": true
-    },
-    {
-      "a": "beam-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "overall",
-      "difference": -20.0,
-      "interval": [
-        -30.5,
-        -9.5
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "deepseek-v4.1-flash-free",
-      "b": "longcat-2.5-preview-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "reasoning",
-      "difference": -25.0,
-      "interval": [
-        -37.5,
-        -12.5
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "deepseek-v4.1-flash-free",
-      "b": "longcat-2.5-preview-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "coding",
-      "difference": 7.5,
-      "interval": [
-        -2.5,
-        17.5
-      ],
-      "unresolved": true
-    },
-    {
-      "a": "deepseek-v4.1-flash-free",
-      "b": "longcat-2.5-preview-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "overall",
-      "difference": -5.5,
-      "interval": [
-        -13.5,
-        2.5
-      ],
-      "unresolved": true
-    },
-    {
-      "a": "deepseek-v4.1-flash-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "reasoning",
-      "difference": -40.0,
-      "interval": [
-        -55.0,
-        -25.0
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "deepseek-v4.1-flash-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "coding",
-      "difference": 17.5,
-      "interval": [
-        2.5,
-        32.5
-      ],
-      "unresolved": false
-    },
-    {
-      "a": "deepseek-v4.1-flash-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "overall",
-      "difference": -5.5,
-      "interval": [
-        -16.0,
-        5.0
-      ],
-      "unresolved": true
-    },
-    {
-      "a": "longcat-2.5-preview-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "reasoning",
-      "difference": -15.0,
-      "interval": [
-        -30.0,
-        0.0
-      ],
-      "unresolved": true
-    },
-    {
-      "a": "longcat-2.5-preview-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "coding",
-      "difference": 10.0,
-      "interval": [
-        -5.0,
-        25.0
-      ],
-      "unresolved": true
-    },
-    {
-      "a": "longcat-2.5-preview-free",
-      "b": "space-bunny-free",
-      "tier": "screen",
-      "season": "s1-eb8afe28e8eafc97",
-      "view": "overall",
-      "difference": 0.0,
-      "interval": [
-        -10.5,
-        10.5
-      ],
-      "unresolved": true
-    }
-  ],
+  "comparisons": [],
   "pilots": [
     {
       "model_id": "beam-free",
@@ -2376,7 +2141,7 @@
       "truncation_rate": 0.16666666666666666,
       "manual_retry_count": 0,
       "manual_recovered_questions": 0,
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "health_graded": 6,
       "health_passed": 5,
       "tool_rejections": 8,
@@ -2435,7 +2200,7 @@
       "truncation_rate": 0.6666666666666666,
       "manual_retry_count": 0,
       "manual_recovered_questions": 0,
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "health_graded": 6,
       "health_passed": 6,
       "tool_rejections": 0,
@@ -2545,7 +2310,7 @@
       "truncation_rate": 0.5,
       "manual_retry_count": 0,
       "manual_recovered_questions": 0,
-      "availability": "eligible",
+      "availability": "client_access_restricted",
       "health_graded": 6,
       "health_passed": 6,
       "tool_rejections": 2,
@@ -2574,9 +2339,12 @@
         "livebench": 35.0
       },
       "evaluated_at": "2026-10-17T04:06:24+00:00",
-      "rank": 3,
+      "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "beam-free",
@@ -2597,9 +2365,12 @@
         "livecodebench": 35.0
       },
       "evaluated_at": "2026-10-17T04:03:46+00:00",
-      "rank": 4,
+      "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "deepseek-v4.1-flash-free",
@@ -2622,9 +2393,12 @@
         "livebench": 30.0
       },
       "evaluated_at": "2026-10-17T05:30:24+00:00",
-      "rank": 4,
+      "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "deepseek-v4.1-flash-free",
@@ -2645,9 +2419,12 @@
         "livecodebench": 67.5
       },
       "evaluated_at": "2026-10-17T04:27:43+00:00",
-      "rank": 1,
+      "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "longcat-2.5-preview-free",
@@ -2670,9 +2447,12 @@
         "livebench": 55.00000000000001
       },
       "evaluated_at": "2026-10-17T06:50:35+00:00",
-      "rank": 2,
+      "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "longcat-2.5-preview-free",
@@ -2693,9 +2473,12 @@
         "livecodebench": 60.0
       },
       "evaluated_at": "2026-10-17T06:32:06+00:00",
-      "rank": 2,
+      "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "nemotron-3.5-super-vl-free",
@@ -2718,7 +2501,10 @@
       "evaluated_at": "2026-10-17T08:34:29+00:00",
       "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "nemotron-3.5-super-vl-free",
@@ -2741,7 +2527,10 @@
       "evaluated_at": "2026-10-17T09:12:16+00:00",
       "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "space-bunny-free",
@@ -2764,9 +2553,12 @@
         "livebench": 80.0
       },
       "evaluated_at": "2026-10-17T07:08:17+00:00",
-      "rank": 1,
+      "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     },
     {
       "model_id": "space-bunny-free",
@@ -2787,12 +2579,120 @@
         "livecodebench": 50.0
       },
       "evaluated_at": "2026-10-17T07:02:30+00:00",
-      "rank": 3,
+      "rank": null,
       "stale": false,
-      "refresh_pending": false
+      "refresh_pending": false,
+      "benchmark_weights": {},
+      "benchmark_evaluated_at": {},
+      "source_seasons": {}
     }
   ],
   "community_results": [],
+  "coding_evaluations": [
+    {
+      "model_id": "beam-free",
+      "epoch": "a7b17df894482a44",
+      "season": "coding-b9ea63932ddefeac",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T19:07:39+00:00",
+      "pending_reasons": {
+        "deferred": 2
+      },
+      "accounted_tokens": 25907,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "deepseek-v4.1-flash-free",
+      "epoch": "7e3433bc4b2ed1b1",
+      "season": "coding-b9ea63932ddefeac",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T19:07:39+00:00",
+      "pending_reasons": {
+        "deferred": 2
+      },
+      "accounted_tokens": 25907,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "longcat-2.5-preview-free",
+      "epoch": "a1987085381087f0",
+      "season": "coding-b9ea63932ddefeac",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T19:07:39+00:00",
+      "pending_reasons": {
+        "deferred": 2
+      },
+      "accounted_tokens": 25907,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "nemotron-3.5-super-vl-free",
+      "epoch": "32021e5737032959",
+      "season": "coding-b9ea63932ddefeac",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T19:07:39+00:00",
+      "pending_reasons": {
+        "deferred": 2
+      },
+      "accounted_tokens": 25907,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "space-bunny-free",
+      "epoch": "08dc1bee6a9afd25",
+      "season": "coding-b9ea63932ddefeac",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T19:07:39+00:00",
+      "pending_reasons": {
+        "deferred": 2
+      },
+      "accounted_tokens": 25907,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    }
+  ],
+  "coding_weights": {
+    "livecodebench": 1.0
+  },
   "seasons": [
     {
       "id": "public-pilot-c818b85f16b42bf9",
@@ -4314,7 +4214,8 @@
         "Dockerfile": "fb131352570e02651f2a1b9acdc1ce090e89b898b584b4e4786491a65a977ee9",
         "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
         "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
-      }
+      },
+      "coding_promoted_at": null
     },
     {
       "id": "public-pilot-424b7a865093c836",
@@ -5836,7 +5737,8 @@
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
         "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
         "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
-      }
+      },
+      "coding_promoted_at": null
     },
     {
       "id": "s1-eb8afe28e8eafc97",
@@ -7850,7 +7752,8 @@
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
         "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
         "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
-      }
+      },
+      "coding_promoted_at": null
     },
     {
       "id": "lightweight-31b42151ccd60e7e",
@@ -7975,29 +7878,1293 @@
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
         "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
         "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8"
-      }
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-56e8c01f321f3f4a",
+      "seed": 20261008,
+      "sources": {
+        "bigcodebench_data": "b74c0d0bf70d2c0bc459be537895cca163007f1a",
+        "bigcodebench_grader": "09dd993f46c3fbf3a799465bb96d524edcb0b199",
+        "base_grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "Python",
+      "counts": {
+        "coding": {
+          "bigcodebench": 24
+        },
+        "coding_pilot": {
+          "bigcodebench": 2
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "bigcodebench:b74c0d0bf70d:847",
+            "hash": "0328bf8f9225cb91c52a728d8f1ed146e93421b22c0a3cbc966bbc5b9f8e7f3b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1106",
+            "hash": "73f8a313cdeac30ad600cfc2c399446bd57f1a50d59cf053cc836b5e509058de",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:724",
+            "hash": "654f0f36261d41b3f52f94b42172eb5e735689018c10da4ceece4288e9c205e5",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:753",
+            "hash": "ea68839354c680fa1622d1a8bc7805f8ffb8ac73ef2cc35ccc7a06200b65194b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:796",
+            "hash": "ef07fb4ba45041128cfdc455575f045e8cb75cb7a0353b904deb527e18c8502d",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:206",
+            "hash": "fd509f81766d9b1af923234e5c1a1edd603b6a53679c29f4d56d7c78cd817b8b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1114",
+            "hash": "52a7f335e8e53f64f05a3d5d328eefde83fa0de45a04f288a32946ae5d2cd70b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:667",
+            "hash": "0929cebc6d25db862510b8635cd7daf51c964d9d8dcffcd4cca1f9ed8f088d52",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:855",
+            "hash": "cacb2883c82da12cb98b14d3f2e186e8c0b19e7c41a42aa61e486f19d56b8be1",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:728",
+            "hash": "94996ab5eabbf679603a7a8aa56d9918851c3f7679f12d2d3ab93a90510492d6",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:358",
+            "hash": "3381d3cf35a5658a27be12133f45fec6ee50aa37567096ae79cc02207b3c41f2",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:331",
+            "hash": "ed5de38df9780e79c84e95f488ba4ff3d34df0997501a014eb4bcddc3fa8c8a8",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:738",
+            "hash": "20729ab3f3d3089e59a6ee08af775367de84986fd7c9cc8106104e16cae68e4a",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:874",
+            "hash": "435352e85ed8bf7d7bfcbd5de364cd85bbbedb0b2a0297b56a3d49fd8c974e6a",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:825",
+            "hash": "ebfcd793f53481836ca14fed32c7543a611e17fecbf56562bae1096b497e022b",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:856",
+            "hash": "8294b317e0c75984329772288eea843d0ee5bc8652bd926444d2c31c92cd8a5c",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:929",
+            "hash": "1fa163749c84a86663f60195456b071a605511ea2bc46b8d988dfac2ff446df2",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1089",
+            "hash": "c15c39186017bc46ec735a66cae3bc7e96b717a51ea06783a370b8bf47d30e80",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:687",
+            "hash": "ffcd392f6e10fa4282745aad11791cd390e48d9df752ed348621b18a04a246e2",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:556",
+            "hash": "1cab60e3733c14ba6a0dc142201b1e3c4197cf8f951d226c7719f41ef2a2f42e",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:899",
+            "hash": "3a650301b50b03070c7cc5e2dd15b37e4b6188dcb1694256a472eb106e4e0481",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:11",
+            "hash": "7a27fbfcfdb58db3b949851891bc18bf15f5ff3e0348177beadbe55991bc472f",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:219",
+            "hash": "ad57610d684b81b994f5dd48bdd740dacc6d0b719a0e300c2fda92745dbff0ce",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:793",
+            "hash": "94c07caf564485e501c41317b743ca503fe54ce9ec0a48d1d88df05886e1bfdd",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "bigcodebench:b74c0d0bf70d:380",
+            "hash": "5ad96aa58293b40f6ff9348c35d139d95dd2b6d55dd4d18e873d5cd8ae082c30",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:3",
+            "hash": "671c8e8e28bf3cf0f19392bf65a360c1460edb7168f86fd0bd827d0bac365822",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "bigcodebench-cpu-v1",
+        "source_season": null,
+        "strata": {
+          "bigcodebench": {
+            "stdlib": 12,
+            "scientific": 12
+          }
+        },
+        "purpose": "CPU library-use subset; equal-weight coding expansion"
+      },
+      "grading_files": {
+        "coding.Dockerfile": "2e05773ab40a69631162c12db23f967063f9f34024a9caa9359aa1a794bc4747",
+        "coding_worker.py": "30e42d5208edd923af809134cf31ad0916a53b73061763f44b53234b04951419",
+        "coding-requirements.txt": "40b4954abb5486ccca7592bf6c35fea2592a088c102e285c7f4da8e88c3c4c94"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-c6abd949db940403",
+      "seed": 20261008,
+      "sources": {
+        "bigcodebench_data": "b74c0d0bf70d2c0bc459be537895cca163007f1a",
+        "bigcodebench_grader": "09dd993f46c3fbf3a799465bb96d524edcb0b199",
+        "base_grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "Python",
+      "counts": {
+        "coding": {
+          "bigcodebench": 24
+        },
+        "coding_pilot": {
+          "bigcodebench": 2
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "bigcodebench:b74c0d0bf70d:847",
+            "hash": "0328bf8f9225cb91c52a728d8f1ed146e93421b22c0a3cbc966bbc5b9f8e7f3b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1106",
+            "hash": "73f8a313cdeac30ad600cfc2c399446bd57f1a50d59cf053cc836b5e509058de",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:724",
+            "hash": "654f0f36261d41b3f52f94b42172eb5e735689018c10da4ceece4288e9c205e5",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:753",
+            "hash": "ea68839354c680fa1622d1a8bc7805f8ffb8ac73ef2cc35ccc7a06200b65194b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:796",
+            "hash": "ef07fb4ba45041128cfdc455575f045e8cb75cb7a0353b904deb527e18c8502d",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:206",
+            "hash": "fd509f81766d9b1af923234e5c1a1edd603b6a53679c29f4d56d7c78cd817b8b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1114",
+            "hash": "52a7f335e8e53f64f05a3d5d328eefde83fa0de45a04f288a32946ae5d2cd70b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:667",
+            "hash": "0929cebc6d25db862510b8635cd7daf51c964d9d8dcffcd4cca1f9ed8f088d52",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:855",
+            "hash": "cacb2883c82da12cb98b14d3f2e186e8c0b19e7c41a42aa61e486f19d56b8be1",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:728",
+            "hash": "94996ab5eabbf679603a7a8aa56d9918851c3f7679f12d2d3ab93a90510492d6",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:358",
+            "hash": "3381d3cf35a5658a27be12133f45fec6ee50aa37567096ae79cc02207b3c41f2",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:331",
+            "hash": "ed5de38df9780e79c84e95f488ba4ff3d34df0997501a014eb4bcddc3fa8c8a8",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:738",
+            "hash": "20729ab3f3d3089e59a6ee08af775367de84986fd7c9cc8106104e16cae68e4a",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:874",
+            "hash": "435352e85ed8bf7d7bfcbd5de364cd85bbbedb0b2a0297b56a3d49fd8c974e6a",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:825",
+            "hash": "ebfcd793f53481836ca14fed32c7543a611e17fecbf56562bae1096b497e022b",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:856",
+            "hash": "8294b317e0c75984329772288eea843d0ee5bc8652bd926444d2c31c92cd8a5c",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:929",
+            "hash": "1fa163749c84a86663f60195456b071a605511ea2bc46b8d988dfac2ff446df2",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1089",
+            "hash": "c15c39186017bc46ec735a66cae3bc7e96b717a51ea06783a370b8bf47d30e80",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:687",
+            "hash": "ffcd392f6e10fa4282745aad11791cd390e48d9df752ed348621b18a04a246e2",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:556",
+            "hash": "1cab60e3733c14ba6a0dc142201b1e3c4197cf8f951d226c7719f41ef2a2f42e",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:899",
+            "hash": "3a650301b50b03070c7cc5e2dd15b37e4b6188dcb1694256a472eb106e4e0481",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:11",
+            "hash": "7a27fbfcfdb58db3b949851891bc18bf15f5ff3e0348177beadbe55991bc472f",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:219",
+            "hash": "ad57610d684b81b994f5dd48bdd740dacc6d0b719a0e300c2fda92745dbff0ce",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:793",
+            "hash": "94c07caf564485e501c41317b743ca503fe54ce9ec0a48d1d88df05886e1bfdd",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "bigcodebench:b74c0d0bf70d:380",
+            "hash": "5ad96aa58293b40f6ff9348c35d139d95dd2b6d55dd4d18e873d5cd8ae082c30",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:3",
+            "hash": "671c8e8e28bf3cf0f19392bf65a360c1460edb7168f86fd0bd827d0bac365822",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "bigcodebench-cpu-v1",
+        "source_season": null,
+        "strata": {
+          "bigcodebench": {
+            "stdlib": 12,
+            "scientific": 12
+          }
+        },
+        "purpose": "CPU library-use subset; equal-weight coding expansion"
+      },
+      "grading_files": {
+        "coding.Dockerfile": "0daa90319dee1891fea1a938bb7b85ebd20b5897bcb5e9e29b8c58a61a1ed591",
+        "coding_worker.py": "30e42d5208edd923af809134cf31ad0916a53b73061763f44b53234b04951419",
+        "coding-requirements.txt": "40b4954abb5486ccca7592bf6c35fea2592a088c102e285c7f4da8e88c3c4c94"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-81609ff3d230bbf2",
+      "seed": 20261008,
+      "sources": {
+        "bigcodebench_data": "b74c0d0bf70d2c0bc459be537895cca163007f1a",
+        "bigcodebench_grader": "09dd993f46c3fbf3a799465bb96d524edcb0b199",
+        "base_grader_image": "sha256:76e7c09409aae0eeb089460672a07c554190e547fea8953e98be54889044c9a6"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "Python",
+      "counts": {
+        "coding": {
+          "bigcodebench": 24
+        },
+        "coding_pilot": {
+          "bigcodebench": 2
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "bigcodebench:b74c0d0bf70d:847",
+            "hash": "0328bf8f9225cb91c52a728d8f1ed146e93421b22c0a3cbc966bbc5b9f8e7f3b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1106",
+            "hash": "73f8a313cdeac30ad600cfc2c399446bd57f1a50d59cf053cc836b5e509058de",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:724",
+            "hash": "654f0f36261d41b3f52f94b42172eb5e735689018c10da4ceece4288e9c205e5",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:753",
+            "hash": "ea68839354c680fa1622d1a8bc7805f8ffb8ac73ef2cc35ccc7a06200b65194b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:796",
+            "hash": "ef07fb4ba45041128cfdc455575f045e8cb75cb7a0353b904deb527e18c8502d",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:206",
+            "hash": "fd509f81766d9b1af923234e5c1a1edd603b6a53679c29f4d56d7c78cd817b8b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1114",
+            "hash": "52a7f335e8e53f64f05a3d5d328eefde83fa0de45a04f288a32946ae5d2cd70b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:667",
+            "hash": "0929cebc6d25db862510b8635cd7daf51c964d9d8dcffcd4cca1f9ed8f088d52",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:855",
+            "hash": "cacb2883c82da12cb98b14d3f2e186e8c0b19e7c41a42aa61e486f19d56b8be1",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:728",
+            "hash": "94996ab5eabbf679603a7a8aa56d9918851c3f7679f12d2d3ab93a90510492d6",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:358",
+            "hash": "3381d3cf35a5658a27be12133f45fec6ee50aa37567096ae79cc02207b3c41f2",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:331",
+            "hash": "ed5de38df9780e79c84e95f488ba4ff3d34df0997501a014eb4bcddc3fa8c8a8",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:738",
+            "hash": "20729ab3f3d3089e59a6ee08af775367de84986fd7c9cc8106104e16cae68e4a",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:874",
+            "hash": "435352e85ed8bf7d7bfcbd5de364cd85bbbedb0b2a0297b56a3d49fd8c974e6a",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:825",
+            "hash": "ebfcd793f53481836ca14fed32c7543a611e17fecbf56562bae1096b497e022b",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:856",
+            "hash": "8294b317e0c75984329772288eea843d0ee5bc8652bd926444d2c31c92cd8a5c",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:929",
+            "hash": "1fa163749c84a86663f60195456b071a605511ea2bc46b8d988dfac2ff446df2",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:1089",
+            "hash": "c15c39186017bc46ec735a66cae3bc7e96b717a51ea06783a370b8bf47d30e80",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:687",
+            "hash": "ffcd392f6e10fa4282745aad11791cd390e48d9df752ed348621b18a04a246e2",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:556",
+            "hash": "1cab60e3733c14ba6a0dc142201b1e3c4197cf8f951d226c7719f41ef2a2f42e",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:899",
+            "hash": "3a650301b50b03070c7cc5e2dd15b37e4b6188dcb1694256a472eb106e4e0481",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:11",
+            "hash": "7a27fbfcfdb58db3b949851891bc18bf15f5ff3e0348177beadbe55991bc472f",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:219",
+            "hash": "ad57610d684b81b994f5dd48bdd740dacc6d0b719a0e300c2fda92745dbff0ce",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:793",
+            "hash": "94c07caf564485e501c41317b743ca503fe54ce9ec0a48d1d88df05886e1bfdd",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "bigcodebench:b74c0d0bf70d:380",
+            "hash": "5ad96aa58293b40f6ff9348c35d139d95dd2b6d55dd4d18e873d5cd8ae082c30",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:b74c0d0bf70d:3",
+            "hash": "671c8e8e28bf3cf0f19392bf65a360c1460edb7168f86fd0bd827d0bac365822",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "bigcodebench-cpu-v1",
+        "source_season": null,
+        "strata": {
+          "bigcodebench": {
+            "stdlib": 12,
+            "scientific": 12
+          }
+        },
+        "purpose": "CPU library-use subset; equal-weight coding expansion"
+      },
+      "grading_files": {
+        "coding.Dockerfile": "0daa90319dee1891fea1a938bb7b85ebd20b5897bcb5e9e29b8c58a61a1ed591",
+        "coding_worker.py": "30e42d5208edd923af809134cf31ad0916a53b73061763f44b53234b04951419",
+        "coding-requirements.txt": "f9c570e5beb5946b5f6058c120c482341fc212aa316da55201e0ab75c8a3bdf1"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-620b19600d5bdcc4",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "bigcodebench_data": "b74c0d0bf70d2c0bc459be537895cca163007f1a",
+        "bigcodebench_grader": "09dd993f46c3fbf3a799465bb96d524edcb0b199"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "Python",
+      "counts": {
+        "coding": {
+          "bigcodebench": 24
+        },
+        "coding_pilot": {
+          "bigcodebench": 2
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:847",
+            "hash": "778874200d1045cc3ad2e1cfa45f3961a56ce369b88c1462272b1b8b397bb7ec",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1106",
+            "hash": "15634a1712a7b2428c982abb62ee85ae033de5c9da1207be43858ed25fffad43",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:724",
+            "hash": "be04d776684d19e7ea6052918bdbff24747b5ea93284cbe510aacc598e7e53a1",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:753",
+            "hash": "8f80fde5507803663909accbe7982767d5f6df02a8ada63f12d8a7c9c1db0880",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:796",
+            "hash": "c23cb6cc98a5f3911345137c8b33db943350c459b0bfbfca56d6412358bad530",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:206",
+            "hash": "38c9e51dd5b7de44187fa9d6533bda534244f77ff0d3ae40e7ea1fc84e44ffc8",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1114",
+            "hash": "981833624b1e8693be8725aad4d4ffaed695ac1ef92c757d88a2842a151689b0",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:667",
+            "hash": "7cda0b9a7864d4af16b57ff9404b7702dd2265b05a99dadc28f098d253c9a5ff",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:855",
+            "hash": "fec04201eb06e1a6274f09b4d26aba3842c52b153ea7d0c1259a499ae9c9ae66",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:728",
+            "hash": "fbd9ef229092e293f82b33841d08f62dd55b00cba2e8f71e11cacd7b52d5f641",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:358",
+            "hash": "97480e98a204cce3eafa3175a1f4e3fe22e801c80e7bfa8ae97add914e5173e7",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:331",
+            "hash": "44adddfd1b8fc31faa818a6154a1171c1a187c5ffdc29c48e96916886420c662",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:738",
+            "hash": "d7626847a2b1de422730c12fdb2e3f7403988adae14baa8ca00a78522070649c",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:874",
+            "hash": "a787866c2613bf38cfc2e6fbd84d72775985b98b03345376d41bfa8da05ed9f6",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:825",
+            "hash": "80b46bb8e73cecc57ac8e819509b485c65630b613e0eded932a9e404f3fcc6b2",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:856",
+            "hash": "d3b841875df6a387b7ecc873e08e6531a94b2d75cb4e623b86b26d01757e80ef",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:929",
+            "hash": "1e3f46b86b8544eb03758973f7730b364c82afa9263a87d0228028c6d921084c",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1089",
+            "hash": "c8ef5b8edd7ef76c6260157ec736535ffb3bf84e4ef0340c731dc2266935ebdb",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:687",
+            "hash": "518e82848fa8aa949f42776aa5d14ba76d9a880e040597ee348e12a4b6076719",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:556",
+            "hash": "73981bc7ea802c810a24d0b69dd62cf635106e1ab7a5c515840afd0cccf2dc14",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:899",
+            "hash": "2f285558c6fc53e53f15449ff3cf1a4bf7af7aefddec5d3112ff79339fa72ed0",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:11",
+            "hash": "608b87e90afde9417df6e949664b1bd4c521d4a66831721e210ef39b60919271",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:219",
+            "hash": "526e7d0f7d925bb6fcc2ba08ee00b23dd761bc3664ddd76a7c4fb10b2a57d3da",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:793",
+            "hash": "6ec9f697c9d1078ae32e1a00882071d29441aa1fd8334bc45c01a411a79a82b1",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:380",
+            "hash": "76bb4e6524111d181b5988d31a2cfccb3abc3a4ac01adcd8453b4e9d5d5eff32",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:3",
+            "hash": "6943174d489785fb55bc1a2ff9b6bc71793ce486a4075a56c8dd8b100ad4c0f6",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "bigcodebench-cpu-v1",
+        "source_season": null,
+        "strata": {
+          "bigcodebench": {
+            "stdlib": 12,
+            "scientific": 12
+          }
+        },
+        "purpose": "CPU library-use subset; equal-weight coding expansion"
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "coding.Dockerfile": "0daa90319dee1891fea1a938bb7b85ebd20b5897bcb5e9e29b8c58a61a1ed591",
+        "coding_worker.py": "cee96a7e480dcbd925a2091537d267da11818f04f62f12c345b8964b63b7e6aa",
+        "coding-requirements.txt": "f9c570e5beb5946b5f6058c120c482341fc212aa316da55201e0ab75c8a3bdf1"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-f7f4a4d19c25b6fd",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "bigcodebench_data": "b74c0d0bf70d2c0bc459be537895cca163007f1a",
+        "bigcodebench_grader": "09dd993f46c3fbf3a799465bb96d524edcb0b199"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "Python",
+      "counts": {
+        "coding": {
+          "bigcodebench": 24
+        },
+        "coding_pilot": {
+          "bigcodebench": 2
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:847:08bc2dbea0b8",
+            "hash": "d41d9557be3c9f402b5bb7aeab6c5eae0f2ff122599f9913ee28606675ec09fb",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1106:08dbeda8b366",
+            "hash": "52847f7528caceca29cdfcf7761b3c01a801dba09a555d70467507a41afd0757",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:724:53b35bdbc57b",
+            "hash": "fca49ce031c9ef5f6020b6edea7c5e5cbdb5823cef893e6aa27aec51c2e5ef32",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:753:858f7dc51923",
+            "hash": "e42327e004b08745a0d755ca5c862f67baa66dedeb8168800ae7bb01789e5b73",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:796:8d430fea2fdf",
+            "hash": "34d37968f2073f18f70ef2bb3630046f1a8ca17290a46d0d84fbda8e6da95f94",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:206:7eed3835270b",
+            "hash": "d773fc582f82c70df322231e70324dd9325603ac1e4c88540f96335876555dfa",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1114:1bb35c846cf7",
+            "hash": "68e472c3f2f496afaa5bfc04006d7bf27ed8bafe5625ed8384fc3a502bd80655",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:667:f1a1ee778bfc",
+            "hash": "ea410ab352c20b627ecc055d8ae6081350870d141e9310a7aae7fc848d51f7ca",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:855:eb79250f476e",
+            "hash": "99c487ec79b6823488941a0a0a1b5d8c41de568f3cf6363d0df8131922a5e66f",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:728:74c4a23b8542",
+            "hash": "7b3484964c70024c6f3717fed3c9ba64886358114b40499b51c40b2d1371c48c",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:358:c809c14c5e0a",
+            "hash": "7ea8e9ca59871e9f7f2e6bdbaf4df67fef23de68f8b70284a337f8a4f3483c20",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:331:32138d5e6e93",
+            "hash": "227f685ea62ed2ed9aa75c082601a4cf1d95e149cd6c5414ac30bea6be056ac2",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:738:67e229154521",
+            "hash": "fed26130d97c36c7d1e0590a5d9fddbda2792fc20153f590b360884420929368",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:874:c0f2da24f39e",
+            "hash": "860e23a0445b896c05d222333581bffb02429c39a3e16316e079f9624eb6ef44",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:825:83e6757a5963",
+            "hash": "b926d16c8e6cfcdab755b1bd5f660427e7f5759cdb65b0e964312e2f23e9b09f",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:856:4a0ba157c4f1",
+            "hash": "9d72ae499f75622959a232f8f6d225b00c68e40eb6723f26cae77aae764e6e5f",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:929:87664ffc1cf1",
+            "hash": "0417416bf940f333a0aa15b64bd642144369024c169a5ebae6edee0a4a7701ad",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1089:e8661a5e7ef3",
+            "hash": "49ac90d727d146da295e859d1d5c25ec2b18d840a0a497fc8a66877166776fe0",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:687:5909573367db",
+            "hash": "2446e47e6122c2a3ab3467db4533929a8eb8d560cf052348e35cbc3237a33977",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:556:b43fdc9e93c6",
+            "hash": "14c73baed48b97d8265db9ec7ec93328d437e7ea26c560ece7c4bd274474f253",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:899:645ee74e9b6a",
+            "hash": "410b9d12b9c886c88873246149f9049e1ec412d36c349e15b689621dd92b8250",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:11:7691248c867a",
+            "hash": "fd80aed632857fd8209f9a9bffd6a66cfab55b714ac7b31b0f1384800456b887",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:219:c1941ce470b8",
+            "hash": "b64656005bbeada16a720971f48c80e1fb14fe49896aa822407258b961bf17bd",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:793:548483a06c4d",
+            "hash": "f224fcce5750297d7b9e739c506b15bc92f4592123da7071b82601936c75add3",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:380:8178543b1146",
+            "hash": "0ae349d8a82562678109f788505bf13554128a1e16d384d6716dbdf82f30a87b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:3:a0371a3cc8a5",
+            "hash": "038da1f3127f1b28cca8807326b24df25508ad26d9ac6254961df58a172de232",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ]
+      },
+      "validated": true,
+      "active": false,
+      "partial": true,
+      "grader_image": "sha256:63815f24355f405dc47d79f622e3da7ac56d16d32e0ed819a98ba4176010584a",
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "bigcodebench-cpu-v1",
+        "source_season": null,
+        "strata": {
+          "bigcodebench": {
+            "stdlib": 12,
+            "scientific": 12
+          }
+        },
+        "purpose": "CPU library-use subset; equal-weight coding expansion"
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "coding.Dockerfile": "0daa90319dee1891fea1a938bb7b85ebd20b5897bcb5e9e29b8c58a61a1ed591",
+        "coding_worker.py": "f72b98d4864ab53c97a3556dce7bf52a3c4c8253a7d8016dc248bb25d5188ffe",
+        "coding-requirements.txt": "f9c570e5beb5946b5f6058c120c482341fc212aa316da55201e0ab75c8a3bdf1"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-b9ea63932ddefeac",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "bigcodebench_data": "b74c0d0bf70d2c0bc459be537895cca163007f1a",
+        "bigcodebench_grader": "09dd993f46c3fbf3a799465bb96d524edcb0b199"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "Python",
+      "counts": {
+        "coding": {
+          "bigcodebench": 24
+        },
+        "coding_pilot": {
+          "bigcodebench": 2
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:847:08bc2dbea0b8",
+            "hash": "d41d9557be3c9f402b5bb7aeab6c5eae0f2ff122599f9913ee28606675ec09fb",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1106:08dbeda8b366",
+            "hash": "52847f7528caceca29cdfcf7761b3c01a801dba09a555d70467507a41afd0757",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:724:53b35bdbc57b",
+            "hash": "fca49ce031c9ef5f6020b6edea7c5e5cbdb5823cef893e6aa27aec51c2e5ef32",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:753:858f7dc51923",
+            "hash": "e42327e004b08745a0d755ca5c862f67baa66dedeb8168800ae7bb01789e5b73",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:796:8d430fea2fdf",
+            "hash": "34d37968f2073f18f70ef2bb3630046f1a8ca17290a46d0d84fbda8e6da95f94",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:206:7eed3835270b",
+            "hash": "d773fc582f82c70df322231e70324dd9325603ac1e4c88540f96335876555dfa",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1114:1bb35c846cf7",
+            "hash": "68e472c3f2f496afaa5bfc04006d7bf27ed8bafe5625ed8384fc3a502bd80655",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:667:f1a1ee778bfc",
+            "hash": "ea410ab352c20b627ecc055d8ae6081350870d141e9310a7aae7fc848d51f7ca",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:855:eb79250f476e",
+            "hash": "99c487ec79b6823488941a0a0a1b5d8c41de568f3cf6363d0df8131922a5e66f",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:728:74c4a23b8542",
+            "hash": "7b3484964c70024c6f3717fed3c9ba64886358114b40499b51c40b2d1371c48c",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:358:c809c14c5e0a",
+            "hash": "7ea8e9ca59871e9f7f2e6bdbaf4df67fef23de68f8b70284a337f8a4f3483c20",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:331:32138d5e6e93",
+            "hash": "227f685ea62ed2ed9aa75c082601a4cf1d95e149cd6c5414ac30bea6be056ac2",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:738:67e229154521",
+            "hash": "fed26130d97c36c7d1e0590a5d9fddbda2792fc20153f590b360884420929368",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:874:c0f2da24f39e",
+            "hash": "860e23a0445b896c05d222333581bffb02429c39a3e16316e079f9624eb6ef44",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:825:83e6757a5963",
+            "hash": "b926d16c8e6cfcdab755b1bd5f660427e7f5759cdb65b0e964312e2f23e9b09f",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:856:4a0ba157c4f1",
+            "hash": "9d72ae499f75622959a232f8f6d225b00c68e40eb6723f26cae77aae764e6e5f",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:929:87664ffc1cf1",
+            "hash": "0417416bf940f333a0aa15b64bd642144369024c169a5ebae6edee0a4a7701ad",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:1089:e8661a5e7ef3",
+            "hash": "49ac90d727d146da295e859d1d5c25ec2b18d840a0a497fc8a66877166776fe0",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:687:5909573367db",
+            "hash": "2446e47e6122c2a3ab3467db4533929a8eb8d560cf052348e35cbc3237a33977",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:556:b43fdc9e93c6",
+            "hash": "14c73baed48b97d8265db9ec7ec93328d437e7ea26c560ece7c4bd274474f253",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:899:645ee74e9b6a",
+            "hash": "410b9d12b9c886c88873246149f9049e1ec412d36c349e15b689621dd92b8250",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:11:7691248c867a",
+            "hash": "fd80aed632857fd8209f9a9bffd6a66cfab55b714ac7b31b0f1384800456b887",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:219:c1941ce470b8",
+            "hash": "b64656005bbeada16a720971f48c80e1fb14fe49896aa822407258b961bf17bd",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:793:548483a06c4d",
+            "hash": "f224fcce5750297d7b9e739c506b15bc92f4592123da7071b82601936c75add3",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:380:8178543b1146",
+            "hash": "0ae349d8a82562678109f788505bf13554128a1e16d384d6716dbdf82f30a87b",
+            "benchmark": "bigcodebench",
+            "stratum": "stdlib"
+          },
+          {
+            "id": "bigcodebench:cpu-v1:b74c0d0bf70d:3:a0371a3cc8a5",
+            "hash": "038da1f3127f1b28cca8807326b24df25508ad26d9ac6254961df58a172de232",
+            "benchmark": "bigcodebench",
+            "stratum": "scientific"
+          }
+        ]
+      },
+      "validated": true,
+      "active": false,
+      "partial": true,
+      "grader_image": "sha256:f83e0adbeb29a09b5840547d653a1d8f4ec452008a639439ad9675a02780b802",
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "bigcodebench-cpu-v1",
+        "source_season": null,
+        "strata": {
+          "bigcodebench": {
+            "stdlib": 12,
+            "scientific": 12
+          }
+        },
+        "purpose": "CPU library-use subset; equal-weight coding expansion"
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "coding.Dockerfile": "0daa90319dee1891fea1a938bb7b85ebd20b5897bcb5e9e29b8c58a61a1ed591",
+        "coding_worker.py": "f72b98d4864ab53c97a3556dce7bf52a3c4c8253a7d8016dc248bb25d5188ffe",
+        "coding-requirements.txt": "a7b223f7975bb4d4754a80cf77e6ef6b04f57553127a3577eb3c90953fc8e188"
+      },
+      "coding_promoted_at": null
     }
   ],
   "budget": {
     "week": "2026-10-12",
-    "attempts_limit": 649,
+    "attempts_limit": 823,
     "tokens_limit": 6384551,
-    "planned_attempts": 3,
-    "planned_tokens": 21413,
-    "attempts_used": 648,
-    "accounted_tokens": 3496467,
+    "planned_attempts": 165,
+    "planned_tokens": 2118207,
+    "attempts_used": 663,
+    "accounted_tokens": 3626002,
     "reported_tokens": 3031349,
-    "estimated_attempts": 35,
-    "opencode_attempts": 559,
-    "opencode_invocations": 531,
-    "opencode_accounted_tokens": 3479337,
+    "estimated_attempts": 45,
+    "opencode_attempts": 569,
+    "opencode_invocations": 541,
+    "opencode_accounted_tokens": 3608872,
     "opencode_reported_tokens": 3031349,
-    "opencode_estimated_attempts": 33,
-    "discovery_attempts": 87,
+    "opencode_estimated_attempts": 43,
+    "discovery_attempts": 92,
     "prior_attempts": 2,
     "prior_accounted_tokens": 17130
   },
-  "queue_size": 19,
+  "queue_size": 29,
   "missed_deadlines": 0,
   "blockers": []
 }

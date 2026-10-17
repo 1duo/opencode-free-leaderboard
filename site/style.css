@@ -73,6 +73,7 @@ td:nth-child(5) { font-size: 11px; }
 .score { color: var(--accent); font-size: 22px; font-weight: 550; letter-spacing: -.6px; }
 .empty { padding: 30px; text-align: center !important; color: var(--muted); }
 #headline > .fine { margin: 12px 0 0; font-size: 11px; }
+#headline > #coding-note { margin: -8px 0 16px; }
 .plot-key { display: flex; align-items: center; gap: 9px; margin: 0; font-size: 11px; white-space: nowrap; }
 .key-mark { position: relative; display: inline-block; width: 25px; height: 4px; border-radius: 3px; background: var(--range); }
 .key-mark::after { content: ""; position: absolute; left: 9px; top: -2px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }

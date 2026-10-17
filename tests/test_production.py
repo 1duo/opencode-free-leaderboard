@@ -17,6 +17,87 @@ from freeboard.scoring import make_row, merged_capabilities
 context = fixtures.context
 
 
+@pytest.mark.parametrize('blocked', ['authentication_failed', 'client_access_restricted'])
+def test_catalog_refresh_preserves_access_rejection_until_explicit_recheck(context, monkeypatch, blocked):
+    import httpx
+    from freeboard.budget import Budget
+    from freeboard.config import ZEN_BASE, ZEN_DOCS
+    from freeboard.discovery import discover
+    db, settings, _ = context
+    monkeypatch.setattr('freeboard.opencode.client_version', lambda _: 'fixture')
+    definition = {'api': {'id':'alias','url':ZEN_BASE},'providerID':'opencode',
+        'cost':{'input':0,'output':0},'capabilities':{'reasoning':True},'options':{},
+        'variants':{'high':{'reasoningEffort':'high'}}}
+    monkeypatch.setattr('freeboard.opencode.inspect_models', lambda *_: {'alias':definition})
+    monkeypatch.setattr('freeboard.discovery.credential', lambda _: None)
+    price = ['Free']
+    def source(request):
+        html = f'<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr><tr><td>Alias</td><td>alias</td><td>{ZEN_BASE}/chat/completions</td></tr></table><table><tr><th>Model</th><th>Input</th><th>Output</th></tr><tr><td>Alias</td><td>{price[0]}</td><td>{price[0]}</td></tr></table>'
+        return httpx.Response(200,text=html) if str(request.url)==ZEN_DOCS else httpx.Response(200,json={'data':[{'id':'alias'}]})
+    with httpx.Client(transport=httpx.MockTransport(source)) as client:
+        budget = Budget(db,settings)
+        discover(db,budget,client)
+        epoch = db.one('SELECT epoch FROM models')['epoch']
+        db.execute('UPDATE models SET status=?',(blocked,))
+        for catalog_only in [False,True]:
+            discover(db,budget,client,catalog_only=catalog_only)
+            assert db.one('SELECT status FROM models')['status']==blocked
+        discover(db,budget,client,recheck_access=('alias',))
+        assert db.one('SELECT status,epoch FROM models')=={'status':'eligible','epoch':epoch}
+        evidence = json.loads(db.one('SELECT evidence FROM discovery ORDER BY id DESC LIMIT 1')['evidence'])
+        assert evidence['recheck_access']==['alias']
+        price[0]='$1.00'
+        discover(db,budget,client,recheck_access=('alias',))
+        assert db.one('SELECT status FROM models')['status']=='paid'
+        assert all(a['kind']=='discovery' for a in db.rows('SELECT kind FROM attempts'))
+
+
+def test_coding_pilot_progress_is_visible_without_a_provisional_score(context):
+    from freeboard.scoring import coding_results
+    runner, _, model, _ = fixtures.job_context(context)
+    manifest = json.loads(runner.db.one('SELECT manifest FROM seasons')['manifest'])
+    manifest['protocol']={'panel':'bigcodebench-cpu-v1'}
+    runner.db.execute('UPDATE seasons SET manifest=?',(json.dumps(manifest),))
+    season = runner.db.one('SELECT * FROM seasons')
+    pilot = runner.cycle(model,season,'coding_pilot','coding-pilot-fixture')
+    for index in range(2):
+        fixtures.add_item(runner.db,ident=f'bcb-pilot-{index}',tier='coding_pilot',benchmark='bigcodebench',
+                          content={'benchmark':'bigcodebench','messages':[{'role':'user','content':'Synthetic fixture.'}]})
+    runner.add_panel(pilot,'coding_pilot')
+    runner.db.execute("UPDATE jobs SET status='graded',score=1 WHERE item_id='bcb-pilot-0'")
+    row = coding_results(runner.db,runner.settings)[0]
+    assert row.phase=='pilot' and row.pilot_progress==1 and row.progress==0
+    assert row.status=='pending' and row.score is None and row.interval is None
+    runner.cycle(model,season,'coding','coding-screen-fixture')
+    rows = coding_results(runner.db,runner.settings)
+    assert len(rows)==1 and rows[0].phase=='screen' and rows[0].score is None
+    runner.close()
+
+
+def test_composite_coding_export_contains_both_components_and_dates(context, tmp_path):
+    import csv
+    from freeboard.publication import render_site,validate_site
+    from freeboard.scoring import CapabilityResult,snapshot
+    runner, _, model, _ = fixtures.job_context(context)
+    report=snapshot(runner.db,runner.settings)
+    dates={'livecodebench':'2026-10-15T18:00:00+00:00','bigcodebench':'2026-10-16T18:00:00+00:00'}
+    composite=CapabilityResult(model_id=model['id'],epoch=model['epoch'],category='coding',score=75,
+        source_tier='coding-expanded',sample_counts={'livecodebench':40,'bigcodebench':24},
+        benchmark_scores={'livecodebench':50,'bigcodebench':100},
+        benchmark_weights={'livecodebench':.5,'bigcodebench':.5},benchmark_evaluated_at=dates)
+    report=report.model_copy(update={'capabilities':[composite],'coding_weights':composite.benchmark_weights})
+    target=tmp_path/'preview'
+    render_site(report,runner.checkout,target)
+    assert validate_site(target).capabilities[0]==composite
+    with (target/'leaderboard.csv').open() as handle:
+        row=next(r for r in csv.DictReader(handle) if r['tier']=='capability')
+    assert float(row['coding'])==75 and float(row['bigcodebench'])==100
+    assert row['sample_n']=='64' and row['bigcodebench_n']=='24'
+    assert row['basis']=='LiveCodeBench + BigCodeBench'
+    assert all(row[f'{b}_evaluated_at']==date for b,date in dates.items())
+    runner.close()
+
+
 def test_conflicting_official_endpoint_rows_block_free_eligibility():
     rows = ('<table><tr><th>Model</th><th>Model ID</th><th>Endpoint</th></tr>'
             '<tr><td>Alias</td><td>alias-free</td><td>/chat/completions</td></tr>'

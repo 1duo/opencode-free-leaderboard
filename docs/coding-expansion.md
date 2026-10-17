@@ -32,11 +32,17 @@ Intervals use 10,000 deterministic stratified bootstrap draws with equal benchma
 
 ## Run and contribute
 
+GPQA access is unnecessary for this expansion. On a fresh setup, first prepare a public grading season with `leaderboard prepare-panels --public-only`, then run `pilot --season PUBLIC_SEASON_ID --all-models`. A completed matching full or public compatibility pilot works. Existing validated setups reuse their grading image.
+
 ```sh
 uv run --frozen --no-editable leaderboard coding --prepare-only
 uv run --frozen --no-editable leaderboard coding --model MODEL_ID
 ```
 
 Omit `--model` for all currently compatible free models. `--limit N` bounds an invocation. Repeat to resume saved work without replaying unknown outcomes. Scheduled common screens take priority; `status` reports completion and capacity.
+
+Authentication and native-client access rejections remain blocked across automatic discovery. After resolving access, explicitly run `leaderboard discover --recheck-access MODEL_ID`, then resume `coding`. Rechecking cannot override paid pricing, missing catalog IDs, unverified caps, or unknown request outcomes.
+
+As of 2026-10-17 the panel and all reference solutions are validated. Pilot requests for the five previously scored models were rejected with HTTP 403 by OpenCode's free-tier access gate; no expansion scores have been published. LiveCodeBench remains the active Coding score until complete comparable expansion results are available.
 
 After a complete 24-question panel, use `submit-results --model MODEL_ID --tier coding --contributor YOUR_GITHUB_USERNAME` for a sanitized result PR. Community results remain labeled and unranked; they do not replace locally reproduced composites.

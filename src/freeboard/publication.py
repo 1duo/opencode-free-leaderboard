@@ -163,10 +163,11 @@ def render_site(report: Snapshot, checkout: Path, target: Path) -> dict:
                         result.category: result.score, 'source_tier': result.source_tier,
                         'sample_n': sum(result.sample_counts.values()), 'rank': result.rank,
                         'stale': result.stale, 'refresh_pending': result.refresh_pending,
-                        'basis': ' + '.join({'gpqa':'GPQA', 'livebench':'LiveBench', 'livecodebench':'LiveCodeBench'}[b]
+                        'basis': ' + '.join({'gpqa':'GPQA', 'livebench':'LiveBench', 'livecodebench':'LiveCodeBench', 'bigcodebench':'BigCodeBench'}[b]
                                             for b in result.sample_counts),
                         'evaluated_at': result.evaluated_at, 'category_interval_note': result.interval_note,
                         **result.benchmark_scores, **{f'{b}_n': n for b, n in result.sample_counts.items()}}
+                data.update({f'{b}_evaluated_at': stamp for b, stamp in result.benchmark_evaluated_at.items()})
                 if result.interval:
                     data.update({f'{result.category}_ci_{bound}': result.interval[index]
                                  for index, bound in enumerate(['low', 'high'])})

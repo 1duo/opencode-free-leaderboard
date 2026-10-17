@@ -3,7 +3,7 @@ let report, view = "reasoning";
 const byId = id => document.getElementById(id);
 const pct = value => value == null ? "—" : `${value.toFixed(1)}%`;
 const fmtDate = value => value ? new Date(value).toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"}) : "—";
-const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", client_access_restricted:"Free-tier access restricted", provider_error:"Request interrupted", ambiguous:"Unknown outcome", dispatching:"Running", provider_overloaded:"Provider overloaded", protocol_violation:"Single-turn check failed", cap_violation:"Cap verification failed", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
+const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", client_access_restricted:"Benchmark access restricted", provider_error:"Request interrupted", ambiguous:"Unknown outcome", dispatching:"Running", provider_overloaded:"Provider overloaded", protocol_violation:"Single-turn check failed", cap_violation:"Cap verification failed", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
 function node(tag, text, className) {
   const element = document.createElement(tag);
   if (text != null) element.textContent = text;
@@ -14,6 +14,14 @@ function dateNode(value) {
   const element = node("time", fmtDate(value));
   if (value) { element.dateTime = value; element.title = new Date(value).toLocaleString(); }
   return element;
+}
+function evaluationDate(result) {
+  const dates = Object.values(result.benchmark_evaluated_at || {}).filter(Boolean).sort();
+  const output = node("span");
+  if (dates.length > 1 && fmtDate(dates[0]) !== fmtDate(dates.at(-1))) {
+    output.append(dateNode(dates[0]), " – ", dateNode(dates.at(-1)));
+  } else output.append(dateNode(result.evaluated_at));
+  return output;
 }
 function reasoningSetting(row) {
   const variant = row.reasoning_variant;
@@ -61,7 +69,7 @@ function intervalPlot(value, interval) {
   return plot;
 }
 function basis(result) {
-  return Object.keys(result.sample_counts).map(b => ({gpqa:"GPQA", livebench:"LiveBench", livecodebench:"LiveCodeBench"})[b]).join(" + ");
+  return Object.keys(result.sample_counts).map(b => ({gpqa:"GPQA", livebench:"LiveBench", livecodebench:"LiveCodeBench", bigcodebench:"BigCodeBench"})[b]).join(" + ");
 }
 function sampleLabel(result) {
   return `${basis(result)} · ${total(result.sample_counts)} questions`;
@@ -70,7 +78,7 @@ function categoryResults(category) {
   const visible = new Set(currentModels().map(m => m.model_id));
   const community = (report.community_results || []).filter(r => r.scores[category] != null && !report.rows.some(m =>
     m.model_id === r.model_id && ["removed", "paid", "excluded"].includes(m.availability))).map(r => {
-    const benchmarks = category === "coding" ? ["livecodebench"] : ["gpqa", "livebench"].filter(b => r.sample_counts[b]);
+    const benchmarks = (category === "coding" ? ["livecodebench", "bigcodebench"] : ["gpqa", "livebench"]).filter(b => r.sample_counts[b]);
     return {...r, category, score:r.scores[category], interval:r.intervals[category], interval_note:r.interval_notes[category], rank:null,
       name:report.rows.find(m => m.model_id === r.model_id)?.name || r.model_id, availability:"community",
       sample_counts:Object.fromEntries(benchmarks.map(b => [b, r.sample_counts[b]])),
@@ -99,7 +107,7 @@ function categoryChart(category) {
     title.append(name, node("strong", pct(result.score), "chart-score"));
     row.append(title, intervalPlot(result.score, result.interval));
     const meta = node("p", null, "chart-meta");
-    meta.append(node("span", result.interval ? `95% interval ${result.interval[0].toFixed(1)}–${result.interval[1].toFixed(1)}%` : result.interval_note ? "Uncertainty unresolved" : "Interval unavailable"), dateNode(result.evaluated_at));
+    meta.append(node("span", result.interval ? `95% interval ${result.interval[0].toFixed(1)}–${result.interval[1].toFixed(1)}%` : result.interval_note ? "Uncertainty unresolved" : "Interval unavailable"), evaluationDate(result));
     row.append(meta); card.append(row);
   }
   if (!categoryResults(category).length) card.append(node("p", "Complete results are pending.", "fine"));
@@ -114,10 +122,11 @@ function renderRankings() {
     const row = node("tr"), name = node("td"), evidence = node("td"), date = node("td");
     name.append(node("strong", model.name), node("span", `Reasoning: ${reasoningSetting(model)}`, "sub"));
     evidence.append(node("span", sampleLabel(result)));
+    if (result.benchmark_weights?.bigcodebench === 0.5) evidence.append(node("span", `Algorithmic ${result.benchmark_scores.livecodebench.toFixed(1)} · practical ${result.benchmark_scores.bigcodebench.toFixed(1)}`, "sub"));
     if (result.rank == null) evidence.append(provenance(result));
     if (model.availability !== "eligible" && !result.submission_id) evidence.append(node("span", statusLabel(model.availability), "sub"));
     const interval = result.interval ? `${result.interval[0].toFixed(1)}–${result.interval[1].toFixed(1)}` : result.interval_note ? "Unresolved" : "—";
-    date.append(dateNode(result.evaluated_at));
+    date.append(evaluationDate(result));
     if (result.stale) date.append(node("span", "Refresh overdue", "sub"));
     else if (result.refresh_pending) date.append(node("span", "Refresh in progress", "sub"));
     row.append(node("td", result.rank == null ? "—" : String(result.rank)), name, node("td", result.score.toFixed(1), "score"), node("td", interval), evidence, date);
@@ -125,6 +134,7 @@ function renderRankings() {
   }
   if (!rows.length) { const row = node("tr"), cell = node("td", "Complete results are pending.", "empty"); cell.colSpan = 6; row.append(cell); body.append(row); }
   byId("score-heading").textContent = `${view === "reasoning" ? "Reasoning" : "Coding"} / 100`;
+  byId("coding-note").hidden = view !== "coding" || report.coding_weights?.bigcodebench !== 0.5;
 }
 function renderPicks() {
   const list = byId("picks"); list.replaceChildren();
@@ -178,12 +188,14 @@ async function load() {
     const notice = byId("notice"); notice.hidden = !messages.length; notice.textContent = [...new Set(messages)].join(" ");
     byId("benchmark-list").replaceChildren(categoryChart("reasoning"), categoryChart("coding"));
     renderPicks(); renderRankings(); renderAvailability();
+    if (report.coding_weights?.bigcodebench === 0.5) byId("coding-method").textContent = "Equal average of LiveCodeBench algorithmic coding and BigCodeBench practical Python pass@1. Both panels must be complete; coverage and dates are shown for each model.";
     for (const button of document.querySelectorAll("[data-view]")) button.disabled = false;
     if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
   } catch (error) {
     report = null;
     for (const id of ["picks", "ranking", "benchmark-list"]) byId(id).replaceChildren();
     byId("pick-note").hidden = true; byId("supporting").hidden = true;
+    byId("coding-note").hidden = true;
     byId("notice").hidden = false; byId("notice").setAttribute("role", "alert");
     byId("notice").textContent = "Results could not be loaded. Refresh the page or use the JSON / CSV exports.";
   } finally {

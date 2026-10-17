@@ -94,8 +94,17 @@ def build_image(runner, manifest: dict, source: Path) -> str:
         '--format', '{{.Id}}'], text=True, env=env, timeout=15).strip()
 
 
+def coding_base(db) -> dict:
+    base = db.one("""SELECT * FROM seasons WHERE validated=1
+        AND json_extract(manifest,'$.counts.screen.livecodebench')=40
+        ORDER BY active DESC,created_at DESC LIMIT 1""")
+    if not base:
+        raise RuntimeError('Validate a common grading image first: prepare-panels --public-only needs no GPQA access')
+    return base
+
+
 def prepare_coding(runner) -> dict:
-    base = runner.active_season()
+    base = coding_base(runner.db)
     base_manifest = json.loads(base['manifest'])
     source = upstream(runner.settings, 'bigcodebench', revision=GRADER_REVISION, repo='bigcode-project/bigcodebench')
     path = download(runner.settings, 'bigcode/bigcodebench', 'data/v0.1.4-00000-of-00001.parquet', DATA_REVISION)
@@ -171,6 +180,9 @@ def run_coding(runner, season: dict, selected: list[str] | None = None, limit: i
         and runner.db.one("SELECT id FROM cycles WHERE model_id=? AND epoch=? AND kind='pilot' AND completed_at IS NOT NULL",
                           (m['id'],m['epoch']))}
     selected = sorted(set(selected)) if selected else sorted(available)
+    if not selected:
+        return {'blocked':'No currently accessible free model has a completed matching compatibility pilot',
+                'season':season['id'],'processed':0}
     if any(model not in available for model in selected):
         raise ValueError('Coding expansion requires current free eligibility and a completed matching compatibility pilot')
     # Headline work has priority; this command never spends its capacity on an

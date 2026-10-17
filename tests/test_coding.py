@@ -7,6 +7,26 @@ from freeboard.db import DB
 from freeboard.scoring import CapabilityResult, CodingEvaluation, expand_coding, expanded_comparisons
 
 
+def test_coding_preparation_can_use_public_season_without_gpqa(tmp_path):
+    import pytest
+    from freeboard.coding import coding_base
+    state=tmp_path/'state'
+    state.mkdir()
+    db=DB(state)
+    try:
+        with pytest.raises(RuntimeError,match='public-only'):
+            coding_base(db)
+        manifest={'counts':{'screen':{'gpqa':0,'livebench':20,'livecodebench':40}}}
+        db.execute('INSERT INTO seasons VALUES(?,?,?,?,?)',('public',now(),json.dumps(manifest),1,0))
+        assert coding_base(db)['id']=='public'
+        db.execute('INSERT INTO seasons VALUES(?,?,?,?,?)',('full',now(),json.dumps(manifest),1,1))
+        assert coding_base(db)['id']=='full'
+        db.execute('UPDATE seasons SET validated=0 WHERE id=?',('full',))
+        assert coding_base(db)['id']=='public'
+    finally:
+        db.conn.close()
+
+
 def test_panel_is_deterministic_disjoint_and_rejects_unsupported_dependencies():
     rows = []
     for index in range(50):
