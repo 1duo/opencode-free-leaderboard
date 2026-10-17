@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "snapshot_id": "7344a1ebb25343807a85",
+  "snapshot_id": "dcb2d6ef2f450fc179eb",
   "repository": "1duo/opencode-free-leaderboard",
-  "generated_at": "2026-10-17T20:34:11+00:00",
+  "generated_at": "2026-10-17T22:50:31+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-17T20:28:38+00:00",
+  "discovery_at": "2026-10-17T22:47:17+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -26,7 +26,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T04:06:24+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -118,7 +118,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -165,7 +165,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -212,7 +212,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -259,7 +259,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T05:30:24+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -351,7 +351,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -398,7 +398,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -445,7 +445,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -492,7 +492,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -539,7 +539,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -586,7 +586,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -633,7 +633,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -680,7 +680,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T06:50:35+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -772,7 +772,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -819,7 +819,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -866,7 +866,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -913,7 +913,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -960,7 +960,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1007,7 +1007,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1054,7 +1054,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1101,7 +1101,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: xhigh",
       "reasoning_variant": "xhigh",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1148,7 +1148,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: xhigh",
       "reasoning_variant": "xhigh",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1195,7 +1195,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T07:08:17+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -1287,7 +1287,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1334,7 +1334,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1381,7 +1381,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1430,7 +1430,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T19:02:01+00:00",
       "cycle_started_at": "2026-10-10T00:20:52+00:00",
@@ -1522,7 +1522,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T18:58:34+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
@@ -1614,7 +1614,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T20:28:38+00:00",
+      "observed_at": "2026-10-17T22:47:17+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T18:59:40+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
@@ -2593,9 +2593,11 @@
       "model_id": "beam-free",
       "epoch": "a7b17df894482a44",
       "season": "coding-b9ea63932ddefeac",
+      "benchmark": "bigcodebench",
       "status": "pending",
       "phase": "pilot",
       "pilot_progress": 0,
+      "pilot_expected": 2,
       "progress": 0,
       "expected": 24,
       "score": null,
@@ -2613,9 +2615,11 @@
       "model_id": "deepseek-v4.1-flash-free",
       "epoch": "7e3433bc4b2ed1b1",
       "season": "coding-b9ea63932ddefeac",
+      "benchmark": "bigcodebench",
       "status": "pending",
       "phase": "pilot",
       "pilot_progress": 0,
+      "pilot_expected": 2,
       "progress": 0,
       "expected": 24,
       "score": null,
@@ -2633,9 +2637,11 @@
       "model_id": "longcat-2.5-preview-free",
       "epoch": "a1987085381087f0",
       "season": "coding-b9ea63932ddefeac",
+      "benchmark": "bigcodebench",
       "status": "pending",
       "phase": "pilot",
       "pilot_progress": 0,
+      "pilot_expected": 2,
       "progress": 0,
       "expected": 24,
       "score": null,
@@ -2653,9 +2659,11 @@
       "model_id": "nemotron-3.5-super-vl-free",
       "epoch": "32021e5737032959",
       "season": "coding-b9ea63932ddefeac",
+      "benchmark": "bigcodebench",
       "status": "pending",
       "phase": "pilot",
       "pilot_progress": 0,
+      "pilot_expected": 2,
       "progress": 0,
       "expected": 24,
       "score": null,
@@ -2673,9 +2681,11 @@
       "model_id": "space-bunny-free",
       "epoch": "08dc1bee6a9afd25",
       "season": "coding-b9ea63932ddefeac",
+      "benchmark": "bigcodebench",
       "status": "pending",
       "phase": "pilot",
       "pilot_progress": 0,
+      "pilot_expected": 2,
       "progress": 0,
       "expected": 24,
       "score": null,
@@ -2686,6 +2696,116 @@
         "deferred": 2
       },
       "accounted_tokens": 25907,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "beam-free",
+      "epoch": "a7b17df894482a44",
+      "season": "coding-5f3f6556e22d053f",
+      "benchmark": "systems_c",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 4,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T22:47:17+00:00",
+      "pending_reasons": {
+        "pending": 4
+      },
+      "accounted_tokens": 0,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "deepseek-v4.1-flash-free",
+      "epoch": "7e3433bc4b2ed1b1",
+      "season": "coding-5f3f6556e22d053f",
+      "benchmark": "systems_c",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 4,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T22:47:17+00:00",
+      "pending_reasons": {
+        "pending": 4
+      },
+      "accounted_tokens": 0,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "longcat-2.5-preview-free",
+      "epoch": "a1987085381087f0",
+      "season": "coding-5f3f6556e22d053f",
+      "benchmark": "systems_c",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 4,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T22:47:17+00:00",
+      "pending_reasons": {
+        "pending": 4
+      },
+      "accounted_tokens": 0,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "nemotron-3.5-super-vl-free",
+      "epoch": "32021e5737032959",
+      "season": "coding-5f3f6556e22d053f",
+      "benchmark": "systems_c",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 4,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T22:47:17+00:00",
+      "pending_reasons": {
+        "pending": 4
+      },
+      "accounted_tokens": 0,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "space-bunny-free",
+      "epoch": "08dc1bee6a9afd25",
+      "season": "coding-5f3f6556e22d053f",
+      "benchmark": "systems_c",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 4,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-17T22:47:17+00:00",
+      "pending_reasons": {
+        "pending": 4
+      },
+      "accounted_tokens": 0,
       "reported_tokens": 0,
       "truncation_rate": null
     }
@@ -4209,7 +4329,10 @@
         "panel": null,
         "source_season": null,
         "strata": {},
-        "purpose": null
+        "purpose": null,
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "Dockerfile": "fb131352570e02651f2a1b9acdc1ce090e89b898b584b4e4786491a65a977ee9",
@@ -5732,7 +5855,10 @@
         "panel": null,
         "source_season": null,
         "strata": {},
-        "purpose": null
+        "purpose": null,
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -7747,7 +7873,10 @@
         "panel": null,
         "source_season": null,
         "strata": {},
-        "purpose": null
+        "purpose": null,
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -7873,7 +8002,10 @@
             "hard": 2
           }
         },
-        "purpose": "Public subset; no headline or overall ranking"
+        "purpose": "Public subset; no headline or overall ranking",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -8080,7 +8212,10 @@
             "scientific": 12
           }
         },
-        "purpose": "CPU library-use subset; equal-weight coding expansion"
+        "purpose": "CPU library-use subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "coding.Dockerfile": "2e05773ab40a69631162c12db23f967063f9f34024a9caa9359aa1a794bc4747",
@@ -8287,7 +8422,10 @@
             "scientific": 12
           }
         },
-        "purpose": "CPU library-use subset; equal-weight coding expansion"
+        "purpose": "CPU library-use subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "coding.Dockerfile": "0daa90319dee1891fea1a938bb7b85ebd20b5897bcb5e9e29b8c58a61a1ed591",
@@ -8494,7 +8632,10 @@
             "scientific": 12
           }
         },
-        "purpose": "CPU library-use subset; equal-weight coding expansion"
+        "purpose": "CPU library-use subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "coding.Dockerfile": "0daa90319dee1891fea1a938bb7b85ebd20b5897bcb5e9e29b8c58a61a1ed591",
@@ -8705,7 +8846,10 @@
             "scientific": 12
           }
         },
-        "purpose": "CPU library-use subset; equal-weight coding expansion"
+        "purpose": "CPU library-use subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -8919,7 +9063,10 @@
             "scientific": 12
           }
         },
-        "purpose": "CPU library-use subset; equal-weight coding expansion"
+        "purpose": "CPU library-use subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -9133,7 +9280,10 @@
             "scientific": 12
           }
         },
-        "purpose": "CPU library-use subset; equal-weight coding expansion"
+        "purpose": "CPU library-use subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
       },
       "grading_files": {
         "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
@@ -9144,15 +9294,944 @@
         "coding-requirements.txt": "a7b223f7975bb4d4754a80cf77e6ef6b04f57553127a3577eb3c90953fc8e188"
       },
       "coding_promoted_at": null
+    },
+    {
+      "id": "coding-83943e6316852361",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "exercism_c": "7cf6fe4098bc2e550e3877c54173eda3314a8bfe"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "C99",
+      "counts": {
+        "coding": {
+          "systems_c": 24
+        },
+        "coding_pilot": {
+          "systems_c": 4
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "systems_c:7cf6fe4098bc:all-your-base:5ed1537bbe89",
+            "hash": "b7cccb359cf9aeaf12829b64f6c297e7d9383f8683f89b23782c3cd5a847cac5",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary:8434bfda9105",
+            "hash": "169ab6bf04e1aadc75acd6dc365fb7dbdc1ca8dd762197882e5a73746a3f4cf5",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:luhn:07cbec8e7ada",
+            "hash": "29ff41e3ab50dfa99143438be5f5d08121264360d6e2f87bbfe9b7933b4b5687",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:intergalactic-transmission:93be30d6a020",
+            "hash": "3af3a3590389767f046d16017dcd2114a53cfa01e0a4a790bd78c0443dbb1582",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:variable-length-quantity:a90985c5f57f",
+            "hash": "bf3a20e4ed4b22d91bf90aab8ab9bdaf3cbe2467ee4c7ef823d9bfa8b62cdd81",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:eliuds-eggs:fe54aabe5dee",
+            "hash": "e068a1228bcc5dc2837f4d013c286401f9ba089c1576e1dbc4ef9e67907ad568",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:linked-list:ece23024b277",
+            "hash": "c6b444baeb398910320f02f4ea9ac8f95aa31187ae327a316762e288b06e1e59",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:grade-school:80bcb762f6ba",
+            "hash": "12a9b5671fde69bfca6d04eeb1005ba14d5334d64287dc9d3fbe38f077eec9e5",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:list-ops:85525e9a6a5e",
+            "hash": "759042be03eccbf27db402e69e04dba29330306cf90dfd0e7f831806792feec3",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:circular-buffer:c679e54575e3",
+            "hash": "45fef106678a799be8bd204a777275ae0f341da49668b03565d1e05fc9ad69b0",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:react:7f55d66bf8bb",
+            "hash": "2311498aa3727c885431c39c80168042d820d402925ca7b588fce22762bf2197",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary-search-tree:a58fca5e0fd6",
+            "hash": "c11299253958c356b09be37141ce2c1d29b997bbef26839863b428b96d0e88a6",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:rational-numbers:e9e91022f007",
+            "hash": "74ff2bd70d3ec6b3f40efbb22e82ce9c9ba2703dade227d9a9acb609a35e38af",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:square-root:308370031ece",
+            "hash": "8896003c1d6771764401dbf88518d99ee0ee58a248c81bf94f19193c217786e8",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:complex-numbers:012c02737236",
+            "hash": "d796a25ad80aba5c7f6910dfa03e4fbb5596417d94c85b0ae8a51fe660a9b1c2",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:sieve:eda31f5346b7",
+            "hash": "7c519a36ca565ea558ecf4d881a34137912e80086bfe319c2d76be7aa19aa998",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary-search:3bf3558109e2",
+            "hash": "84381a04c50b44d3f99f3579e5656de5cdc6ea62aeed8c54b6fda51219f562e5",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:knapsack:7b70349ec563",
+            "hash": "b3de761017b25e615a7526bc29b03713c206a14b2e10d7ba73acf0e61fc568f7",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:matching-brackets:27c35c726745",
+            "hash": "bed6a47ea2fe136062249e4b6bc1cdae47451b169e2dcdb42456753c2f6fdd8b",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:word-count:69e7ba061c1b",
+            "hash": "cba5016b784651558a1988671728cf6621cb4170341cc68047ccaf973e8a6c44",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:wordy:6012a15d3e25",
+            "hash": "d3845307507ff0ebd485d585cfa46937921c4f5516dd8ab36c5807264554ce8c",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:run-length-encoding:c515f76b438c",
+            "hash": "76b00d5e9f3d2ae88dcbfaf2f6982e9058b254698fa69bb1cde6b15d443d1687",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:roman-numerals:900d13488b97",
+            "hash": "887c531ef98d811e1a080eb1dcdbdbee44490f6b3aa312ba9c272a08a43dc237",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:nucleotide-count:f24f0bb53c3d",
+            "hash": "d20ce8779bffc0c686dbdca4d60215a438430f883fce6b7cb4bec85608336d63",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "systems_c:7cf6fe4098bc:secret-handshake:f512d00686fa",
+            "hash": "8290b78e8b05f102629bd992946ce32ff9f3cbcc4f75e992312a6f49a3bb4294",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:series:6832bfa8d4b0",
+            "hash": "5f8c46760635985ffe193a5d487f2326d0c8aa403fead27b55bc33082f7452c0",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:prime-factors:3efdd620ad60",
+            "hash": "3d56e694c1e6cf1c0ee7d51f5f5929181522d9f16c8f5d1167f194969af62f81",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:phone-number:ae8fb9cbf66b",
+            "hash": "3c0cd29d302b41b94db4552a2e378b50bf43daebd1fd2c8053969b6b779a7c80",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "systems-c-v1",
+        "source_season": null,
+        "strata": {
+          "systems_c": {
+            "memory": 6,
+            "encoding": 6,
+            "parsing": 6,
+            "numeric": 6
+          }
+        },
+        "purpose": "CPU systems programming subset; equal-weight coding expansion",
+        "compiler": "gcc-12.2.0",
+        "sanitizers": [
+          "address",
+          "undefined"
+        ],
+        "toolchain_packages_hash": null
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "systems.Dockerfile": "0f0b8632045c1a2dd0cac516d3fa8d16565600a4f36c1ea4e32ed0457aa121a8",
+        "systems_worker.py": "a07332b036eac18c4bd6dcd3aa543d8f2ffaafa2368db7d81b2a12f96e61bf5a"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-f12e9b34f5d5be2d",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "exercism_c": "7cf6fe4098bc2e550e3877c54173eda3314a8bfe"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "C99",
+      "counts": {
+        "coding": {
+          "systems_c": 24
+        },
+        "coding_pilot": {
+          "systems_c": 4
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "systems_c:7cf6fe4098bc:all-your-base:5ed1537bbe89",
+            "hash": "b7cccb359cf9aeaf12829b64f6c297e7d9383f8683f89b23782c3cd5a847cac5",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary:8434bfda9105",
+            "hash": "169ab6bf04e1aadc75acd6dc365fb7dbdc1ca8dd762197882e5a73746a3f4cf5",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:luhn:07cbec8e7ada",
+            "hash": "29ff41e3ab50dfa99143438be5f5d08121264360d6e2f87bbfe9b7933b4b5687",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:intergalactic-transmission:93be30d6a020",
+            "hash": "3af3a3590389767f046d16017dcd2114a53cfa01e0a4a790bd78c0443dbb1582",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:variable-length-quantity:a90985c5f57f",
+            "hash": "bf3a20e4ed4b22d91bf90aab8ab9bdaf3cbe2467ee4c7ef823d9bfa8b62cdd81",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:eliuds-eggs:fe54aabe5dee",
+            "hash": "e068a1228bcc5dc2837f4d013c286401f9ba089c1576e1dbc4ef9e67907ad568",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:linked-list:ece23024b277",
+            "hash": "c6b444baeb398910320f02f4ea9ac8f95aa31187ae327a316762e288b06e1e59",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:grade-school:80bcb762f6ba",
+            "hash": "12a9b5671fde69bfca6d04eeb1005ba14d5334d64287dc9d3fbe38f077eec9e5",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:list-ops:1fdbdf7aea2e",
+            "hash": "1659ad0ec7e21ffa54bf20bf51716e7c8445719e7e1dfd77dc2e6f5ecfa529c8",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:circular-buffer:c679e54575e3",
+            "hash": "45fef106678a799be8bd204a777275ae0f341da49668b03565d1e05fc9ad69b0",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:react:7f55d66bf8bb",
+            "hash": "2311498aa3727c885431c39c80168042d820d402925ca7b588fce22762bf2197",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary-search-tree:a58fca5e0fd6",
+            "hash": "c11299253958c356b09be37141ce2c1d29b997bbef26839863b428b96d0e88a6",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:rational-numbers:e9e91022f007",
+            "hash": "74ff2bd70d3ec6b3f40efbb22e82ce9c9ba2703dade227d9a9acb609a35e38af",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:square-root:308370031ece",
+            "hash": "8896003c1d6771764401dbf88518d99ee0ee58a248c81bf94f19193c217786e8",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:complex-numbers:012c02737236",
+            "hash": "d796a25ad80aba5c7f6910dfa03e4fbb5596417d94c85b0ae8a51fe660a9b1c2",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:sieve:eda31f5346b7",
+            "hash": "7c519a36ca565ea558ecf4d881a34137912e80086bfe319c2d76be7aa19aa998",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary-search:3bf3558109e2",
+            "hash": "84381a04c50b44d3f99f3579e5656de5cdc6ea62aeed8c54b6fda51219f562e5",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:knapsack:7b70349ec563",
+            "hash": "b3de761017b25e615a7526bc29b03713c206a14b2e10d7ba73acf0e61fc568f7",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:matching-brackets:27c35c726745",
+            "hash": "bed6a47ea2fe136062249e4b6bc1cdae47451b169e2dcdb42456753c2f6fdd8b",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:word-count:69e7ba061c1b",
+            "hash": "cba5016b784651558a1988671728cf6621cb4170341cc68047ccaf973e8a6c44",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:wordy:6012a15d3e25",
+            "hash": "d3845307507ff0ebd485d585cfa46937921c4f5516dd8ab36c5807264554ce8c",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:run-length-encoding:c515f76b438c",
+            "hash": "76b00d5e9f3d2ae88dcbfaf2f6982e9058b254698fa69bb1cde6b15d443d1687",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:roman-numerals:900d13488b97",
+            "hash": "887c531ef98d811e1a080eb1dcdbdbee44490f6b3aa312ba9c272a08a43dc237",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:nucleotide-count:f24f0bb53c3d",
+            "hash": "d20ce8779bffc0c686dbdca4d60215a438430f883fce6b7cb4bec85608336d63",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "systems_c:7cf6fe4098bc:secret-handshake:f512d00686fa",
+            "hash": "8290b78e8b05f102629bd992946ce32ff9f3cbcc4f75e992312a6f49a3bb4294",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:series:6832bfa8d4b0",
+            "hash": "5f8c46760635985ffe193a5d487f2326d0c8aa403fead27b55bc33082f7452c0",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:prime-factors:3efdd620ad60",
+            "hash": "3d56e694c1e6cf1c0ee7d51f5f5929181522d9f16c8f5d1167f194969af62f81",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:phone-number:ae8fb9cbf66b",
+            "hash": "3c0cd29d302b41b94db4552a2e378b50bf43daebd1fd2c8053969b6b779a7c80",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "systems-c-v1",
+        "source_season": null,
+        "strata": {
+          "systems_c": {
+            "memory": 6,
+            "encoding": 6,
+            "parsing": 6,
+            "numeric": 6
+          }
+        },
+        "purpose": "CPU systems programming subset; equal-weight coding expansion",
+        "compiler": "gcc-12.2.0",
+        "sanitizers": [
+          "address",
+          "undefined"
+        ],
+        "toolchain_packages_hash": null
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "systems.Dockerfile": "0f0b8632045c1a2dd0cac516d3fa8d16565600a4f36c1ea4e32ed0457aa121a8",
+        "systems_worker.py": "a07332b036eac18c4bd6dcd3aa543d8f2ffaafa2368db7d81b2a12f96e61bf5a"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-78d2af8e82e8a6d4",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "exercism_c": "7cf6fe4098bc2e550e3877c54173eda3314a8bfe",
+        "systems_toolchain": "6125f6994ac99a9173373d94d63e8c15e07f1d426e423aca0ba53db465d90ef1"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "C99",
+      "counts": {
+        "coding": {
+          "systems_c": 24
+        },
+        "coding_pilot": {
+          "systems_c": 4
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "systems_c:7cf6fe4098bc:all-your-base:5ed1537bbe89",
+            "hash": "b7cccb359cf9aeaf12829b64f6c297e7d9383f8683f89b23782c3cd5a847cac5",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary:8434bfda9105",
+            "hash": "169ab6bf04e1aadc75acd6dc365fb7dbdc1ca8dd762197882e5a73746a3f4cf5",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:luhn:07cbec8e7ada",
+            "hash": "29ff41e3ab50dfa99143438be5f5d08121264360d6e2f87bbfe9b7933b4b5687",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:intergalactic-transmission:93be30d6a020",
+            "hash": "3af3a3590389767f046d16017dcd2114a53cfa01e0a4a790bd78c0443dbb1582",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:variable-length-quantity:a90985c5f57f",
+            "hash": "bf3a20e4ed4b22d91bf90aab8ab9bdaf3cbe2467ee4c7ef823d9bfa8b62cdd81",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:eliuds-eggs:fe54aabe5dee",
+            "hash": "e068a1228bcc5dc2837f4d013c286401f9ba089c1576e1dbc4ef9e67907ad568",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:linked-list:ece23024b277",
+            "hash": "c6b444baeb398910320f02f4ea9ac8f95aa31187ae327a316762e288b06e1e59",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:grade-school:80bcb762f6ba",
+            "hash": "12a9b5671fde69bfca6d04eeb1005ba14d5334d64287dc9d3fbe38f077eec9e5",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:list-ops:1fdbdf7aea2e",
+            "hash": "1659ad0ec7e21ffa54bf20bf51716e7c8445719e7e1dfd77dc2e6f5ecfa529c8",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:circular-buffer:c679e54575e3",
+            "hash": "45fef106678a799be8bd204a777275ae0f341da49668b03565d1e05fc9ad69b0",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:react:7f55d66bf8bb",
+            "hash": "2311498aa3727c885431c39c80168042d820d402925ca7b588fce22762bf2197",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary-search-tree:a58fca5e0fd6",
+            "hash": "c11299253958c356b09be37141ce2c1d29b997bbef26839863b428b96d0e88a6",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:rational-numbers:e9e91022f007",
+            "hash": "74ff2bd70d3ec6b3f40efbb22e82ce9c9ba2703dade227d9a9acb609a35e38af",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:square-root:308370031ece",
+            "hash": "8896003c1d6771764401dbf88518d99ee0ee58a248c81bf94f19193c217786e8",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:complex-numbers:012c02737236",
+            "hash": "d796a25ad80aba5c7f6910dfa03e4fbb5596417d94c85b0ae8a51fe660a9b1c2",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:sieve:eda31f5346b7",
+            "hash": "7c519a36ca565ea558ecf4d881a34137912e80086bfe319c2d76be7aa19aa998",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary-search:3bf3558109e2",
+            "hash": "84381a04c50b44d3f99f3579e5656de5cdc6ea62aeed8c54b6fda51219f562e5",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:knapsack:7b70349ec563",
+            "hash": "b3de761017b25e615a7526bc29b03713c206a14b2e10d7ba73acf0e61fc568f7",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:matching-brackets:27c35c726745",
+            "hash": "bed6a47ea2fe136062249e4b6bc1cdae47451b169e2dcdb42456753c2f6fdd8b",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:word-count:69e7ba061c1b",
+            "hash": "cba5016b784651558a1988671728cf6621cb4170341cc68047ccaf973e8a6c44",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:wordy:6012a15d3e25",
+            "hash": "d3845307507ff0ebd485d585cfa46937921c4f5516dd8ab36c5807264554ce8c",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:run-length-encoding:c515f76b438c",
+            "hash": "76b00d5e9f3d2ae88dcbfaf2f6982e9058b254698fa69bb1cde6b15d443d1687",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:roman-numerals:900d13488b97",
+            "hash": "887c531ef98d811e1a080eb1dcdbdbee44490f6b3aa312ba9c272a08a43dc237",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:nucleotide-count:f24f0bb53c3d",
+            "hash": "d20ce8779bffc0c686dbdca4d60215a438430f883fce6b7cb4bec85608336d63",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "systems_c:7cf6fe4098bc:secret-handshake:f512d00686fa",
+            "hash": "8290b78e8b05f102629bd992946ce32ff9f3cbcc4f75e992312a6f49a3bb4294",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:series:6832bfa8d4b0",
+            "hash": "5f8c46760635985ffe193a5d487f2326d0c8aa403fead27b55bc33082f7452c0",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:prime-factors:3efdd620ad60",
+            "hash": "3d56e694c1e6cf1c0ee7d51f5f5929181522d9f16c8f5d1167f194969af62f81",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:phone-number:ae8fb9cbf66b",
+            "hash": "3c0cd29d302b41b94db4552a2e378b50bf43daebd1fd2c8053969b6b779a7c80",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          }
+        ]
+      },
+      "validated": true,
+      "active": false,
+      "partial": true,
+      "grader_image": "sha256:f0de3cf5d88632effe09990bc57d0dbec210b281a14ae7d999d72dddd692fa9d",
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "systems-c-v1",
+        "source_season": null,
+        "strata": {
+          "systems_c": {
+            "memory": 6,
+            "encoding": 6,
+            "parsing": 6,
+            "numeric": 6
+          }
+        },
+        "purpose": "CPU systems programming subset; equal-weight coding expansion",
+        "compiler": "gcc-12.2.0",
+        "sanitizers": [
+          "address",
+          "undefined"
+        ],
+        "toolchain_packages_hash": null
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "systems.Dockerfile": "0f0b8632045c1a2dd0cac516d3fa8d16565600a4f36c1ea4e32ed0457aa121a8",
+        "systems_worker.py": "ac0dce1004af3b35e3d526d838e5e63bafea183a40e4c07196084cadb1550d02"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-5f3f6556e22d053f",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "exercism_c": "7cf6fe4098bc2e550e3877c54173eda3314a8bfe"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "C99",
+      "counts": {
+        "coding": {
+          "systems_c": 24
+        },
+        "coding_pilot": {
+          "systems_c": 4
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "systems_c:7cf6fe4098bc:all-your-base:5ed1537bbe89",
+            "hash": "b7cccb359cf9aeaf12829b64f6c297e7d9383f8683f89b23782c3cd5a847cac5",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary:8434bfda9105",
+            "hash": "169ab6bf04e1aadc75acd6dc365fb7dbdc1ca8dd762197882e5a73746a3f4cf5",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:luhn:07cbec8e7ada",
+            "hash": "29ff41e3ab50dfa99143438be5f5d08121264360d6e2f87bbfe9b7933b4b5687",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:intergalactic-transmission:93be30d6a020",
+            "hash": "3af3a3590389767f046d16017dcd2114a53cfa01e0a4a790bd78c0443dbb1582",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:variable-length-quantity:a90985c5f57f",
+            "hash": "bf3a20e4ed4b22d91bf90aab8ab9bdaf3cbe2467ee4c7ef823d9bfa8b62cdd81",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:eliuds-eggs:fe54aabe5dee",
+            "hash": "e068a1228bcc5dc2837f4d013c286401f9ba089c1576e1dbc4ef9e67907ad568",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:linked-list:ece23024b277",
+            "hash": "c6b444baeb398910320f02f4ea9ac8f95aa31187ae327a316762e288b06e1e59",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:grade-school:80bcb762f6ba",
+            "hash": "12a9b5671fde69bfca6d04eeb1005ba14d5334d64287dc9d3fbe38f077eec9e5",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:list-ops:1fdbdf7aea2e",
+            "hash": "1659ad0ec7e21ffa54bf20bf51716e7c8445719e7e1dfd77dc2e6f5ecfa529c8",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:circular-buffer:c679e54575e3",
+            "hash": "45fef106678a799be8bd204a777275ae0f341da49668b03565d1e05fc9ad69b0",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:react:7f55d66bf8bb",
+            "hash": "2311498aa3727c885431c39c80168042d820d402925ca7b588fce22762bf2197",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary-search-tree:a58fca5e0fd6",
+            "hash": "c11299253958c356b09be37141ce2c1d29b997bbef26839863b428b96d0e88a6",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:rational-numbers:e9e91022f007",
+            "hash": "74ff2bd70d3ec6b3f40efbb22e82ce9c9ba2703dade227d9a9acb609a35e38af",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:square-root:308370031ece",
+            "hash": "8896003c1d6771764401dbf88518d99ee0ee58a248c81bf94f19193c217786e8",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:complex-numbers:012c02737236",
+            "hash": "d796a25ad80aba5c7f6910dfa03e4fbb5596417d94c85b0ae8a51fe660a9b1c2",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:sieve:eda31f5346b7",
+            "hash": "7c519a36ca565ea558ecf4d881a34137912e80086bfe319c2d76be7aa19aa998",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:binary-search:3bf3558109e2",
+            "hash": "84381a04c50b44d3f99f3579e5656de5cdc6ea62aeed8c54b6fda51219f562e5",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:knapsack:7b70349ec563",
+            "hash": "b3de761017b25e615a7526bc29b03713c206a14b2e10d7ba73acf0e61fc568f7",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:matching-brackets:27c35c726745",
+            "hash": "bed6a47ea2fe136062249e4b6bc1cdae47451b169e2dcdb42456753c2f6fdd8b",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:word-count:69e7ba061c1b",
+            "hash": "cba5016b784651558a1988671728cf6621cb4170341cc68047ccaf973e8a6c44",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:wordy:6012a15d3e25",
+            "hash": "d3845307507ff0ebd485d585cfa46937921c4f5516dd8ab36c5807264554ce8c",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:run-length-encoding:c515f76b438c",
+            "hash": "76b00d5e9f3d2ae88dcbfaf2f6982e9058b254698fa69bb1cde6b15d443d1687",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:roman-numerals:900d13488b97",
+            "hash": "887c531ef98d811e1a080eb1dcdbdbee44490f6b3aa312ba9c272a08a43dc237",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:nucleotide-count:f24f0bb53c3d",
+            "hash": "d20ce8779bffc0c686dbdca4d60215a438430f883fce6b7cb4bec85608336d63",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "systems_c:7cf6fe4098bc:secret-handshake:f512d00686fa",
+            "hash": "8290b78e8b05f102629bd992946ce32ff9f3cbcc4f75e992312a6f49a3bb4294",
+            "benchmark": "systems_c",
+            "stratum": "encoding"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:series:6832bfa8d4b0",
+            "hash": "5f8c46760635985ffe193a5d487f2326d0c8aa403fead27b55bc33082f7452c0",
+            "benchmark": "systems_c",
+            "stratum": "memory"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:prime-factors:3efdd620ad60",
+            "hash": "3d56e694c1e6cf1c0ee7d51f5f5929181522d9f16c8f5d1167f194969af62f81",
+            "benchmark": "systems_c",
+            "stratum": "numeric"
+          },
+          {
+            "id": "systems_c:7cf6fe4098bc:phone-number:ae8fb9cbf66b",
+            "hash": "3c0cd29d302b41b94db4552a2e378b50bf43daebd1fd2c8053969b6b779a7c80",
+            "benchmark": "systems_c",
+            "stratum": "parsing"
+          }
+        ]
+      },
+      "validated": true,
+      "active": false,
+      "partial": true,
+      "grader_image": "sha256:f0de3cf5d88632effe09990bc57d0dbec210b281a14ae7d999d72dddd692fa9d",
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "systems-c-v1",
+        "source_season": null,
+        "strata": {
+          "systems_c": {
+            "memory": 6,
+            "encoding": 6,
+            "parsing": 6,
+            "numeric": 6
+          }
+        },
+        "purpose": "CPU systems programming subset; equal-weight coding expansion",
+        "compiler": "gcc-12.2.0",
+        "sanitizers": [
+          "address",
+          "undefined"
+        ],
+        "toolchain_packages_hash": "6125f6994ac99a9173373d94d63e8c15e07f1d426e423aca0ba53db465d90ef1"
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "systems.Dockerfile": "0f0b8632045c1a2dd0cac516d3fa8d16565600a4f36c1ea4e32ed0457aa121a8",
+        "systems_worker.py": "ac0dce1004af3b35e3d526d838e5e63bafea183a40e4c07196084cadb1550d02"
+      },
+      "coding_promoted_at": null
     }
   ],
   "budget": {
     "week": "2026-10-12",
-    "attempts_limit": 823,
+    "attempts_limit": 875,
     "tokens_limit": 6384551,
-    "planned_attempts": 3,
-    "planned_tokens": 0,
-    "attempts_used": 695,
+    "planned_attempts": 178,
+    "planned_tokens": 2560750,
+    "attempts_used": 697,
     "accounted_tokens": 3761677,
     "reported_tokens": 3047001,
     "estimated_attempts": 59,
@@ -9161,11 +10240,11 @@
     "opencode_accounted_tokens": 3622164,
     "opencode_reported_tokens": 3036021,
     "opencode_estimated_attempts": 44,
-    "discovery_attempts": 106,
+    "discovery_attempts": 108,
     "prior_attempts": 18,
     "prior_accounted_tokens": 139513
   },
-  "queue_size": 29,
+  "queue_size": 49,
   "missed_deadlines": 0,
   "blockers": []
 }
