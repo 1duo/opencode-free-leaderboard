@@ -28,8 +28,9 @@ header { height: 84px; display: flex; align-items: center; justify-content: spac
 .brand-divider { color: #a3aea6; padding: 0 4px; font-weight: 400; }
 .mark { display: grid; place-items: center; width: 33px; height: 33px; border-radius: 9px; background: var(--ink); color: var(--paper); font: 16px/1 monospace; letter-spacing: -2px; padding-right: 2px; }
 nav { display: flex; gap: 24px; font-size: 12px; }
-nav a { padding: 8px 0; color: var(--muted); text-decoration: none; }
+nav a { padding: 8px 0; color: var(--muted); text-decoration: none; white-space: nowrap; }
 nav a:hover { text-decoration: underline; }
+nav .github-star { color: var(--accent); font-weight: 600; }
 .hero { padding: 52px 0 32px; }
 .hero p { max-width: 580px; margin: 0; font-size: 15px; line-height: 1.7; }
 .eyebrow { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: 1.6px; line-height: 1.5; }
@@ -126,11 +127,11 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px soli
 }
 @media (max-width: 760px) {
   header, main, footer { padding-left: 20px; padding-right: 20px; }
-  header { height: 72px; gap: 12px; }
+  header { height: auto; min-height: 72px; flex-wrap: wrap; gap: 6px 12px; padding-top: 12px; padding-bottom: 12px; }
   .brand { gap: 8px; font-size: 12px; }
   .brand-divider { padding: 0 2px; }
   .mark { width: 28px; height: 28px; font-size: 14px; border-radius: 7px; }
-  nav { gap: 14px; font-size: 11px; }
+  nav { gap: 14px; margin-left: auto; font-size: 11px; }
   .hero { padding: 36px 0 26px; }
   h1 { margin-top: 12px; font-size: 38px; letter-spacing: -1.5px; }
   .hero p { font-size: 14px; }

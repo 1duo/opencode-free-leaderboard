@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
-  "snapshot_id": "e7b3af99c4de2d74d0db",
+  "snapshot_id": "08e45b35a6615f8c386b",
   "repository": "1duo/opencode-free-leaderboard",
-  "generated_at": "2026-10-18T00:15:20+00:00",
+  "generated_at": "2026-10-18T01:48:49+00:00",
   "published_at": null,
   "discovery_at": "2026-10-18T00:02:20+00:00",
   "discovery_ok": true,
@@ -2825,8 +2825,8 @@
       "evaluated_at": null,
       "started_at": "2026-10-18T00:02:20+00:00",
       "pending_reasons": {
-        "deferred": 1,
-        "pending": 5
+        "pending": 5,
+        "deferred": 1
       },
       "accounted_tokens": 15041,
       "reported_tokens": 0,
@@ -2848,8 +2848,8 @@
       "evaluated_at": null,
       "started_at": "2026-10-18T00:02:20+00:00",
       "pending_reasons": {
-        "deferred": 1,
-        "pending": 5
+        "pending": 5,
+        "deferred": 1
       },
       "accounted_tokens": 15041,
       "reported_tokens": 0,
@@ -2871,8 +2871,8 @@
       "evaluated_at": null,
       "started_at": "2026-10-18T00:02:20+00:00",
       "pending_reasons": {
-        "deferred": 1,
-        "pending": 5
+        "pending": 5,
+        "deferred": 1
       },
       "accounted_tokens": 15041,
       "reported_tokens": 0,
@@ -2894,8 +2894,8 @@
       "evaluated_at": null,
       "started_at": "2026-10-18T00:02:20+00:00",
       "pending_reasons": {
-        "deferred": 1,
-        "pending": 5
+        "pending": 5,
+        "deferred": 1
       },
       "accounted_tokens": 15041,
       "reported_tokens": 0,
@@ -2917,8 +2917,8 @@
       "evaluated_at": null,
       "started_at": "2026-10-18T00:02:20+00:00",
       "pending_reasons": {
-        "deferred": 1,
-        "pending": 5
+        "pending": 5,
+        "deferred": 1
       },
       "accounted_tokens": 15041,
       "reported_tokens": 0,
