@@ -3,6 +3,7 @@ from __future__ import annotations
 import fcntl
 import json
 import os
+import re
 import shutil
 import sqlite3
 import tempfile
@@ -131,8 +132,12 @@ class DB:
                 os.fsync(directory)
             finally:
                 os.close(directory)
-        for old in sorted((self.state / "backups").glob("*.sqlite3"))[:-7]:
-            old.unlink()
+        copies = [p for p in target.parent.iterdir()
+                  if re.fullmatch(r'\d{4}-\d{2}-\d{2}\.sqlite3(?:\.gz)?', p.name)]
+        retained = sorted({p.name[:10] for p in copies})[-7:]
+        for old in copies:
+            if old.name[:10] not in retained or old.name == target.name + '.gz':
+                old.unlink()
 
     def invalidate_cap(self, job_id: int, message: str, status: str = 'failed') -> None:
         cycle = self.one('SELECT c.* FROM cycles c JOIN jobs j ON j.cycle_id=c.id WHERE j.id=?', (job_id,))

@@ -53,6 +53,8 @@ Validate a frozen season without resampling with `prepare-panels --season SEASON
 
 Seven validated daily SQLite backups live at `state/backups`. A new backup needs free space for the complete database plus 64 MiB headroom. Backup writes go to a private temporary directory, receive an integrity check and fsync, then replace the day's successful copy. A failed write preserves previous copies; rotation happens afterward. Temporary backup files never enter the repository.
 
+Older standalone backups may be losslessly gzip-compressed after verifying the decompressed bytes against the original. Rotation retains seven dates across `.sqlite3` and `.sqlite3.gz` files. To restore a compressed copy, decompress it into a separate private directory and verify SQLite integrity before using it; retain the archive until recovery succeeds.
+
 If a legacy backup has a nonempty WAL, stop leaderboard work and checkpoint it with SQLite before replacement. Never delete a WAL: it may contain committed data. Inspect available disk space before dataset or image setup. Local backups protect logical state; an independent encrypted copy is needed for disk loss. Back up response files, selected datasets and immutable grader images as well.
 
 To restore, stop the launch agent, preserve the existing private state, and restore a validated SQLite backup and its matching response/dataset/image files into a separate private state directory. Run SQLite `PRAGMA quick_check` and `leaderboard --state ... status` before resuming. Missing evidence must remain pending; never regenerate accepted answers because files are missing.

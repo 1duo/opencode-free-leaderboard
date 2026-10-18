@@ -10,6 +10,12 @@ SPECS = {
         'strata': {'memory': 6, 'encoding': 6, 'parsing': 6, 'numeric': 6},
         'label': 'systems C',
     },
+    'humanevalpack-multilingual-v1': {
+        'benchmark': 'humanevalpack',
+        'strata': {f'{language}_{task}': 4 for language in ['cpp', 'go', 'rust']
+                   for task in ['generation', 'repair']},
+        'label': 'C++ / Rust / Go',
+    },
 }
 
 

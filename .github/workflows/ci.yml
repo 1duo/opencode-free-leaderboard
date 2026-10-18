@@ -24,8 +24,10 @@ jobs:
           uv run --frozen --no-editable ruff check src tests grading/worker.py grading/coding_worker.py
           node --check web/app.js
           uv run --frozen --no-editable ruff check grading/systems_worker.py
+          uv run --frozen --no-editable ruff check grading/humanevalpack_worker.py
+          test -z "$(gofmt -l grading/humanevalpack_go.go)"
       - name: Production and privacy regressions (no provider calls)
-        run: uv run --frozen --no-editable pytest -q tests/test_production.py tests/test_privacy.py tests/test_contributions.py tests/test_coding.py tests/test_systems.py
+        run: uv run --frozen --no-editable pytest -q tests/test_production.py tests/test_privacy.py tests/test_contributions.py tests/test_coding.py tests/test_systems.py tests/test_humanevalpack.py
       - name: Bind new result records to the pull request author
         if: github.event_name == 'pull_request'
         env:

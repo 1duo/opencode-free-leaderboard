@@ -10,7 +10,7 @@
 Panels are deterministic and nested, with seed `20261008`. LiveBench uses spatial and zebra questions active on **2024-11-25**; LiveCodeBench uses `code_generation_lite`, `release_v6`. Data and graders are pinned by revision. Public manifests contain IDs, hashes and strata, never prompts or answer keys.
 
 - **Reasoning:** equal average of GPQA and LiveBench. Public-only results use LiveBench and disclose that coverage.
-- **Coding:** LiveCodeBench pass@1 until the [24-task BigCodeBench CPU expansion](coding-expansion.md) passes its promotion gate, then the equal-weight average of both complete coding panels. Legacy screen records retain their original LiveCodeBench scores.
+- **Coding:** LiveCodeBench pass@1 until the [24-task HumanEvalPack expansion](humanevalpack.md) passes its promotion gate, then the equal-weight average of both complete coding panels. The earlier Systems C and BigCodeBench panels remain separate. Legacy screen records retain their original LiveCodeBench scores.
 - **Ranking:** complete, matching full screens only. Other coverage is unranked. An unfinished refresh preserves the prior completed score with its original date and refresh status.
 - **Uncertainty:** 10,000 deterministic stratified bootstrap draws; paired comparisons use identical panel draws. A difference interval containing zero is unresolved. Intervals measure question sampling, not repeated-generation variability.
 

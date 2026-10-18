@@ -51,7 +51,7 @@ def parser() -> argparse.ArgumentParser:
     lightweight.add_argument('--model', action='append')
     lightweight.add_argument('--limit', type=int)
     coding = commands.add_parser('coding', help='Prepare or run a frozen 24-task CPU coding expansion')
-    coding.add_argument('--benchmark', choices=['systems-c', 'bigcodebench'], default='systems-c')
+    coding.add_argument('--benchmark', choices=['humanevalpack', 'systems-c', 'bigcodebench'], default='humanevalpack')
     coding.add_argument('--prepare-only', action='store_true')
     coding.add_argument('--model', action='append')
     coding.add_argument('--limit', type=int)
@@ -117,7 +117,7 @@ def daily_work(runner: Runner) -> dict:
             if runnable:
                 result['public_screen'] = attempt(lambda: run_public(runner, public, runnable))
     expansion = runner.db.one("""SELECT * FROM seasons WHERE validated=1
-        AND json_extract(manifest,'$.protocol.panel') IN ('systems-c-v1','bigcodebench-cpu-v1')
+        AND json_extract(manifest,'$.protocol.panel') IN ('humanevalpack-multilingual-v1','systems-c-v1','bigcodebench-cpu-v1')
         ORDER BY created_at DESC,id DESC LIMIT 1""")
     if expansion and runner.models():
         from .coding import run_coding
@@ -172,7 +172,10 @@ def main() -> None:
                 result = run_lightweight(runner, args.model, args.limit)
             elif args.command == 'coding':
                 from .coding import prepare_coding, run_coding
-                if args.benchmark == 'systems-c':
+                if args.benchmark == 'humanevalpack':
+                    from .humanevalpack import prepare_humanevalpack
+                    season = prepare_humanevalpack(runner)
+                elif args.benchmark == 'systems-c':
                     from .systems import prepare_systems
                     season = prepare_systems(runner)
                 else:

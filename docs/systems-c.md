@@ -2,6 +2,8 @@
 
 A custom **24-task C99 subset of [Exercism's C track](https://github.com/exercism/c)** adds explicit memory handling and compiled-language coverage to LiveCodeBench's Python algorithms. Its MIT-licensed data and CPU grader require no dataset login, GPU or paid evaluation service. It is not an official Exercism leaderboard or a complete systems-engineering assessment.
 
+This earlier panel remains available with `coding --benchmark systems-c`. The default expansion is now [HumanEvalPack](humanevalpack.md); results from different extensions remain separate.
+
 | Domain | Scored tasks | Held-out pilot |
 |---|---:|---:|
 | Memory ownership, pointers and data structures | 6 | 1 |
@@ -29,10 +31,10 @@ Each component retains its count and evaluation date. Confidence intervals use 1
 
 ```sh
 uv run --frozen --no-editable leaderboard prepare-panels --public-only
-uv run --frozen --no-editable leaderboard coding --prepare-only
-uv run --frozen --no-editable leaderboard coding
+uv run --frozen --no-editable leaderboard coding --benchmark systems-c --prepare-only
+uv run --frozen --no-editable leaderboard coding --benchmark systems-c
 # For one model or a bounded invocation:
-uv run --frozen --no-editable leaderboard coding --model MODEL_ID --limit 8
+uv run --frozen --no-editable leaderboard coding --benchmark systems-c --model MODEL_ID --limit 8
 ```
 
 A fresh setup also needs the matching model compatibility pilot described in [CONTRIBUTING.md](../CONTRIBUTING.md). Repeating the command resumes durable work. Commit runner and grader changes before generation. After the 24 tasks finish, export with `submit-results --model MODEL_ID --tier coding --season LOCAL_SEASON_ID --contributor YOUR_GITHUB_USERNAME` and submit the sanitized file by PR. Use the local season ID printed by `coding --prepare-only`; the exporter matches its source/panel fingerprint to the published season. CI requires matching published grader sources and panel hashes, all domains, binary grades, usage limits and the highest exposed reasoning setting. Contributors record their own immutable image ID; a rebuild on another host can produce a different ID. Community results remain labeled and unranked, with execution claims awaiting independent reproduction.

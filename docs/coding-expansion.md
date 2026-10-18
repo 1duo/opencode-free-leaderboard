@@ -1,6 +1,6 @@
 # Coding expansion
 
-The current extension is [Systems C](systems-c.md), covering CPU-only C programming. This document preserves the earlier BigCodeBench panel and its evaluation history. Use `coding --benchmark bigcodebench` to select that panel explicitly.
+The current extension is [HumanEvalPack](humanevalpack.md), covering C++, Rust and Go generation/repair. This document preserves the earlier BigCodeBench panel and its evaluation history. Use `coding --benchmark bigcodebench` to select that panel explicitly. [Systems C](systems-c.md) also remains separate.
 
 **BigCodeBench-Instruct v0.1.4, a custom 24-task CPU subset**, adds practical function and library use to LiveCodeBench's algorithmic Python problems. These are custom-subset results, not official BigCodeBench leaderboard scores.
 

@@ -27,7 +27,7 @@ class Strict(BaseModel):
 
 
 class QuestionResult(Strict):
-    id: str = Field(pattern=r'^(gpqa|livebench|livecodebench|bigcodebench|systems_c):[A-Za-z0-9_.:-]+$', max_length=200)
+    id: str = Field(pattern=r'^(gpqa|livebench|livecodebench|bigcodebench|systems_c|humanevalpack):[A-Za-z0-9_.:-]+$', max_length=200)
     hash: Hash
     score: float = Field(ge=0, le=1)
     attempts: int = Field(ge=1, strict=True)
@@ -167,7 +167,7 @@ def validate_submission(record: ResultSubmission, manifests: list[dict]) -> Comm
         item = reference.get(question.id)
         if not item or item['hash'] != question.hash:
             raise ValueError('Question IDs/hashes differ from the frozen panel')
-        if item['benchmark'] in {'gpqa', 'livecodebench', 'bigcodebench', 'systems_c'} and question.score not in {0, 1}:
+        if item['benchmark'] in {'gpqa', 'livecodebench', 'bigcodebench', 'systems_c', 'humanevalpack'} and question.score not in {0, 1}:
             raise ValueError('GPQA and coding grades must be binary')
         graded.append({'item_id': question.id, 'benchmark': item['benchmark'], 'stratum': item['stratum'], 'score': question.score})
     draws = bootstrap(graded) if record.tier in {'screen', 'confirmation'} else component_bootstrap(graded)

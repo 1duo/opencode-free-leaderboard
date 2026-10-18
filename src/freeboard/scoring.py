@@ -150,10 +150,10 @@ class PublicProtocol(Strict):
     temperature: float | None = None
     tools: bool | None = None
     completions: int | None = None
-    panel: Literal['lightweight-v1', 'bigcodebench-cpu-v1', 'systems-c-v1'] | None = None
+    panel: Literal['lightweight-v1', 'bigcodebench-cpu-v1', 'systems-c-v1', 'humanevalpack-multilingual-v1'] | None = None
     source_season: str | None = None
-    strata: dict[Literal['livebench', 'livecodebench', 'bigcodebench', 'systems_c'], dict[Literal['spatial', 'zebra_puzzle', 'easy', 'medium', 'hard', 'stdlib', 'scientific', 'memory', 'encoding', 'parsing', 'numeric'], int]] = {}
-    purpose: Literal['Public subset; no headline or overall ranking', 'CPU library-use subset; equal-weight coding expansion', 'CPU systems programming subset; equal-weight coding expansion'] | None = None
+    strata: dict[Literal['livebench', 'livecodebench', 'bigcodebench', 'systems_c', 'humanevalpack'], dict[Literal['spatial', 'zebra_puzzle', 'easy', 'medium', 'hard', 'stdlib', 'scientific', 'memory', 'encoding', 'parsing', 'numeric', 'cpp_generation', 'cpp_repair', 'go_generation', 'go_repair', 'rust_generation', 'rust_repair'], int]] = {}
+    purpose: Literal['Public subset; no headline or overall ranking', 'CPU library-use subset; equal-weight coding expansion', 'CPU systems programming subset; equal-weight coding expansion', 'Multilingual generation and repair subset; equal-weight coding expansion'] | None = None
     compiler: Literal['gcc-12.2.0'] | None = None
     sanitizers: list[Literal['address', 'undefined']] = []
     toolchain_packages_hash: str | None = Field(default=None, pattern=r'^[0-9a-f]{64}$')
@@ -201,7 +201,7 @@ class CodingEvaluation(Strict):
     model_id: str
     epoch: str
     season: str
-    benchmark: Literal['bigcodebench', 'systems_c'] = 'bigcodebench'
+    benchmark: Literal['bigcodebench', 'systems_c', 'humanevalpack'] = 'bigcodebench'
     status: Literal['pending', 'complete']
     phase: Literal['pilot', 'screen'] = 'screen'
     pilot_progress: int = 0
