@@ -6,7 +6,7 @@ const codingExtension = weights => ["humanevalpack", "systems_c", "bigcodebench"
 const codingExtensionLabel = b => ({humanevalpack:"C++ / Rust / Go", systems_c:"systems C", bigcodebench:"practical Python"})[b];
 const pct = value => value == null ? "—" : `${value.toFixed(1)}%`;
 const fmtDate = value => value ? new Date(value).toLocaleDateString(undefined, {year:"numeric", month:"short", day:"numeric"}) : "—";
-const statusLabel = value => ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", client_access_restricted:"Benchmark access restricted", provider_error:"Request interrupted", ambiguous:"Unknown outcome", dispatching:"Running", provider_overloaded:"Provider overloaded", protocol_violation:"Single-turn check failed", cap_violation:"Cap verification failed", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
+const statusLabel = value => value === "client_access_restricted" ? "" : ({eligible:"Runnable", cap_unverified:"Cap unverified", verification_unavailable:"Eligibility unverified", pricing_unknown:"Pricing unverified", quota_limited:"Quota limited", authentication_failed:"Access unavailable", model_unavailable:"Model unavailable", configuration_error:"Configuration unsupported", provider_error:"Request interrupted", ambiguous:"Unknown outcome", dispatching:"Running", provider_overloaded:"Provider overloaded", protocol_violation:"Single-turn check failed", cap_violation:"Cap verification failed", excluded:"Excluded", unsupported:"Unsupported protocol", removed:"Removed", paid:"Now paid", complete:"Complete", pending:"Pending", stale:"Stale"})[value] || value.replaceAll("_", " ");
 function node(tag, text, className) {
   const element = document.createElement(tag);
   if (text != null) element.textContent = text;
@@ -92,8 +92,7 @@ function categoryResults(category) {
 }
 function modelFor(result) { return result.submission_id ? result : currentModels().find(m => m.model_id === result.model_id); }
 function provenance(result) {
-  if (!result.submission_id) return node("span", "Unranked", "sub");
-  const link = node("a", `Community · @${result.contributor} · unranked`, "sub");
+  const link = node("a", `Community · @${result.contributor}`, "sub");
   link.href = `https://github.com/${report.repository}/blob/main/results/${result.submission_id}.json`;
   return link;
 }
@@ -105,7 +104,7 @@ function categoryChart(category) {
     const model = modelFor(result);
     const row = node("div", null, "chart-row"), title = node("div", null, "chart-row-title"), name = node("div");
     name.append(node("strong", model.name), node("span", sampleLabel(result), "sub"));
-    if (result.rank == null) name.append(provenance(result));
+    if (result.submission_id) name.append(provenance(result));
     if (result.stale) name.append(node("span", "Refresh overdue", "sub"));
     title.append(name, node("strong", pct(result.score), "chart-score"));
     row.append(title, intervalPlot(result.score, result.interval));
@@ -127,8 +126,9 @@ function renderRankings() {
     evidence.append(node("span", sampleLabel(result)));
     const extension = codingExtension(result.benchmark_weights);
     if (extension) evidence.append(node("span", `Algorithmic ${result.benchmark_scores.livecodebench.toFixed(1)} · ${codingExtensionLabel(extension)} ${result.benchmark_scores[extension].toFixed(1)}`, "sub"));
-    if (result.rank == null) evidence.append(provenance(result));
-    if (model.availability !== "eligible" && !result.submission_id) evidence.append(node("span", statusLabel(model.availability), "sub"));
+    if (result.submission_id) evidence.append(provenance(result));
+    const availability = statusLabel(model.availability);
+    if (model.availability !== "eligible" && availability && !result.submission_id) evidence.append(node("span", availability, "sub"));
     const interval = result.interval ? `${result.interval[0].toFixed(1)}–${result.interval[1].toFixed(1)}` : result.interval_note ? "Unresolved" : "—";
     date.append(evaluationDate(result));
     if (result.stale) date.append(node("span", "Refresh overdue", "sub"));
@@ -175,7 +175,8 @@ function renderAvailability() {
     const label = model.availability === "cap_violation" ? "No validated benchmark score"
       : model.availability === "unsupported" ? "Not a supported chat / code endpoint"
       : model.availability === "eligible" ? "Evaluation pending" : statusLabel(model.availability);
-    row.append(node("strong", model.name), node("span", label, "sub"));
+    row.append(node("strong", model.name));
+    if (label) row.append(node("span", label, "sub"));
     list.append(row);
   }
 }
