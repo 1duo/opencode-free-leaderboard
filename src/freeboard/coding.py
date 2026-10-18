@@ -225,8 +225,10 @@ def run_coding(runner, season: dict, selected: list[str] | None = None, limit: i
         if not manifest.get('coding_promoted_at'):
             manifest['coding_promoted_at'] = now()
             runner.db.execute('UPDATE seasons SET manifest=? WHERE id=?',(json.dumps(manifest),season['id']))
-    return {'season':season['id'],'models':selected,'questions_per_model':24,
+    current_statuses = {model_id: runner.db.one('SELECT status FROM models WHERE id=?', (model_id,))['status']
+                        for model_id in selected}
+    return {'season':season['id'],'models':selected,'model_statuses':current_statuses,'questions_per_model':24,
             'held_out_per_model':len(spec['strata']), 'processed':processed,
-            'blocked': None if any(m['status']=='eligible' for m in available.values()) else
-                'OpenCode generation access is restricted; validated panels and queued jobs are retained',
+            'blocked': None if 'eligible' in current_statuses.values() else
+                'No selected model is currently runnable; validated panels and queued jobs are retained',
             'budget':runner.budget.summary()}
