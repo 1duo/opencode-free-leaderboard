@@ -1,10 +1,10 @@
 {
   "schema_version": 2,
-  "snapshot_id": "dcb2d6ef2f450fc179eb",
+  "snapshot_id": "8a302e653d96d1368b49",
   "repository": "1duo/opencode-free-leaderboard",
-  "generated_at": "2026-10-17T22:50:31+00:00",
+  "generated_at": "2026-10-18T00:03:29+00:00",
   "published_at": null,
-  "discovery_at": "2026-10-17T22:47:17+00:00",
+  "discovery_at": "2026-10-18T00:02:20+00:00",
   "discovery_ok": true,
   "discovery_error": null,
   "rows": [
@@ -26,7 +26,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T04:06:24+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -118,7 +118,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -165,7 +165,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -212,7 +212,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -259,7 +259,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T05:30:24+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -351,7 +351,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -398,7 +398,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -445,7 +445,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -492,7 +492,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -539,7 +539,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -586,7 +586,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -633,7 +633,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -680,7 +680,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T06:50:35+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -772,7 +772,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -819,7 +819,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -866,7 +866,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -913,7 +913,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -960,7 +960,7 @@
       "cap_failure": null,
       "reasoning_setting": "Provider-managed · no selectable level",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1007,7 +1007,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1054,7 +1054,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1101,7 +1101,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: xhigh",
       "reasoning_variant": "xhigh",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1148,7 +1148,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: xhigh",
       "reasoning_variant": "xhigh",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1195,7 +1195,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-17T07:08:17+00:00",
       "cycle_started_at": "2026-10-17T03:55:29+00:00",
@@ -1287,7 +1287,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1334,7 +1334,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1381,7 +1381,7 @@
       "cap_failure": null,
       "reasoning_setting": "Unverified",
       "reasoning_variant": null,
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": null,
       "cycle_started_at": null,
@@ -1430,7 +1430,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T19:02:01+00:00",
       "cycle_started_at": "2026-10-10T00:20:52+00:00",
@@ -1522,7 +1522,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: max",
       "reasoning_variant": "max",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T18:58:34+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
@@ -1614,7 +1614,7 @@
       "cap_failure": null,
       "reasoning_setting": "Highest exposed: high",
       "reasoning_variant": "high",
-      "observed_at": "2026-10-17T22:47:17+00:00",
+      "observed_at": "2026-10-18T00:02:20+00:00",
       "next_retry_at": null,
       "evaluated_at": "2026-10-10T18:59:40+00:00",
       "cycle_started_at": "2026-10-09T20:09:54+00:00",
@@ -2806,6 +2806,121 @@
         "pending": 4
       },
       "accounted_tokens": 0,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "beam-free",
+      "epoch": "a7b17df894482a44",
+      "season": "coding-137dd7d3129063b7",
+      "benchmark": "humanevalpack",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 6,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-18T00:02:20+00:00",
+      "pending_reasons": {
+        "deferred": 1,
+        "pending": 5
+      },
+      "accounted_tokens": 15041,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "deepseek-v4.1-flash-free",
+      "epoch": "7e3433bc4b2ed1b1",
+      "season": "coding-137dd7d3129063b7",
+      "benchmark": "humanevalpack",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 6,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-18T00:02:20+00:00",
+      "pending_reasons": {
+        "deferred": 1,
+        "pending": 5
+      },
+      "accounted_tokens": 15041,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "longcat-2.5-preview-free",
+      "epoch": "a1987085381087f0",
+      "season": "coding-137dd7d3129063b7",
+      "benchmark": "humanevalpack",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 6,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-18T00:02:20+00:00",
+      "pending_reasons": {
+        "deferred": 1,
+        "pending": 5
+      },
+      "accounted_tokens": 15041,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "nemotron-3.5-super-vl-free",
+      "epoch": "32021e5737032959",
+      "season": "coding-137dd7d3129063b7",
+      "benchmark": "humanevalpack",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 6,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-18T00:02:20+00:00",
+      "pending_reasons": {
+        "deferred": 1,
+        "pending": 5
+      },
+      "accounted_tokens": 15041,
+      "reported_tokens": 0,
+      "truncation_rate": null
+    },
+    {
+      "model_id": "space-bunny-free",
+      "epoch": "08dc1bee6a9afd25",
+      "season": "coding-137dd7d3129063b7",
+      "benchmark": "humanevalpack",
+      "status": "pending",
+      "phase": "pilot",
+      "pilot_progress": 0,
+      "pilot_expected": 6,
+      "progress": 0,
+      "expected": 24,
+      "score": null,
+      "interval": null,
+      "evaluated_at": null,
+      "started_at": "2026-10-18T00:02:20+00:00",
+      "pending_reasons": {
+        "deferred": 1,
+        "pending": 5
+      },
+      "accounted_tokens": 15041,
       "reported_tokens": 0,
       "truncation_rate": null
     }
@@ -10223,28 +10338,1001 @@
         "systems_worker.py": "ac0dce1004af3b35e3d526d838e5e63bafea183a40e4c07196084cadb1550d02"
       },
       "coding_promoted_at": null
+    },
+    {
+      "id": "coding-341a2c065494053d",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "humanevalpack_data": "9a41762f73a8cb23bb5811b73d5aab164efcf378"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "C++17 / Go 1.19 / Rust 2021",
+      "counts": {
+        "coding": {
+          "humanevalpack": 24
+        },
+        "coding_pilot": {
+          "humanevalpack": 6
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:26:981a588b54f9",
+            "hash": "9f42849bbf0e894ba3b40e09fe23cb451b9c880026f3520473d4900cd5ce2d03",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:36:8dbdc87411c0",
+            "hash": "7fbc4381d4f460d41a71dd90d85afdb2c56434065ae77d0349e2af4e04cde9d9",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:37:17b4a58480fa",
+            "hash": "86d72267c48c76ce1994d8d06935d9da6234fd59f60f523b25c4fb241d40ef28",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:95:e1405efc41f0",
+            "hash": "dc82bac7e831e3e5c3866f9cdfa6b1763600a029c1e138fefa44efcdbdb27aa2",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:2:030171fc156e",
+            "hash": "520a3d6a098ad794e14ff34c4ad269f41db5083176953725d4131aec627e7702",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:62:256771b0751a",
+            "hash": "7725e4bd1699873182181604fddcf34a44d75d2208fb43ad156d21c4b6141338",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:154:2916035f8ad9",
+            "hash": "fc658d0225cb53f411ea49004251624260eb51c6ccb718cfba0b70605d38d73c",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:84:36299c7b5539",
+            "hash": "39033d96fd6229ff62bab7008505c819695853dcd25d0c7e86c2aaf16e2b4b3e",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:18:8a4d0cd49146",
+            "hash": "7ef9f7753b9975c317eee8b513f28e58f36cbfd8175b93979066ee7c045d6a32",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:122:b9a1e90d5d5e",
+            "hash": "80f50a743ee902a572f8464300a42eab89088aa60836eab61a31fce7a2249fc6",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:35:1fcbad9fc1b8",
+            "hash": "52d7bc6b40d86f840b0fc44e2acb6a11b7fa79ff0b696e10da4ed75bfe385f09",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:143:d3729b173a27",
+            "hash": "dc94299e2467155d931157238880119a8ac5babbf86c621160ac7f1224e984f4",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:51:43a6c4a62959",
+            "hash": "12d6671db663f4dd8b4d021bb54d448264bcd92a1ec31c7038eb3610c492f969",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:162:6cd4796328ba",
+            "hash": "5dead8dc4dd1ad0864e6b58b6fbd4de3344eea68d4ba7af7b2e9024730601ee0",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:141:dda0f2d5e0c0",
+            "hash": "816694eff92b0216634ce38eb38029732063209d49c465c806f83de50bd84120",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:80:bcc95825d32e",
+            "hash": "dce93375006561cf0461997d4cba3d7b47bf3b6e2f823dfe20368bc9bc36b9f1",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:58:6a85a01ca1fe",
+            "hash": "ecfe562725088b3a39eb82996bca10421d084317ada26203351dc029f8ceaec4",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:93:e604c33ed2d2",
+            "hash": "4f3b5fe7ad1dbe25e553237c6cd7afe7eef8fe4b726b2fd67f78a2d0c90e00ad",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:29:d24092c17fed",
+            "hash": "409de81bedfb082257677f7da2d2563815425bd73916fbaa67b01f580cdfe7d5",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:82:95205758f62e",
+            "hash": "81eee5ce7e838d5da5485f511e7f52b59ed954c216038308a50d64f9fa1322b8",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:98:8114f2a75a2d",
+            "hash": "cf4f4ecee2bf799e77c4022f68d0fd58aad2d5aadf95617c6417de35127f31d1",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:117:b752ff434aee",
+            "hash": "fa50c94a9f58bde8b881dde6740cfbed78fdf6323d21b793a770a4f41d43773d",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:92:5c48a6591da0",
+            "hash": "a9a7cfaee0effdc4d8a21c8059eca916b38b255a8f7b4700b9775ec195821aba",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:126:ab7732b3a750",
+            "hash": "65d63d278ddffd0222b764f81aa1016fc17a4f122adbd7c03866ce992f24d613",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:153:2aa734c53941",
+            "hash": "863f2ee09f633c5d7a8f0b20451b502a1c93f6fa0caac77250a10500352b809c",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:140:091291374fd9",
+            "hash": "bf0337014a0335b0fd1cc60004b8a3439083204db0c9899cb4c2d66b2dcc8b49",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:88:46f1991ed72f",
+            "hash": "c66e9d1735f7716ab4b7496d1e8b147b1b0e106bdf1a74eecf09874e10450017",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:38:387b13a9c319",
+            "hash": "b542bf6a3067677f8a3cb1dbfb1dd3783cb39a9bf2834456c60bacb2bc280d3e",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:148:9d980f22baef",
+            "hash": "0ceb4a6ab39064ee816a9040b8e27d7fedde7f6b4ca1e908bbcfc48980b98c78",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:25:2fbd0c7fc216",
+            "hash": "8cd378026681a568300c5d23bc3358ce7aff9b8c02d9ecf435303bd7b734af2f",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "humanevalpack-multilingual-v1",
+        "source_season": null,
+        "strata": {
+          "humanevalpack": {
+            "cpp_generation": 4,
+            "cpp_repair": 4,
+            "go_generation": 4,
+            "go_repair": 4,
+            "rust_generation": 4,
+            "rust_repair": 4
+          }
+        },
+        "purpose": "Multilingual generation and repair subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "humanevalpack.Dockerfile": "389bee99a420279da9fd09b613ec5954d990dae5c8f5c546257f9b1a9e70a455",
+        "humanevalpack_worker.py": "b0f05132ee7e106b0a320743cd4a699adba555660776a72f37015f504a69b23a"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-a4bb4520de0ea100",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "humanevalpack_data": "9a41762f73a8cb23bb5811b73d5aab164efcf378"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "C++17 / Go 1.19 / Rust 2021",
+      "counts": {
+        "coding": {
+          "humanevalpack": 24
+        },
+        "coding_pilot": {
+          "humanevalpack": 6
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:26:981a588b54f9",
+            "hash": "9f42849bbf0e894ba3b40e09fe23cb451b9c880026f3520473d4900cd5ce2d03",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:36:8dbdc87411c0",
+            "hash": "7fbc4381d4f460d41a71dd90d85afdb2c56434065ae77d0349e2af4e04cde9d9",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:37:17b4a58480fa",
+            "hash": "86d72267c48c76ce1994d8d06935d9da6234fd59f60f523b25c4fb241d40ef28",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:95:e1405efc41f0",
+            "hash": "dc82bac7e831e3e5c3866f9cdfa6b1763600a029c1e138fefa44efcdbdb27aa2",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:2:030171fc156e",
+            "hash": "520a3d6a098ad794e14ff34c4ad269f41db5083176953725d4131aec627e7702",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:62:256771b0751a",
+            "hash": "7725e4bd1699873182181604fddcf34a44d75d2208fb43ad156d21c4b6141338",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:154:2916035f8ad9",
+            "hash": "fc658d0225cb53f411ea49004251624260eb51c6ccb718cfba0b70605d38d73c",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:84:36299c7b5539",
+            "hash": "39033d96fd6229ff62bab7008505c819695853dcd25d0c7e86c2aaf16e2b4b3e",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:18:8a4d0cd49146",
+            "hash": "7ef9f7753b9975c317eee8b513f28e58f36cbfd8175b93979066ee7c045d6a32",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:122:b9a1e90d5d5e",
+            "hash": "80f50a743ee902a572f8464300a42eab89088aa60836eab61a31fce7a2249fc6",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:35:1fcbad9fc1b8",
+            "hash": "52d7bc6b40d86f840b0fc44e2acb6a11b7fa79ff0b696e10da4ed75bfe385f09",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:143:d3729b173a27",
+            "hash": "dc94299e2467155d931157238880119a8ac5babbf86c621160ac7f1224e984f4",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:51:43a6c4a62959",
+            "hash": "12d6671db663f4dd8b4d021bb54d448264bcd92a1ec31c7038eb3610c492f969",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:162:6cd4796328ba",
+            "hash": "5dead8dc4dd1ad0864e6b58b6fbd4de3344eea68d4ba7af7b2e9024730601ee0",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:141:dda0f2d5e0c0",
+            "hash": "816694eff92b0216634ce38eb38029732063209d49c465c806f83de50bd84120",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:80:bcc95825d32e",
+            "hash": "dce93375006561cf0461997d4cba3d7b47bf3b6e2f823dfe20368bc9bc36b9f1",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:58:6a85a01ca1fe",
+            "hash": "ecfe562725088b3a39eb82996bca10421d084317ada26203351dc029f8ceaec4",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:93:e604c33ed2d2",
+            "hash": "4f3b5fe7ad1dbe25e553237c6cd7afe7eef8fe4b726b2fd67f78a2d0c90e00ad",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:29:d24092c17fed",
+            "hash": "409de81bedfb082257677f7da2d2563815425bd73916fbaa67b01f580cdfe7d5",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:82:95205758f62e",
+            "hash": "81eee5ce7e838d5da5485f511e7f52b59ed954c216038308a50d64f9fa1322b8",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:98:8114f2a75a2d",
+            "hash": "cf4f4ecee2bf799e77c4022f68d0fd58aad2d5aadf95617c6417de35127f31d1",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:117:b752ff434aee",
+            "hash": "fa50c94a9f58bde8b881dde6740cfbed78fdf6323d21b793a770a4f41d43773d",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:92:5c48a6591da0",
+            "hash": "a9a7cfaee0effdc4d8a21c8059eca916b38b255a8f7b4700b9775ec195821aba",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:126:ab7732b3a750",
+            "hash": "65d63d278ddffd0222b764f81aa1016fc17a4f122adbd7c03866ce992f24d613",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:153:2aa734c53941",
+            "hash": "863f2ee09f633c5d7a8f0b20451b502a1c93f6fa0caac77250a10500352b809c",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:140:091291374fd9",
+            "hash": "bf0337014a0335b0fd1cc60004b8a3439083204db0c9899cb4c2d66b2dcc8b49",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:88:46f1991ed72f",
+            "hash": "c66e9d1735f7716ab4b7496d1e8b147b1b0e106bdf1a74eecf09874e10450017",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:38:387b13a9c319",
+            "hash": "b542bf6a3067677f8a3cb1dbfb1dd3783cb39a9bf2834456c60bacb2bc280d3e",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:148:9d980f22baef",
+            "hash": "0ceb4a6ab39064ee816a9040b8e27d7fedde7f6b4ca1e908bbcfc48980b98c78",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:25:2fbd0c7fc216",
+            "hash": "8cd378026681a568300c5d23bc3358ce7aff9b8c02d9ecf435303bd7b734af2f",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "humanevalpack-multilingual-v1",
+        "source_season": null,
+        "strata": {
+          "humanevalpack": {
+            "cpp_generation": 4,
+            "cpp_repair": 4,
+            "go_generation": 4,
+            "go_repair": 4,
+            "rust_generation": 4,
+            "rust_repair": 4
+          }
+        },
+        "purpose": "Multilingual generation and repair subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "humanevalpack.Dockerfile": "698b435a0ba7dfbbe2c674a72c5f20140b70534ec66ed4443b992037da2e4e03",
+        "humanevalpack_worker.py": "c5152d2dbace6b1b82f54aa6fa2357555de948fdaf4f2bdb6dd8b0a935df8588"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-d81fe93bbeb6750a",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "humanevalpack_data": "9a41762f73a8cb23bb5811b73d5aab164efcf378"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "C++17 / Go 1.19 / Rust 2021",
+      "counts": {
+        "coding": {
+          "humanevalpack": 24
+        },
+        "coding_pilot": {
+          "humanevalpack": 6
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:26:cdb24593defb",
+            "hash": "e968d3a71aa04b09e07cfd75d386a974339a136e3a7aa7ee29cc6295224398d0",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:36:6755a891381e",
+            "hash": "7d2fe29c4bf444acc303e52cfda0cc940cd23d4ba4409895816eaead774f50ec",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:37:08cbfecee068",
+            "hash": "8c4654a2ef830182bbe0cc9df0fc0edaa5f75c4b5dbbd89e44747fb37844e4f9",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:95:84d93f3e4783",
+            "hash": "e944cf85015e6106c9b06f2950be269b88cfaab36ca771549bb0c3ff2836992c",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:2:6fa87af71059",
+            "hash": "59a718cecf037947905644208885d282cc457e334527e5bd88c7f1244ae348d9",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:62:15ba3f287541",
+            "hash": "c433f05b0bd4b8d1489202f24d247f4505ac6e91a22e88337ac8762a924e9e40",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:154:7d5fec801af0",
+            "hash": "d220b2acdd51c09573e7276b595e73c688b99c36b2f7d2aa39f270d86224d056",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:84:0da54f7e8baf",
+            "hash": "aa4a321d10f6a0efd365caf7792a3ecd57f779c17bf2c01002e8857d2c3a70b4",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:18:6b611a355d65",
+            "hash": "c8ff608ff54e2e9cf6b8ebac31f13db28d19c534615e157b7985fc65b9cff4e5",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:122:17f7eb6c6c99",
+            "hash": "4912431cb491831cc586069aecb687980314b1edadb60ea5b1bb451e671d2cf5",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:35:520016e89fe6",
+            "hash": "e45c76c3ed5d2057c92ddb5f4d6159dc4057180843e88708f26959833b0b6540",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:143:3f6725df4833",
+            "hash": "6aa222656de43a5367eb482e5ee6ff093282e973f01fafd4defb542e85cf9dff",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:51:af9e56176bf4",
+            "hash": "98e6531decef8ef3a858c167a77f96d6a36b8a00e0eb0ae3cf3a6000dfeb9aa4",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:162:3ac4ac7ece3f",
+            "hash": "58a8f65824ab67d0b1ac98da454af77e45cea71a635c0c457450d96f82d9a8a3",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:141:6e104df16a8a",
+            "hash": "7dc7c095553001746e3d24bd7b99b40526bc1eac6f67c911aca87fe72ab0d70a",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:80:3e2d6ab1c00a",
+            "hash": "de63d0e7957c9b21652762d9b4a4a46fcf4b864a36c93091c7996ed2cf5a320b",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:58:f975837d4497",
+            "hash": "b628547b1da36836e47aa55ba79590b190a0b8982b0b87213db6505c5a3bd9d0",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:93:13144f6c5395",
+            "hash": "baae06376012319ae2c4583d0d1386bd2a92ab2ddec2dd49040633ae306a0008",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:29:960aec7799c8",
+            "hash": "d83268e4cd4caf697610f742b0b349da61efd953a9e5dbf1520a8bc40b2404ed",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:82:ae6c1909ae34",
+            "hash": "7ab55c38bac020b0e0f91838066712f3bf0f6ac12a06783501aee411c5c67626",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:98:e9635992907c",
+            "hash": "097d2c7fca9d2ecaee96953b5644eb1d64e7daf2ca4032d26d2e6a0751d679bc",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:117:024c2dbf80b0",
+            "hash": "fae9f23021a8cd9fafad2fa15ad0b8480f704272de31a12ad312518e474c02bc",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:92:71c882be5514",
+            "hash": "ad29ecefbd7042b07553fb33c5558c8bce69203af8f8ef0d83fc8a3ae88190af",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:126:46f3ebc9abba",
+            "hash": "41887cc5a8e24ca2b10c315f3ae51347ebe1b430ab473ff0e66be06edafe37eb",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:153:f26b55078253",
+            "hash": "2ec6f9357e9a0ba36f5bc4b20c2585d28170491f61d80afb25c045761d7e4274",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:140:a79f71963759",
+            "hash": "1b0fd605a53075ae3e60cdae68f9cfb6b858044e07e8b3b1d1ed8e05f246ebd0",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:88:0e81fb7eda91",
+            "hash": "131d9f78e2eac0fca2fd64ed86653542a7d707b5fe207a70cd55e3de71084fbd",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:38:0910ea51a340",
+            "hash": "fd96bb44113d8ddaac808fdb8eff59e21f0e2dce93429a5ad01877f03bfa55ac",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:148:e6e2f52c229e",
+            "hash": "8466d8ee1baaf7b77bb029cbc01939c01df0f1d877bd45a1ebd113f69b9eaa85",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:25:cc082c630f31",
+            "hash": "17c00a06bdb93f601a1e86561bee53305294986488db632c3e81b89b9e9a139e",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          }
+        ]
+      },
+      "validated": false,
+      "active": false,
+      "partial": true,
+      "grader_image": null,
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "humanevalpack-multilingual-v1",
+        "source_season": null,
+        "strata": {
+          "humanevalpack": {
+            "cpp_generation": 4,
+            "cpp_repair": 4,
+            "go_generation": 4,
+            "go_repair": 4,
+            "rust_generation": 4,
+            "rust_repair": 4
+          }
+        },
+        "purpose": "Multilingual generation and repair subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": null
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "humanevalpack.Dockerfile": "698b435a0ba7dfbbe2c674a72c5f20140b70534ec66ed4443b992037da2e4e03",
+        "humanevalpack_worker.py": "c5152d2dbace6b1b82f54aa6fa2357555de948fdaf4f2bdb6dd8b0a935df8588"
+      },
+      "coding_promoted_at": null
+    },
+    {
+      "id": "coding-137dd7d3129063b7",
+      "seed": 20261008,
+      "sources": {
+        "gpqa": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+        "livebench_data": "6fc6498a5dfba553f69f4413feabade1f1a2d384",
+        "livebench_grader": "24364d65076429adfcba7be18af4d44fddc43dce",
+        "livecodebench_data": "0fe84c3912ea0c4d4a78037083943e8f0c4dd505",
+        "livecodebench_grader": "28fef95ea8c9f7a547c8329f2cd3d32b92c1fa24",
+        "humanevalpack_data": "9a41762f73a8cb23bb5811b73d5aab164efcf378"
+      },
+      "livebench_release": "2024-11-25",
+      "livecodebench_release": "release_v6",
+      "language": "C++17 / Go 1.19 / Rust 2021",
+      "counts": {
+        "coding": {
+          "humanevalpack": 24
+        },
+        "coding_pilot": {
+          "humanevalpack": 6
+        }
+      },
+      "panels": {
+        "coding": [
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:26:981a588b54f9",
+            "hash": "9f42849bbf0e894ba3b40e09fe23cb451b9c880026f3520473d4900cd5ce2d03",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:36:8dbdc87411c0",
+            "hash": "7fbc4381d4f460d41a71dd90d85afdb2c56434065ae77d0349e2af4e04cde9d9",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:37:17b4a58480fa",
+            "hash": "86d72267c48c76ce1994d8d06935d9da6234fd59f60f523b25c4fb241d40ef28",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:95:e1405efc41f0",
+            "hash": "dc82bac7e831e3e5c3866f9cdfa6b1763600a029c1e138fefa44efcdbdb27aa2",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:2:030171fc156e",
+            "hash": "520a3d6a098ad794e14ff34c4ad269f41db5083176953725d4131aec627e7702",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:62:256771b0751a",
+            "hash": "7725e4bd1699873182181604fddcf34a44d75d2208fb43ad156d21c4b6141338",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:154:2916035f8ad9",
+            "hash": "fc658d0225cb53f411ea49004251624260eb51c6ccb718cfba0b70605d38d73c",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:84:36299c7b5539",
+            "hash": "39033d96fd6229ff62bab7008505c819695853dcd25d0c7e86c2aaf16e2b4b3e",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:18:8a4d0cd49146",
+            "hash": "7ef9f7753b9975c317eee8b513f28e58f36cbfd8175b93979066ee7c045d6a32",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:122:b9a1e90d5d5e",
+            "hash": "80f50a743ee902a572f8464300a42eab89088aa60836eab61a31fce7a2249fc6",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:35:1fcbad9fc1b8",
+            "hash": "52d7bc6b40d86f840b0fc44e2acb6a11b7fa79ff0b696e10da4ed75bfe385f09",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:143:d3729b173a27",
+            "hash": "dc94299e2467155d931157238880119a8ac5babbf86c621160ac7f1224e984f4",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:51:43a6c4a62959",
+            "hash": "12d6671db663f4dd8b4d021bb54d448264bcd92a1ec31c7038eb3610c492f969",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:162:6cd4796328ba",
+            "hash": "5dead8dc4dd1ad0864e6b58b6fbd4de3344eea68d4ba7af7b2e9024730601ee0",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:141:dda0f2d5e0c0",
+            "hash": "816694eff92b0216634ce38eb38029732063209d49c465c806f83de50bd84120",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:80:bcc95825d32e",
+            "hash": "dce93375006561cf0461997d4cba3d7b47bf3b6e2f823dfe20368bc9bc36b9f1",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:58:6a85a01ca1fe",
+            "hash": "ecfe562725088b3a39eb82996bca10421d084317ada26203351dc029f8ceaec4",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:93:e604c33ed2d2",
+            "hash": "4f3b5fe7ad1dbe25e553237c6cd7afe7eef8fe4b726b2fd67f78a2d0c90e00ad",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:29:d24092c17fed",
+            "hash": "409de81bedfb082257677f7da2d2563815425bd73916fbaa67b01f580cdfe7d5",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:82:95205758f62e",
+            "hash": "81eee5ce7e838d5da5485f511e7f52b59ed954c216038308a50d64f9fa1322b8",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:98:8114f2a75a2d",
+            "hash": "cf4f4ecee2bf799e77c4022f68d0fd58aad2d5aadf95617c6417de35127f31d1",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:117:b752ff434aee",
+            "hash": "fa50c94a9f58bde8b881dde6740cfbed78fdf6323d21b793a770a4f41d43773d",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:92:5c48a6591da0",
+            "hash": "a9a7cfaee0effdc4d8a21c8059eca916b38b255a8f7b4700b9775ec195821aba",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:126:ab7732b3a750",
+            "hash": "65d63d278ddffd0222b764f81aa1016fc17a4f122adbd7c03866ce992f24d613",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          }
+        ],
+        "coding_pilot": [
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_generation:153:2aa734c53941",
+            "hash": "863f2ee09f633c5d7a8f0b20451b502a1c93f6fa0caac77250a10500352b809c",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:cpp_repair:140:091291374fd9",
+            "hash": "bf0337014a0335b0fd1cc60004b8a3439083204db0c9899cb4c2d66b2dcc8b49",
+            "benchmark": "humanevalpack",
+            "stratum": "cpp_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_generation:88:46f1991ed72f",
+            "hash": "c66e9d1735f7716ab4b7496d1e8b147b1b0e106bdf1a74eecf09874e10450017",
+            "benchmark": "humanevalpack",
+            "stratum": "go_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:go_repair:38:387b13a9c319",
+            "hash": "b542bf6a3067677f8a3cb1dbfb1dd3783cb39a9bf2834456c60bacb2bc280d3e",
+            "benchmark": "humanevalpack",
+            "stratum": "go_repair"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_generation:148:9d980f22baef",
+            "hash": "0ceb4a6ab39064ee816a9040b8e27d7fedde7f6b4ca1e908bbcfc48980b98c78",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_generation"
+          },
+          {
+            "id": "humanevalpack:9a41762f73a8:rust_repair:25:2fbd0c7fc216",
+            "hash": "8cd378026681a568300c5d23bc3358ce7aff9b8c02d9ecf435303bd7b734af2f",
+            "benchmark": "humanevalpack",
+            "stratum": "rust_repair"
+          }
+        ]
+      },
+      "validated": true,
+      "active": false,
+      "partial": true,
+      "grader_image": "sha256:8fc3116defa8fc1f22d0996cfb113410a129e8e02cead4f0d28c61e1e8294637",
+      "protocol": {
+        "output_cap": 4096,
+        "temperature": 0.0,
+        "tools": false,
+        "completions": 1,
+        "panel": "humanevalpack-multilingual-v1",
+        "source_season": null,
+        "strata": {
+          "humanevalpack": {
+            "cpp_generation": 4,
+            "cpp_repair": 4,
+            "go_generation": 4,
+            "go_repair": 4,
+            "rust_generation": 4,
+            "rust_repair": 4
+          }
+        },
+        "purpose": "Multilingual generation and repair subset; equal-weight coding expansion",
+        "compiler": null,
+        "sanitizers": [],
+        "toolchain_packages_hash": "13d1a05176c363849d93d1a2a5efc5161208af4fccc86cd942a21534d1c080b9"
+      },
+      "grading_files": {
+        "Dockerfile": "cf5ecf60d0c762a6e4eda7e41ae2c84e15b25bc3f03f89c1eb25c2cdda1465c6",
+        "worker.py": "04d020d3cb0f5f1a4768f97b8148532458b25178dbefe212e5c25d1f6a805b6e",
+        "requirements.txt": "d9a0bd05cb3012f1259dcdcc321049ae96bc68f5ea643cbd4501696930b85eb8",
+        "humanevalpack.Dockerfile": "8bda49d610377947aa18c71ad838ddb477d8f31c318b6c42c1040337bddadb07",
+        "humanevalpack_worker.py": "78c1f5ad235689c73c752e288a99c61645729975fb87494b071c80afb4a5e7e4",
+        "humanevalpack_go.go": "93294c80ce303f6fef6b73ed36d0770f48f2db235a811912fefbf66d424b1db4"
+      },
+      "coding_promoted_at": null
     }
   ],
   "budget": {
     "week": "2026-10-12",
-    "attempts_limit": 875,
+    "attempts_limit": 891,
     "tokens_limit": 6384551,
-    "planned_attempts": 178,
-    "planned_tokens": 2560750,
-    "attempts_used": 697,
-    "accounted_tokens": 3761677,
+    "planned_attempts": 190,
+    "planned_tokens": 2598225,
+    "attempts_used": 706,
+    "accounted_tokens": 3836882,
     "reported_tokens": 3047001,
-    "estimated_attempts": 59,
-    "opencode_attempts": 571,
-    "opencode_invocations": 541,
-    "opencode_accounted_tokens": 3622164,
+    "estimated_attempts": 64,
+    "opencode_attempts": 576,
+    "opencode_invocations": 546,
+    "opencode_accounted_tokens": 3697369,
     "opencode_reported_tokens": 3036021,
-    "opencode_estimated_attempts": 44,
-    "discovery_attempts": 108,
+    "opencode_estimated_attempts": 49,
+    "discovery_attempts": 112,
     "prior_attempts": 18,
     "prior_accounted_tokens": 139513
   },
-  "queue_size": 49,
+  "queue_size": 79,
   "missed_deadlines": 0,
   "blockers": []
 }
