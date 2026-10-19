@@ -41,6 +41,10 @@ Resume the original command. An accepted response is atomically saved and synced
 
 A proven native free-quota rejection can resume only when the saved transcript establishes the exact question/model/variant, a single empty assistant turn and zero usage. The provider retry time applies across that model's seasons. The original three-attempt allowance and charges remain.
 
+An HTTP 403 `FreeTierError` may identify a network/IP restriction, rather than a login or client-configuration failure. Inspect the saved provider error locally; retain its UTC timestamp and `x-opencode-log-id` for OpenCode support, without sharing credentials, private prompts or responses. Check whether a VPN or proxy is enabled, as suggested by that error. If none is configured, the runner cannot lift the provider's network restriction. Stop inference until access is restored; changing benchmark datasets, repeatedly logging in or refreshing the catalog does not resolve it. No paid fallback is enabled.
+
+After resolving access, explicitly run `leaderboard discover --recheck-access MODEL_ID`, then resume the original command. This does not override a price, protocol or cap failure, replenish retry allowances, or replay ambiguous outcomes. See [coding candidates](coding-candidates.md) for locally feasible alternatives and the shared generation prerequisite.
+
 `retry-missing --season SEASON_ID [--model MODEL_ID]` consumes one explicit operator-authorized recovery for an unanswered full-screen question. It never replaces a durable, scored, withheld or cap-invalid answer. Scheduling never grants this exception. Further exceptional recoveries require separate authorization and audit records; do not reset the existing allowance. Preserve partial and unknown records rather than improving the sample by deletion.
 
 ## Grading and seasons

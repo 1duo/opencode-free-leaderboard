@@ -17,6 +17,40 @@ from freeboard.scoring import make_row, merged_capabilities
 context = fixtures.context
 
 
+@pytest.mark.parametrize('message,detail', [
+    ('FreeTierError: free models unavailable from your current network because of this IP address', 'network/IP'),
+    ('FreeTierError: this free tier can only be used with supported clients', 'rejected free-tier access'),
+])
+def test_free_tier_rejections_preserve_cause_without_assuming_configuration(message, detail):
+    from freeboard.opencode import failure_status, retry_is_safe
+    response = fixtures.native_error(403, 'Request rejected')
+    response['info']['error']['data']['responseBody'] = json.dumps({'error': {'message': message}})
+    status, explanation = failure_status(response)
+    assert status == 'client_access_restricted' and detail in explanation
+    assert not retry_is_safe({'message': 'HTTP 403 ' + message, 'response_observed': False})
+    assert failure_status(fixtures.native_error(401, 'Invalid credentials'))[0] == 'authentication_failed'
+
+
+def test_network_rejection_stops_model_without_scoring_or_automatic_retry(context, monkeypatch):
+    runner, job, model, item = fixtures.job_context(context)
+    response = fixtures.native_error(403, 'FreeTierError: unavailable from your current network: IP address restricted')
+    response['parts'] = []
+    monkeypatch.setattr(runner.opencode, 'generate', lambda *_: response)
+    try:
+        runner.generate(job, model, item, 4096)
+        saved = runner.db.one('SELECT * FROM jobs WHERE id=?', (job['id'],))
+        assert saved['status'] == 'deferred' and saved['score'] is None and saved['response_path'] is None
+        assert 'network/IP' in saved['error']
+        assert runner.db.one('SELECT status FROM models')['status'] == 'client_access_restricted'
+        assert runner.drain(runner.active_season())['processed'] == 0
+        attempt = runner.db.one('SELECT * FROM attempts')
+        assert attempt['http_status'] == 403 and attempt['accounted_tokens'] == attempt['reserved_tokens'] > 0
+        assert runner.db.one('SELECT count(*) AS n FROM attempts')['n'] == 1
+        assert Path(attempt['response_path']).is_file()
+    finally:
+        runner.close()
+
+
 @pytest.mark.parametrize('blocked', ['authentication_failed', 'client_access_restricted'])
 def test_catalog_refresh_preserves_access_rejection_until_explicit_recheck(context, monkeypatch, blocked):
     import httpx

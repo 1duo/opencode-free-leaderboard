@@ -23,7 +23,7 @@ The current first release may publish an honest setup/pending page while API cre
 
 ## Operational failures
 
-Provider access can disappear between price verification and dispatch. An OpenCode-only free-tier promotion can also reject the controlled client configuration; switching transport does not guarantee access. Keep the exact provider response status, mark access/quota failures, and stop using the endpoint. No local pricing check can make a contractual guarantee about provider billing. Daily revalidation and explicit model gating minimize that gap.
+Provider access can disappear between price verification and dispatch. OpenCode free-tier policy can reject client or network access; preserve the provider's specific cause rather than assuming every 403 is a login or configuration error. Switching transport or dataset does not guarantee access. Keep the exact provider response status, mark access/quota failures, and stop using the endpoint. No local pricing check can make a contractual guarantee about provider billing. Daily revalidation and explicit model gating minimize that gap.
 
 An interrupted attempt without a response remains ambiguous until an operator can reconcile it from provider evidence. Do not reissue it to improve a score. Container infrastructure timeouts remain ungraded. Pending screens cannot replace older complete scores; older scores remain available with their original dates.
 

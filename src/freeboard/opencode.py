@@ -157,7 +157,9 @@ def failure_status(result: dict) -> tuple[str, str]:
     text = str(data.get('message', '')) + str(data.get('responseBody', ''))
     code = data.get('statusCode')
     if 'FreeTierError' in text or 'free tier can only' in text.lower():
-        return 'client_access_restricted', 'Provider restricts free-tier access under this OpenCode configuration'
+        if 'current network' in text.lower() and 'ip address' in text.lower():
+            return 'client_access_restricted', 'OpenCode blocks free-tier access from the current network/IP; resolve provider access before rechecking'
+        return 'client_access_restricted', 'OpenCode rejected free-tier access; resolve provider access before rechecking'
     if code in {401, 403}:
         return 'authentication_failed', 'Provider access rejected'
     if code == 429:
